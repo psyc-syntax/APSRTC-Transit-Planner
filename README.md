@@ -1,32 +1,62 @@
-# \# APSRTC-Transit-Planner
+# APSRTC Multi-Modal Transit Planner 🚌🚆
 
-# 
+# A high-performance transit routing engine and mobile application designed to optimize travel across the Andhra Pradesh State Road Transport Corporation (APSRTC) network and eventually integrate South Central Railway (SCR) data.
 
-# A high-performance multi-modal transit routing engine built with C++, Flutter, and Dart FFI. Optimized for the Andhra Pradesh bus and rail network.
+# 🌟 The Vision
 
-# 
+# Navigating large-scale bus networks requires speed and precision. This project bridges a modern Flutter UI with a high-performance C++ Routing Engine to provide instant, optimized routing solutions for commuters in Andhra Pradesh.
 
-# \## Getting Started
+# 🏗️ Technical Architecture (The "Brain \& Body")
 
-# 
+# This project utilizes a Hybrid Architecture to ensure the app remains responsive even when calculating paths through thousands of transit nodes:
 
-# This project is a starting point for a Flutter application.
+# &nbsp;\* The Body (Flutter/Dart): A modern, responsive UI focused on accessibility and ease of use.
 
-# 
+# &nbsp;\* The Brain (C++ Engine - In Progress): A custom routing engine being built in C++ to handle heavy pathfinding math with maximum memory efficiency.
 
-# A few resources to get you started if this is your first Flutter project:
+# &nbsp;\* The Bridge (Dart FFI): Low-level integration allowing the Flutter frontend to communicate directly with the C++ backend for near-native execution speeds.
 
-# 
+# &nbsp;\* The Memory (Firebase): Real-time synchronization of bus schedules and stop data.
 
-# \- \[Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+# 🧠 Data Structures \& Algorithms
 
-# \- \[Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# The core engine is architected to implement:
 
-# 
+# &nbsp;\* Graph Theory (Adjacency Lists): To represent 10,000+ transit stops as nodes.
 
-# For help getting started with Flutter development, view the
+# &nbsp;\* Dijkstra’s Algorithm: Calculating the shortest/cheapest/fastest paths using a Priority Queue (Heap) to maintain O(E + V \\log V) complexity.
 
-# \[online documentation](https://docs.flutter.dev/), which offers tutorials, samples, guidance on mobile development, and a full API reference.
+# &nbsp;\* Trie (Prefix Tree): Powering the search bar for O(L) auto-complete of bus stop names.
 
-# 
+# &nbsp;\* Stacks: Managing path reconstruction and state history.
+
+# 🚀 Current Status: Phase 1 (UI Prototype)
+
+# &nbsp;\* \[x] Initial Architecture Design
+
+# &nbsp;\* \[x] UI/UX Development: Homepage and Search Interface (Flutter)
+
+# &nbsp;\* \[ ] C++ Engine Integration: Implementing Graph traversals via Dart FFI
+
+# &nbsp;\* \[ ] Firebase Integration: Real-time data modeling
+
+# &nbsp;\* \[ ] Multi-Modal Update: Adding Railway network data
+
+# 📂 Project Structure
+
+# &nbsp;\* /lib: Flutter/Dart source code (Current Focus).
+
+# &nbsp;\* /android, /ios: Platform-specific configurations.
+
+# &nbsp;\* pubspec.yaml: Project dependencies and assets.
+
+# &nbsp;\* README.md: Project documentation and roadmap.
+
+# 🧩 About the Developer
+
+# I am a 2-Star CodeChef coder and have solved 100+ LeetCode problems focusing on Trees, Graphs, and Dynamic Programming. You can find my deep-dive algorithmic case studies (Brute Force vs. Optimal) in my LeetCrack-DSA Repository.
+
+# Connect with me:
+
+# LinkedIn | GitHub
 
