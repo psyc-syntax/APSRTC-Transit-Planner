@@ -58,5 +58,5 @@
 
 # Connect with me:
 
-# LinkedIn | GitHub
+# LinkedIn : LinkedIn: https://www.linkedin.com/in/min-max-a61323378
 
