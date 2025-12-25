@@ -52,7 +52,7 @@ class _OptimizationSlectionState extends State<OptimizationSlection> {
 
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: fastestmodeselected? Colors.deepPurple: Colors.grey[200],
+                backgroundColor: fastestmodeselected? Colors.blue[900]: Colors.grey[200],
                 elevation: fastestmodeselected ? 2 : 0,
                 fixedSize: Size(110, 70),
                 padding: EdgeInsets.all(0),
@@ -96,7 +96,7 @@ class _OptimizationSlectionState extends State<OptimizationSlection> {
 
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: costmodeselected? Colors.deepPurple: Colors.grey[200],
+                backgroundColor: costmodeselected? Colors.blue[900]: Colors.grey[200],
                 elevation: costmodeselected ? 2 : 0,
                 fixedSize: Size(110, 70),
                 padding: EdgeInsets.all(0),
@@ -139,7 +139,7 @@ class _OptimizationSlectionState extends State<OptimizationSlection> {
 
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: distancemodeselected? Colors.deepPurple: Colors.grey[200],
+                backgroundColor: distancemodeselected? Colors.blue[900]: Colors.grey[200],
                 elevation: distancemodeselected ? 2 : 0,
                 fixedSize: Size(110, 70),
                 padding: EdgeInsets.all(0),

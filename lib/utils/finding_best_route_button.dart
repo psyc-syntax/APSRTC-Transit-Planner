@@ -8,7 +8,6 @@ class FindingBestRouteButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: (){},
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple,
         fixedSize: Size(400, 50),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(10)

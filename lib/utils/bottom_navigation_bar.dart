@@ -1,40 +1,35 @@
 import 'package:flutter/material.dart';
-class MyBottomNavigationBar extends StatefulWidget {
-  const MyBottomNavigationBar({super.key});
 
-  @override
-  State<MyBottomNavigationBar> createState() => _MyBottomNavigationBarState();
-}
+class MyBottomNavigationBar extends StatelessWidget {
+  final int selectedIndex; // Current selected tab index
+  final Function(int) onItemTapped; // Callback to notify MainPage
 
-class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
+  const MyBottomNavigationBar({
+    super.key,
+    required this.selectedIndex,
+    required this.onItemTapped,
+  });
 
-  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      onTap: (index) {
-        setState(() {
-          selectedIndex = index;
-        });
-      },
       currentIndex: selectedIndex,
-      selectedItemColor: Colors.purple,
-       unselectedItemColor: Colors.black,
-      items: [
+      onTap: onItemTapped,
+     
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: "home",),
-          
-
+          label: "Home",
+        ),
         BottomNavigationBarItem(
-          icon:  Icon(Icons.save), 
-          label: 'saved'
-          ),
-
+          icon: Icon(Icons.save),
+          label: "Saved",
+        ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings), 
-          label: 'settings')
+          icon: Icon(Icons.person),
+          label: "User",
+        ),
       ],
-      );
+    );
   }
 }

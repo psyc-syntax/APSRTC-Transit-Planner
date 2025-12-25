@@ -48,7 +48,7 @@ class _TravelDateSelectionState extends State<TravelDateSelection> {
                 });
               }, 
               style: ElevatedButton.styleFrom(
-                backgroundColor: todaySelected? Colors.deepPurple: Colors.grey[200],
+                backgroundColor: todaySelected? Colors.blue[900]: Colors.grey[200],
                 elevation: todaySelected? 2: 0,
                 fixedSize: Size(130, 40),
     
@@ -75,7 +75,7 @@ class _TravelDateSelectionState extends State<TravelDateSelection> {
                 });
               }, 
               style: ElevatedButton.styleFrom(
-                backgroundColor: tomorrowSelected? Colors.deepPurple: Colors.grey[200],
+                backgroundColor: tomorrowSelected? Colors.blue[900]: Colors.grey[200],
                 elevation: tomorrowSelected? 2: 0,
                 fixedSize: Size(130, 40),
     
@@ -103,7 +103,7 @@ class _TravelDateSelectionState extends State<TravelDateSelection> {
                 });
               }, 
               style: ElevatedButton.styleFrom(
-                backgroundColor: calendarselected? Colors.deepPurple: Colors.grey[200],
+                backgroundColor: calendarselected? Colors.blue[900]: Colors.grey[200],
                 elevation: calendarselected? 2: 0,
                 fixedSize: Size(60, 40),
                 padding: EdgeInsets.all(0),

@@ -42,6 +42,9 @@ class _TripDatailsState extends State<TripDatails> {
                               borderRadius: BorderRadius.circular(10),
                               
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey)
+                            ),
                             prefixIcon: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: GlowingDot(dotColor: 0xFF00FF00),
@@ -62,6 +65,10 @@ class _TripDatailsState extends State<TripDatails> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
+
+                            ),
+                             enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey)
                             ),
                             prefixIcon: Padding(
                               padding: const EdgeInsets.all(20.0),
@@ -83,7 +90,7 @@ class _TripDatailsState extends State<TripDatails> {
                     padding: const EdgeInsets.only(top: 45, left: 150),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.deepPurple,
+                        color: Colors.blue[900],
                         borderRadius: BorderRadius.circular(60)
                       ),
                       child: IconButton(

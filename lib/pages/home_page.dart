@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/utils/bottom_navigation_bar.dart';
 import 'package:planner_demo/utils/finding_best_route_button.dart';
 import 'package:planner_demo/utils/optimization_slection.dart';
 import 'package:planner_demo/utils/travel_date_selection.dart';
@@ -11,7 +10,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+
         title: Column(
           children: [
             Text(
@@ -42,7 +41,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Container(
                   height: 40,
-                  color: Colors.deepPurple,
+                  color: Colors.blue[900],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20, top: 10),
@@ -78,7 +77,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
 
-       bottomNavigationBar: MyBottomNavigationBar(),
+
 
     );
   }
