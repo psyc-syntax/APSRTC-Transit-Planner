@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:planner_demo/pages/main_page.dart';
+import 'package:planner_demo/utils/routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,6 +14,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
+      // routes to navigate pages
+      initialRoute: AppRoutes.home,
+      routes: AppRoutes.routes,
       theme: ThemeData(
 
         // color theme
@@ -43,10 +48,10 @@ class MyApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.blue[900],
           )
-        )
+        ),
+
       ),
       
-      home: MainPage(),
     );
   }
 }

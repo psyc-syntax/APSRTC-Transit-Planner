@@ -11,8 +11,8 @@ class GlowingDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 4,
-      height: 4,
+      width: 10,
+      height: 10,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Color(dotColor),

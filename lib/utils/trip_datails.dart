@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/utils/glowing_dot.dart';
+import 'package:planner_demo/utils/routes.dart';
 
 class TripDatails extends StatefulWidget {
 
@@ -36,53 +37,84 @@ class _TripDatailsState extends State<TripDatails> {
                       //from text field
                       Padding(
                         padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              
+                        child: SizedBox(
+                          height: 55,
+                          child: ElevatedButton(
+                            
+                            style: ElevatedButton.styleFrom(
+                                        
+                              elevation: 0,
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(color: Colors.black),
+                              )
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)
-                            ),
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: GlowingDot(dotColor: 0xFF00FF00),
-                            ),
-                            hintText: "From",
-                            hintStyle: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold
-                            )
-                          ),
+                            onPressed: (){
+                              Navigator.pushNamed(context, AppRoutes.locationsSelection);
+                            },
+                            child:Row(
+                                    
+                              children: [
+                                        
+                                GlowingDot(dotColor: 0xFF00FF00),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text(
+                                    "From",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
                         ),
                       ),
 
-                      //to textfield
+
+                       //to textfield
                       Padding(
-                        padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
+                        child: SizedBox(
+                          height: 55,
+                          child: ElevatedButton(
+                            
+                            style: ElevatedButton.styleFrom(
+                                        
+                              elevation: 0,
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(color: Colors.black),
+                              )
+                            ),
+                            onPressed: (){
+                              Navigator.pushNamed(context, AppRoutes.locationsSelection);
+                            },
+                            child:Row(
+                                    
+                              children: [
+                                        
+                                GlowingDot(dotColor: 0xFFFF0000),
 
-                            ),
-                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)
-                            ),
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: GlowingDot(dotColor: 0xFFFF0000),
-                            ),
-                            hintText: "To",
-                            hintStyle: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold
-                            )
-                          ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15),
+                                  child: Text(
+                                    "To",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
                         ),
                       ),
-
                     ],
                   ),
 
