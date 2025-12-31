@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/utils/glowing_dot.dart';
+
 
 class TripLocationSelectionPage extends StatefulWidget {
   const TripLocationSelectionPage({super.key});
@@ -14,14 +14,13 @@ class _TripLocationSelectionPageState extends State<TripLocationSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(150), // taller AppBar
+        preferredSize: Size.fromHeight(140), // taller AppBar
         child: AppBar(
           backgroundColor: Color.fromARGB(0, 0, 0, 0),
           elevation: 4,
           flexibleSpace: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 20.0,
-              horizontal: 12.0,
+            padding: const EdgeInsets.only(
+              left: 16, right :10, top : 40
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

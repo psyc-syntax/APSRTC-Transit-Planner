@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import 'package:planner_demo/pages/main_page.dart';
 import 'package:planner_demo/utils/routes.dart';
 
 void main() {

@@ -119,8 +119,10 @@ class _TripDatailsState extends State<TripDatails> {
                   ),
 
                   Padding(
-                    padding: const EdgeInsets.only(top: 45, left: 150),
+                    padding: const EdgeInsets.only(top: 45, left: 250),
                     child: Container(
+                      width: 45,
+                      height: 45,
                       decoration: BoxDecoration(
                         color: Colors.blue[900],
                         borderRadius: BorderRadius.circular(60)
