@@ -1,54 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/utils/routes.dart';
+import 'package:planner_demo/Theme/App_theme.dart';
+import 'package:planner_demo/screens/tabs.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const App());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatefulWidget {
+  const App({super.key});
 
+  @override
+  State<App> createState() => _AppState();
+}
+
+
+class _AppState extends State<App> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void toggleTheme(ThemeMode mode){
+    setState(() {
+      _themeMode = mode;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      // routes to navigate pages
-      initialRoute: AppRoutes.home,
-      routes: AppRoutes.routes,
-      theme: ThemeData(
-
-        // color theme
-        primaryColor: Colors.blue[900],
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: Colors.deepPurple
-        ),
-
-        // appbar theme
-        appBarTheme: AppBarThemeData(
-          backgroundColor: Colors.blue[900],
-          titleTextStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          )
-        ),
-
-        //bottom navigation bar theme
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          selectedItemColor: Color.fromARGB(255, 0, 90, 255),
-          unselectedItemColor: Colors.black,
-          backgroundColor: Colors.white,
-        ),
-
-        // elevated button theme
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue[900],
-          )
-        ),
-
-      ),
+      debugShowCheckedModeBanner: false, 
+      themeMode: _themeMode,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      home: TabsScreen(),
       
     );
   }
