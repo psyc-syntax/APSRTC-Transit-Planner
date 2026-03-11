@@ -1,0 +1,102 @@
+import 'package:flutter/material.dart';
+
+class LocationSelectionBlock extends StatelessWidget{
+  const LocationSelectionBlock({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          //left side icons
+          Padding(
+            padding: const EdgeInsets.only(left: 32, right: 12, top: 16),
+            child: Column(
+              children: [
+                //from Icon
+                Icon(Icons.radio_button_on,
+                color: Theme.of(context).colorScheme.primary,
+                size: 14,
+                ),
+            
+                //vertical line
+                Container(
+                  width: 2,
+                  height: 50,
+                  color: const Color(0xFFE2E8F0),
+                ),
+            
+                //too Icon
+                Icon(Icons.location_on_outlined,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20,
+                ),
+              ],
+            ),
+          ),
+
+
+          //right side maincontent
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("FROM",
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Colors.black54
+                ),
+                ),
+                SizedBox(height: 6,),
+            
+                InkWell(
+                  onTap: (){
+                    print("from location selected");
+                  },
+                  child: Text("Kakinada Main....",
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontSize: 16,
+                      color: Colors.black54
+                    ),
+                  ),
+                ),
+            
+                SizedBox(height: 12,),
+                
+                //horizontal line
+                Container(
+                  height: 2,
+                  width: 250,
+                  color: const Color(0xFFE2E8F0),
+                ),
+            
+                SizedBox(height: 12,),
+            
+                Text("TO",
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Colors.black54
+                ),
+                ),
+            
+                SizedBox(height: 6,),
+            
+                InkWell(
+                  onTap: (){
+                    print("to location selected");
+                  },
+                  child: Text("Vijayawada PNBS....",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontSize: 16,
+                    color: Colors.black54
+                  ),
+                  ),
+                ),
+            
+              ],
+            ),
+          )
+        ],
+      );
+  }
+}

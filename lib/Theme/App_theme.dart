@@ -22,6 +22,7 @@ const kDarkColorScheme = ColorScheme(
   onError: Colors.black, 
   surface: Color(0xff1e293b), 
   onSurface: Colors.white,
+  
 );
 
 class AppTheme{
@@ -30,6 +31,7 @@ class AppTheme{
     useMaterial3: true,
     colorScheme: kLightColorScheme,
     scaffoldBackgroundColor: kLightColorScheme.surface,
+    dividerColor: const Color(0xFFE2E8F0),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       foregroundColor: kLightColorScheme.surface,
@@ -55,6 +57,41 @@ class AppTheme{
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: kLightColorScheme.surface,
       selectedItemColor: kLightColorScheme.primary,
+    ),
+
+    textTheme: TextTheme(
+      headlineSmall: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+      ),
+
+      titleMedium: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
+
+      titleSmall: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: Colors.black54
+      ),
+
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+
+      bodyMedium: TextStyle(
+        fontSize: 14,
+
+      ),
+
+      labelLarge: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+      )
+
+
     )
   );
 
@@ -62,6 +99,7 @@ class AppTheme{
     useMaterial3: true,
     colorScheme: kDarkColorScheme,
     scaffoldBackgroundColor: kDarkColorScheme.surface,
+    dividerColor: const Color(0xFF334155),
 
     appBarTheme: AppBarThemeData(
       backgroundColor: Colors.transparent,
@@ -89,6 +127,40 @@ class AppTheme{
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: kDarkColorScheme.surface,
       selectedItemColor: kDarkColorScheme.primary,
+    ),
+
+    textTheme: TextTheme(
+      headlineSmall: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+      ),
+
+      titleMedium: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: const Color.fromARGB(205, 255, 255, 255)
+      ),
+
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+
+      titleSmall: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: Colors.white70
+      ),
+
+      bodyMedium: TextStyle(
+        fontSize: 14,
+
+      ),
+
+      labelLarge: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+      )
     )
 
     

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/Theme/App_theme.dart';
+import 'package:planner_demo/Theme/app_theme.dart';
 import 'package:planner_demo/screens/tabs.dart';
 
 void main() {
@@ -15,13 +15,8 @@ class App extends StatefulWidget {
 
 
 class _AppState extends State<App> {
-  ThemeMode _themeMode = ThemeMode.system;
+  final ThemeMode _themeMode = ThemeMode.system;
 
-  void toggleTheme(ThemeMode mode){
-    setState(() {
-      _themeMode = mode;
-    });
-  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
