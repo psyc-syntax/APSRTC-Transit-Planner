@@ -15,9 +15,9 @@ class GlowingDot extends StatelessWidget{
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: dotColor.withAlpha(175),
-            blurRadius: 10,
-            spreadRadius: 3,
+            color: dotColor.withAlpha(100),
+            blurRadius: 2,
+            spreadRadius: 1,
           )
         ]
       ),

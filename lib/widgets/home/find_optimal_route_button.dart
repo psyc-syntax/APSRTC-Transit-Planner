@@ -29,7 +29,7 @@ class FindOptimalRouteButton extends StatelessWidget{
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("FIND OPTIMAL ROUTE"),
+              Text("FIND OPTIMAL ROUTE", style: TextStyle(fontSize: 18),),
               Icon(Icons.bolt, size: 24,),
             ],
           ),

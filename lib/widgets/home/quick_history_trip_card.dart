@@ -28,28 +28,35 @@ class QuickHistoryTripCard extends StatelessWidget {
                   ),
                 ),
               ),
-      
-              SizedBox(width: 10,),
-              
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  //from - to (trip details)
-                  "Kakinada - Rajahmundry", 
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 16,
+              // ButtonWithIcon(
+              //   icon: Icons.navigation_outlined,
+              //   iconColor: Theme.of(context).colorScheme.onSurface,
+              //   fillColor: Theme.of(context).dividerColor,
+              //   iconsize: 20,
+              //   elevation: 0,
+              // ),
+              SizedBox(width: 10),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    //from - to (trip details)
+                    "Kakinada - Rajahmundry",
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(fontSize: 16),
                   ),
-                ),
-              
-                Text(
-                  //trip searched date which is mentioned
-                  "Yesterday",
-                  style: Theme.of(context).textTheme.titleSmall,
-                )
-              
-              ],
-            )
+
+                  Text(
+                    //trip searched date which is mentioned
+                    "Yesterday",
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

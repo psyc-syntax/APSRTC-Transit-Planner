@@ -17,14 +17,19 @@ class RouteSearchCard extends StatelessWidget{
             spreadRadius: 4.0,
             offset: Offset(0, 0),
           )
-        ]
+        ],
       ),
       child: Card(
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
         elevation: 0,
         child: Column(
           children: [
+            
             LocationSelectionBlock(),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: TravelDateSelectionBlock(),
@@ -39,6 +44,8 @@ class RouteSearchCard extends StatelessWidget{
               // find optimal route button
               child: FindOptimalRouteButton(),
             ),
+
+            SizedBox(height: 4,),
           ],
         ),
       ),

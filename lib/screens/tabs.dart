@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/screens/home_screen.dart';
+import 'package:planner_demo/screens/saved_trips_screen.dart';
+import 'package:planner_demo/screens/stop_details_search_screen.dart';
+import 'package:planner_demo/screens/stop_search_screen.dart';
 
 class TabsScreen extends StatefulWidget{
   const TabsScreen({super.key});
@@ -15,8 +18,8 @@ class _TabsScreenState extends State<TabsScreen>{
 
   final List<Widget> _pages = [
     HomeScreen(),
-    Text("Stops Screen"),
-    Text("history screen"), 
+    StopDetailsSearchScreen(),
+    SavedTripsScreen(), 
   ];
 
   @override
@@ -42,8 +45,8 @@ class _TabsScreenState extends State<TabsScreen>{
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.alarm),
-            label: "HISTORY",
+            icon: Icon(Icons.save),
+            label: "SAVED",
           )
         ]),
     );

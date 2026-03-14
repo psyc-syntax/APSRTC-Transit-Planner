@@ -10,6 +10,7 @@ const kLightColorScheme = ColorScheme(
   onError: Colors.white, 
   surface: Colors.white, 
   onSurface: Color(0xFF0F172A),
+  secondaryContainer: Colors.white,
 );
 
 const kDarkColorScheme = ColorScheme(
@@ -22,6 +23,7 @@ const kDarkColorScheme = ColorScheme(
   onError: Colors.black, 
   surface: Color(0xff1e293b), 
   onSurface: Colors.white,
+  secondaryContainer: Color(0xFFFAF9F6),
   
 );
 
@@ -34,7 +36,7 @@ class AppTheme{
     dividerColor: const Color(0xFFE2E8F0),
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
-      foregroundColor: kLightColorScheme.surface,
+      foregroundColor: kLightColorScheme.onSurface,
       elevation: 0,
       centerTitle: true,
     ),
@@ -61,7 +63,7 @@ class AppTheme{
 
     textTheme: TextTheme(
       headlineSmall: TextStyle(
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
 
@@ -72,8 +74,9 @@ class AppTheme{
 
       titleSmall: TextStyle(
         fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: Colors.black54
+        fontWeight: FontWeight.bold,
+        color: Colors.black54,
+        letterSpacing: 2,
       ),
 
       bodyLarge: TextStyle(
@@ -142,14 +145,15 @@ class AppTheme{
       ),
 
       bodyLarge: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: FontWeight.w500,
       ),
 
       titleSmall: TextStyle(
         fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: Colors.white70
+        fontWeight: FontWeight.bold,
+        color: Colors.white70,
+        letterSpacing: 2,
       ),
 
       bodyMedium: TextStyle(

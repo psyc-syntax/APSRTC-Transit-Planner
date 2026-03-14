@@ -49,7 +49,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                     SizedBox(width: 8,),
                     Text("TRAVEL DATE", // travel date headding
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Colors.black54 
+                        color: Colors.black54 ,
                       ),
                     ),
                   ],
@@ -58,22 +58,19 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     TextButton(
-                      onPressed: (){},
+                      onPressed: () async{
+                          await pickDate();
+                        },
                       style: TextButton.styleFrom(
                         minimumSize: Size.zero,
                         padding: EdgeInsets.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: InkWell(
-                        onTap: () async{
-                          await pickDate();
-                        },
-                        child: Text(
-                          "Select Calendar", // select calendar button 
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue,
-                          ),
+                      child: Text(
+                        "Select Calendar", // select calendar button 
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.blue,
                         ),
                       ),
                     ),
@@ -87,15 +84,16 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //today button
-              SizedBox(
-                width: 120,
-                height: 40,
+              Container(
                 child: ElevatedButton(
                   onPressed: (){
                     _selectedDate = DateTime.now();
                   }, 
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                    backgroundColor: WidgetStateProperty.all(Colors.white70),
+                    padding: const WidgetStatePropertyAll(
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+                    ),
                    shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadiusGeometry.circular(10))),
@@ -104,16 +102,15 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   child: Text("Today",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontSize: 16,
-                    color: Colors.black54, 
+                    color: Colors.black54,
+                    letterSpacing: 0, 
                   ),
                   ),
                 ),
               ),
               
               //tomorrow button
-              SizedBox(
-                width: 120,
-                height: 40,
+              Container(
                 child: ElevatedButton(
                   
                   onPressed: (){
@@ -122,6 +119,9 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
 
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                    backgroundColor: WidgetStateProperty.all(Colors.white70),
+                   padding: const WidgetStatePropertyAll(
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 28),
+                    ),
                    shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadiusGeometry.circular(10))),
@@ -130,7 +130,8 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   child: Text("Tomorrow",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontSize: 16,
-                    color: Colors.black54
+                    color: Colors.black54,
+                    letterSpacing: 0,
                   ),
                   ),
                 ),
@@ -143,6 +144,11 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                 }, 
                 style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                  backgroundColor: WidgetStateProperty.all(Colors.white70),
+
+                 padding: const WidgetStatePropertyAll(
+                      EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                    ),
+                  
                  shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadiusGeometry.circular(10))),

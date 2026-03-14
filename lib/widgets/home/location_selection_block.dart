@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planner_demo/screens/stop_search_screen.dart';
 
 class LocationSelectionBlock extends StatelessWidget{
   const LocationSelectionBlock({super.key});
@@ -52,12 +53,16 @@ class LocationSelectionBlock extends StatelessWidget{
             
                 InkWell(
                   onTap: (){
-                    print("from location selected");
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => StopSearchScreen(),
+                      ),
+                    );
                   },
                   child: Text("Kakinada Main....",
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontSize: 16,
-                      color: Colors.black54
+                      color: Colors.black54,
+                      letterSpacing: 0,
                     ),
                   ),
                 ),
@@ -75,7 +80,8 @@ class LocationSelectionBlock extends StatelessWidget{
             
                 Text("TO",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.black54
+                  color: Colors.black54,
+                  
                 ),
                 ),
             
@@ -88,7 +94,8 @@ class LocationSelectionBlock extends StatelessWidget{
                   child: Text("Vijayawada PNBS....",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontSize: 16,
-                    color: Colors.black54
+                    color: Colors.black54,
+                    letterSpacing: 0,
                   ),
                   ),
                 ),
