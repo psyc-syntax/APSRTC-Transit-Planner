@@ -2,7 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/shared/button_with_icon.dart';
 
 class StopBasicDetailsCard extends StatelessWidget{
-  const StopBasicDetailsCard({super.key});
+  const StopBasicDetailsCard({
+    super.key,
+    required this.stopName,
+    required this.district,
+    required this.pincode,
+    required this.panchayat,
+  });
+
+  final String stopName;
+  final String district;
+  final String pincode;
+  final String panchayat;
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +35,14 @@ class StopBasicDetailsCard extends StatelessWidget{
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("STOP NAME", 
+                    Text(stopName, 
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontSize: 18,
                     ),
                   ),
           
                   Text(
-                    "PANCHAYAT",
+                    panchayat,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       letterSpacing: 0,
                     ),
@@ -39,11 +50,11 @@ class StopBasicDetailsCard extends StatelessWidget{
           
                   Row(
                     children: [
-                      Text("DISTRICT - ", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      Text("$district- ", style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       letterSpacing: 0,
                     ),
                     ),
-                      Text("PINCODE", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      Text(pincode, style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       letterSpacing: 0,
                     ),
                       ),

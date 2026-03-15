@@ -13,9 +13,12 @@ class HomeScreen extends StatelessWidget{
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+
+
         //top title(offline engine ready, database info)
         TopTitle(),
         HorizontalLine(),
+        
         
         //main title (app icon and dropdown menu)
         MainTitle(),

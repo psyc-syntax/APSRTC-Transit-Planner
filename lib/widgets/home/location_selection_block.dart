@@ -89,7 +89,12 @@ class LocationSelectionBlock extends StatelessWidget{
             
                 InkWell(
                   onTap: (){
-                    print("to location selected");
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(
+                        builder: (context) => StopSearchScreen()
+                      )
+                    );
                   },
                   child: Text("Vijayawada PNBS....",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(

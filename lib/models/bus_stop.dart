@@ -14,6 +14,7 @@ class BusStop {
     required this.facilities,
     required this.latitude,
     required this.longitude,
+    required this.address,
 
   });
 
@@ -31,5 +32,6 @@ class BusStop {
   //location
   final double latitude;
   final double longitude;
+  final List<String> address;
 
 }
