@@ -23,7 +23,7 @@ class MainTitle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "APSRTC", // main app title 
+                    "MARK", // main app title 
                     style: Theme.of(
                       context,
                     ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),

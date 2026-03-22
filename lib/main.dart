@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/Theme/app_theme.dart';
 import 'package:planner_demo/screens/tabs.dart';
 
 void main() {
-  runApp(const App());
+  runApp(ProviderScope(child: const App()));
 }
 
-class App extends StatefulWidget {
+class App extends StatefulWidget { 
   const App({super.key});
 
   @override

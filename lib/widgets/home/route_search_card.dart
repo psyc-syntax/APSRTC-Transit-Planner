@@ -22,7 +22,7 @@ class RouteSearchCard extends StatelessWidget{
       child: Card(
         color: Theme.of(context).colorScheme.secondaryContainer,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(32),
         ),
         elevation: 0,
         child: Column(
@@ -45,7 +45,7 @@ class RouteSearchCard extends StatelessWidget{
               child: FindOptimalRouteButton(),
             ),
 
-            SizedBox(height: 4,),
+            SizedBox(height: 10,),
           ],
         ),
       ),

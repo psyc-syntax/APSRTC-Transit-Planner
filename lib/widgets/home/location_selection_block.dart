@@ -46,7 +46,8 @@ class LocationSelectionBlock extends StatelessWidget{
               children: [
                 Text("FROM",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.black54
+                  color: Colors.black54,
+                  letterSpacing: 0,
                 ),
                 ),
                 SizedBox(height: 6,),
@@ -54,7 +55,7 @@ class LocationSelectionBlock extends StatelessWidget{
                 InkWell(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => StopSearchScreen(),
+                      builder: (context) => StopSearchScreen(isbackneeded: true,),
                       ),
                     );
                   },
@@ -81,6 +82,7 @@ class LocationSelectionBlock extends StatelessWidget{
                 Text("TO",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Colors.black54,
+                  letterSpacing: 0,
                   
                 ),
                 ),
@@ -92,7 +94,7 @@ class LocationSelectionBlock extends StatelessWidget{
                     Navigator.push(
                       context, 
                       MaterialPageRoute(
-                        builder: (context) => StopSearchScreen()
+                        builder: (context) => StopSearchScreen(isbackneeded: true,)
                       )
                     );
                   },

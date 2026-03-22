@@ -17,9 +17,7 @@ class QuickHistory extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               "QUICK HISTORY",
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontSize: 15,
-              ),
+              style: Theme.of(context).textTheme.titleSmall
             ),
           ],
         ),
@@ -28,7 +26,7 @@ class QuickHistory extends StatelessWidget {
 
         // The List of Cards
         ListView.builder(
-          itemCount: 3,           
+          itemCount: 2,           
           shrinkWrap: true,
           padding: EdgeInsets.zero,
           physics: NeverScrollableScrollPhysics(),     

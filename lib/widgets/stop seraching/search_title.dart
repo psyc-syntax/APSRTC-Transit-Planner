@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/shared/button_with_icon.dart';
 
-class MainTitle extends StatelessWidget {
-  const MainTitle({super.key});
+class SearchTitle extends StatelessWidget {
+  const SearchTitle({super.key, required this.isbackneeded});
+
+  final bool isbackneeded;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         //return button
-        ButtonWithIcon(icon: Icons.arrow_back),
+        if(isbackneeded)
+          ButtonWithIcon(icon: Icons.arrow_back),
 
         //gap between title and return button
         SizedBox(width: 16),
