@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/widgets/shared/button_with_icon.dart';
 
 class StopBasicDetailsCard extends StatelessWidget{
   const StopBasicDetailsCard({
@@ -7,13 +6,13 @@ class StopBasicDetailsCard extends StatelessWidget{
     required this.stopName,
     required this.district,
     required this.pincode,
-    required this.panchayat,
+    required this.address,
   });
 
   final String stopName;
   final String district;
   final String pincode;
-  final String panchayat;
+  final String address;
 
   @override
   Widget build(BuildContext context) {
@@ -23,26 +22,54 @@ class StopBasicDetailsCard extends StatelessWidget{
         children: [
           Row(
               children: [
-                ButtonWithIcon(
-                  icon: Icons.business, 
-                  elevation: 0.1,
-                  iconsize: 42, 
-                  fillColor: Theme.of(context).colorScheme.surface,
-                  iconColor: Theme.of(context).dividerColor,
+                // ButtonWithIcon(
+                //   icon: Icons.business, 
+                //   elevation: 0.1,
+                //   iconsize: 42, 
+                //   fillColor: Theme.of(context).colorScheme.surface,
+                //   iconColor: Theme.of(context).dividerColor,
+                // ),
+
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor,
+                      width: 2,
+                    )
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(
+                      Icons.business, 
+                      color: Theme.of(context).dividerColor,
+                      size: 42,
+                    ),
+                  ),
                 ),
+
                 SizedBox(width: 20,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(stopName, 
+                    Text(
+                      stopName.length> 22
+                        ?stopName.substring(0,22)
+                        :stopName, 
+                        
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontSize: 18,
                     ),
                   ),
           
                   Text(
-                    panchayat,
+                    address.length > 30
+                     ?address.substring(0,30)
+                     :address,
+
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       letterSpacing: 0,
                     ),

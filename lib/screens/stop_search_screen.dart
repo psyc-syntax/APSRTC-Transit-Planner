@@ -1,34 +1,64 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:planner_demo/providers/search_screen_data_provider.dart';
+import 'package:planner_demo/helpers/database_helper.dart';
 import '../widgets/stop seraching/search_title.dart';
 import 'package:planner_demo/widgets/shared/stop_basic_details_card.dart';
 
-class StopSearchScreen extends ConsumerStatefulWidget {
+class StopSearchScreen extends StatefulWidget {
   const StopSearchScreen({super.key, required this.isbackneeded});
 
   final bool isbackneeded;
 
   @override
-  ConsumerState<StopSearchScreen> createState() => _StopSearchScreenState();
+  State<StopSearchScreen> createState() => _StopSearchScreenState();
 }
 
-class _StopSearchScreenState extends ConsumerState<StopSearchScreen> {
+class _StopSearchScreenState extends State<StopSearchScreen> {
   final TextEditingController controller = TextEditingController();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  List<Map<String, dynamic>> stops = [];
+  bool isloading = false;
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    searchStops(""); // 🔥 load all data initially
+  }
 
   @override
   void dispose() {
     controller.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
-  void searchStops(String query) {
-    ref.read(searchScreenDataProvider.notifier).searchStops(query);
+  Future<void> searchStops(String query) async {
+    setState(() {
+      isloading = true;
+    });
+
+    try {
+      final result = await _databaseHelper.getsearchstops(query);
+
+      print("RESULT COUNT: ${result.length}");
+
+      setState(() {
+        stops = result;
+        isloading = false;
+      });
+    } catch (e) {
+      print("ERROR: $e");
+
+      setState(() {
+        isloading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final stops = ref.watch(searchScreenDataProvider);
     final isSearching = controller.text.isNotEmpty;
 
     return Scaffold(
@@ -50,11 +80,27 @@ class _StopSearchScreenState extends ConsumerState<StopSearchScreen> {
                 children: [
                   const SizedBox(height: 36),
                   SearchTitle(isbackneeded: widget.isbackneeded),
+
+                  // 🔍 YOUR SAME TEXTFIELD UI
                   Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 32),
                     child: TextField(
                       controller: controller,
-                      onChanged: searchStops,
+                      onChanged: (value) {
+                        // 🔥 DEBOUNCE
+                        if (_debounce?.isActive ?? false) {
+                          _debounce!.cancel();
+                        }
+
+                        _debounce = Timer(
+                          const Duration(milliseconds: 300),
+                          () {
+                            searchStops(value);
+                          },
+                        );
+
+                        setState(() {}); // update header visibility
+                      },
                       textAlignVertical: TextAlignVertical.center,
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(color: Colors.black54),
@@ -65,24 +111,22 @@ class _StopSearchScreenState extends ConsumerState<StopSearchScreen> {
                           color: Theme.of(context).colorScheme.primary,
                           size: 32,
                         ),
-
                         hintText: "SELECT STOP",
-
                         filled: true,
-                        fillColor: const Color.fromARGB(96, 211, 225, 250),
-
+                        fillColor:
+                            const Color.fromARGB(96, 211, 225, 250),
                         hintStyle: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(color: Colors.black54),
-
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
-                          borderSide: const BorderSide(color: Colors.grey),
+                          borderSide:
+                              const BorderSide(color: Colors.grey),
                         ),
-
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                            color:
+                                Theme.of(context).colorScheme.primary,
                             width: 2,
                           ),
                         ),
@@ -93,41 +137,30 @@ class _StopSearchScreenState extends ConsumerState<StopSearchScreen> {
               ),
             ),
           ),
+
           Expanded(
-            child: isSearching
-                ? _buildSearchResults(stops)
-                : _buildPopularStops(stops),
+            child: _buildResults(isSearching),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchResults(List stops) {
+  Widget _buildResults(bool isSearching) {
+    if (isloading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (stops.isEmpty) {
       return const Center(child: Text("No results Found"));
     }
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(26, 26, 26, 0),
-      itemCount: stops.length,
-      itemBuilder: (context, index) {
-        final stop = stops[index];
-        return StopBasicDetailsCard(
-          stopName: stop.name,
-          district: stop.address[1],
-          pincode: stop.address[0],
-          panchayat: stop.address[2],
-        );
-      },
-    );
-  }
 
-  Widget _buildPopularStops(List stops) {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(26, 26, 26, 0),
-      itemCount: stops.length + 1,
+      itemCount: stops.length + (isSearching ? 0 : 1),
       itemBuilder: (context, index) {
-        if (index == 0) {
+        // 🔥 HEADER ONLY WHEN NOT SEARCHING
+        if (!isSearching && index == 0) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
@@ -136,12 +169,14 @@ class _StopSearchScreenState extends ConsumerState<StopSearchScreen> {
             ),
           );
         }
-        final stop = stops[index - 1];
+
+        final stop = stops[isSearching ? index : index - 1];
+
         return StopBasicDetailsCard(
-          stopName: stop.name,
-          district: stop.address[1],
-          pincode: stop.address[0],
-          panchayat: stop.address[2],
+          stopName: stop["placeName"] ?? "",
+          district: stop["district"] ?? "",
+          pincode: stop["pincode"]?.toString() ?? "",
+          address: stop["address"] ?? "",
         );
       },
     );

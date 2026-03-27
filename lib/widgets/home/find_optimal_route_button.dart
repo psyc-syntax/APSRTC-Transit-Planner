@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:planner_demo/screens/route_results_screen.dart';
 
 class FindOptimalRouteButton extends StatelessWidget{
   const FindOptimalRouteButton({super.key});
@@ -16,7 +18,12 @@ class FindOptimalRouteButton extends StatelessWidget{
         ]
       ),
       child: ElevatedButton(
-        onPressed: (){}, 
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (ctx) => RouteResultsScreen()) 
+          );
+        }, 
         style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(

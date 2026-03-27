@@ -17,7 +17,10 @@ class TopTitle extends StatelessWidget {
               SizedBox(width: 8),
               Text(
                 "OFFLINE ENGINE READY",
-                style: Theme.of(context).textTheme.titleSmall,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  letterSpacing: 1,
+                ),
+                
               ),
             ],
           ),
@@ -26,7 +29,12 @@ class TopTitle extends StatelessWidget {
             children: [
               Icon(Icons.storage_rounded, size: 16),
               SizedBox(width: 6),
-              Text("DATA VERSION", style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                "DATA VERSION", 
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  letterSpacing: 1,
+                )
+              ),
             ],
           ),
         ],
