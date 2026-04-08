@@ -38,76 +38,81 @@ class LocationSelectionBlock extends StatelessWidget{
 
 
           //right side maincontent
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text("FROM",
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.black54,
-                  letterSpacing: 0,
-                ),
-                ),
-                SizedBox(height: 6,),
-            
-                InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => StopSearchScreen(isbackneeded: true,),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 26),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text("FROM",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Colors.black54,
+                    letterSpacing: 0,
+                  ),
+                  ),
+                  SizedBox(height: 4,),
+              
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => StopSearchScreen(isbackneeded: true,),
+                        ),
+                      );
+                    },
+                    child: Text("Kakinada Main....",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontSize: 16,
+                        color: Colors.black54,
+                        letterSpacing: 0,
                       ),
-                    );
-                  },
-                  child: Text("Kakinada Main....",
+                    ),
+                  ),
+              
+                  SizedBox(height: 8,),
+                  
+                  //horizontal line
+                  Padding(
+                    padding: const EdgeInsets.only(right: 24.0),
+                    child: Container(
+                      height: 2,
+                      width: double.infinity,
+                      color: const Color(0xFFE2E8F0),
+                    ),
+                  ),
+              
+                  SizedBox(height: 8,),
+              
+                  Text("TO",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Colors.black54,
+                    letterSpacing: 0,
+                    
+                  ),
+                  ),
+              
+                  SizedBox(height: 4,),
+              
+                  InkWell(
+                    onTap: (){
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => StopSearchScreen(isbackneeded: true,)
+                        )
+                      );
+                    },
+                    child: Text("Vijayawada PNBS....",
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontSize: 16,
                       color: Colors.black54,
                       letterSpacing: 0,
                     ),
+                    ),
                   ),
-                ),
-            
-                SizedBox(height: 12,),
-                
-                //horizontal line
-                Container(
-                  height: 2,
-                  width: 250,
-                  color: const Color(0xFFE2E8F0),
-                ),
-            
-                SizedBox(height: 12,),
-            
-                Text("TO",
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Colors.black54,
-                  letterSpacing: 0,
-                  
-                ),
-                ),
-            
-                SizedBox(height: 6,),
-            
-                InkWell(
-                  onTap: (){
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(
-                        builder: (context) => StopSearchScreen(isbackneeded: true,)
-                      )
-                    );
-                  },
-                  child: Text("Vijayawada PNBS....",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontSize: 16,
-                    color: Colors.black54,
-                    letterSpacing: 0,
-                  ),
-                  ),
-                ),
-            
-              ],
+              
+                ],
+              ),
             ),
           )
         ],

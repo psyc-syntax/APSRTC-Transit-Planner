@@ -78,8 +78,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 children: [
-                  const SizedBox(height: 36),
-                  SearchTitle(isbackneeded: widget.isbackneeded),
+                  SafeArea(child: SearchTitle(isbackneeded: widget.isbackneeded)),
 
                   // 🔍 YOUR SAME TEXTFIELD UI
                   Padding(

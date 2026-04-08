@@ -7,7 +7,7 @@ class TopTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -19,6 +19,7 @@ class TopTitle extends StatelessWidget {
                 "OFFLINE ENGINE READY",
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   letterSpacing: 1,
+                  fontSize: 10,
                 ),
                 
               ),
@@ -33,6 +34,7 @@ class TopTitle extends StatelessWidget {
                 "DATA VERSION", 
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   letterSpacing: 1,
+                  fontSize: 10,
                 )
               ),
             ],

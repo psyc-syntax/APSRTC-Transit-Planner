@@ -1,36 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/shared/button_with_icon.dart';
 
-class SearchTitle extends StatelessWidget {
-  const SearchTitle({super.key, required this.isbackneeded});
-
-  final bool isbackneeded;
-
+class RouteResultsTitle extends StatelessWidget {
+  const RouteResultsTitle({super.key});
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        //return button
-        if(isbackneeded)
-          ButtonWithIcon(icon: Icons.arrow_back),
-
-        //gap between title and return button
-        if(isbackneeded)
-          SizedBox(width: 16),
-
-        //title and subtitle
+        ButtonWithIcon(icon: Icons.arrow_back),
+        
+        SizedBox(width: 16),
+        
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "SELECT STOP",
+              "ROUTE RESULTS",
               style: Theme.of(
                 context,
-              ).textTheme.headlineSmall?.copyWith(color: Colors.black),
+              ).textTheme.headlineSmall,
             ),
 
             Text(
-              "DIJKSTRA NODE SELECTION",
+              "DIJKSTRA PATH SELECTION",
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
               ),

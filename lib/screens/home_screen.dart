@@ -10,35 +10,38 @@ class HomeScreen extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-
-
-        //top title(offline engine ready, database info)
-        TopTitle(),
-        HorizontalLine(),
-        
-        
-        //main title (app icon and dropdown menu)
-        MainTitle(),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0, 
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+      
+          //top title(offline engine ready, database info)
+          TopTitle(),
+          HorizontalLine(),
+          
+          
+          //main title (app icon and dropdown menu)
+          MainTitle(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, 
+                ),
+                child: RouteSearchCard(), //trip details selection card
               ),
-              child: RouteSearchCard(), //trip details selection card
-            ),
-                  
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 42),
-              child: QuickHistory(),
-            )
-          ],
-        )
-      ],
+                    
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: QuickHistory(),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
     );
   }
 }

@@ -27,7 +27,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,14 +39,14 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
 
           //travel date title and select calendar button too
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
                     Icon(Icons.calendar_month, color: Colors.black54, size: 16,),
-                    SizedBox(width: 8,),
+                    SizedBox(width: 2,),
                     Text("TRAVEL DATE", // travel date headding
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Colors.black54 ,
@@ -92,7 +92,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                    backgroundColor: WidgetStateProperty.all(Colors.white70),
                     padding: const WidgetStatePropertyAll(
-                      EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     ),
                    shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
@@ -120,7 +120,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
                    backgroundColor: WidgetStateProperty.all(Colors.white70),
                    padding: const WidgetStatePropertyAll(
-                      EdgeInsets.symmetric(vertical: 8, horizontal: 28),
+                      EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     ),
                    shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(

@@ -61,7 +61,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/data/apsrtc_master.db
+    - assets/data/apsrtc_master.sqli
 
   # To add assets to your application, add an assets section, like this:
   # assets:

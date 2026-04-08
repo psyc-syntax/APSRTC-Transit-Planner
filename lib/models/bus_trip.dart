@@ -11,42 +11,28 @@ enum BusType{
 
 class BusTrip {
 
-  //UNIQUE identity
-  final String id;
-  final String serviceNumber;
+  String serviceDocId;
+  String oprsNo;
+  String placeId;
+  int seqNo;
+  String placeName;
+  String 	stationName;
+  double latitude;
+  double longitude;
+  String scheduleArrTime;
+  String scheduleDepTime;
 
-  //Trip id's for core graphlink
-  final String sourceStopId;
-  final String destinationStopId;
-
-  //Graph node weights
-  final double distanceInKm;
-  final int durationInMinutes;
-  final double ticketPrice;
-
-  //Transit details
-  final BusType busType;
-  final String departureTime;
-  final String arrivaltime;
-  final List<String> viaStops;
-
-  //Bus Status
-  final bool isExpress;
-
-  const BusTrip({
-
-    required this.id,
-    required this.serviceNumber,
-    required this.sourceStopId,
-    required this.destinationStopId,
-    required this.distanceInKm,
-    required this.durationInMinutes,
-    required this.ticketPrice,
-    required this.busType,
-    required this.departureTime,
-    required this.arrivaltime,
-    required this.viaStops,
-    required this.isExpress,
+  BusTrip({
+    required this.serviceDocId,
+    required this.oprsNo,
+    required this.placeId,
+    required this.seqNo,
+    required this.placeName,
+    required this.stationName,
+    required this.latitude,
+    required this.longitude,
+    required this.scheduleArrTime,
+    required this.scheduleDepTime,
   });
 
 

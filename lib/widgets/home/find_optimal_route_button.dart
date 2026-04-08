@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:planner_demo/screens/route_results_screen.dart';
 
 class FindOptimalRouteButton extends StatelessWidget{
@@ -36,8 +35,8 @@ class FindOptimalRouteButton extends StatelessWidget{
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("FIND OPTIMAL ROUTE", style: TextStyle(fontSize: 18),),
-              Icon(Icons.bolt, size: 24,),
+              Text("FIND OPTIMAL ROUTE", style: TextStyle(fontSize: 16),),
+              Icon(Icons.bolt, size: 18,),
             ],
           ),
         ),

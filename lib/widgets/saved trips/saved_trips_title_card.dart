@@ -7,6 +7,7 @@ class SavedTripsTitleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).colorScheme.secondaryContainer,
+       margin: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.only(
           bottomLeft: Radius.circular(32),
@@ -14,43 +15,44 @@ class SavedTripsTitleCard extends StatelessWidget {
         ),
       ),
       elevation: 8,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 46),
-            Row(
-              children: [
-                Text(
-                  "SAVED ",
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.black,
-                    fontSize: 24,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "SAVED ",
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Colors.black,
+                      fontSize: 24,
+                    ),
                   ),
-                ),
-                Text(
-                  "TRIPS",
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 24,
+                  Text(
+                    "TRIPS",
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 24,
+                    ),
                   ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 2),
-
-            Text(
-              "SYSTEM OPTIMIZED",
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(color: Colors.black54),
-            ),
-
-            SizedBox(height: 32),
-          ],
+                ],
+              ),
+        
+              SizedBox(height: 2),
+        
+              Text(
+                "SYSTEM OPTIMIZED",
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(color: Colors.black54),
+              ),
+        
+              SizedBox(height: 28),
+            ],
+          ),
         ),
       ),
     );
