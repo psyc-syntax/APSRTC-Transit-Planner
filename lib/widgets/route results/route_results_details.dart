@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:planner_demo/providers/providers.dart';
 
-class RouteResultsDetails extends StatelessWidget {
+class RouteResultsDetails extends ConsumerWidget {
   const RouteResultsDetails({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final String startingPlaceName = ref.watch(startingPlaceNameProvider);
+    final String destinationPlaceName = ref.watch(destinationPlaceNameProvider);
     return Column(
       children: [
         Row(
@@ -42,7 +46,7 @@ class RouteResultsDetails extends StatelessWidget {
                 children: [
                   
                   Text(
-                    "Bangalore City",
+                    startingPlaceName,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           color: Colors.black,
                           fontSize: 16,
@@ -59,9 +63,9 @@ class RouteResultsDetails extends StatelessWidget {
                     ),
                   ),
                   
-                  SizedBox(height: 8),  
+                  SizedBox(height: 8),
                   Text(
-                    "Bangalore International Airport",
+                    destinationPlaceName,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           color: Colors.black,
                           fontSize: 16,

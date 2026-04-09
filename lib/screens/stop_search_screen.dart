@@ -5,9 +5,15 @@ import '../widgets/stop seraching/search_title.dart';
 import 'package:planner_demo/widgets/shared/stop_basic_details_card.dart';
 
 class StopSearchScreen extends StatefulWidget {
-  const StopSearchScreen({super.key, required this.isbackneeded});
+  const StopSearchScreen({
+    super.key, 
+    required this.isbackneeded, 
+    required this.isStartingStop
+    }
+  );
 
   final bool isbackneeded;
+  final bool isStartingStop;
 
   @override
   State<StopSearchScreen> createState() => _StopSearchScreenState();
@@ -24,7 +30,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
   @override
   void initState() {
     super.initState();
-    searchStops(""); // 🔥 load all data initially
+    searchStops(""); //load all data initially
   }
 
   @override
@@ -80,13 +86,13 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
                 children: [
                   SafeArea(child: SearchTitle(isbackneeded: widget.isbackneeded)),
 
-                  // 🔍 YOUR SAME TEXTFIELD UI
+                  // TEXTFIELD UI
                   Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 32),
                     child: TextField(
                       controller: controller,
                       onChanged: (value) {
-                        // 🔥 DEBOUNCE
+                        //DEBOUNCE
                         if (_debounce?.isActive ?? false) {
                           _debounce!.cancel();
                         }
@@ -158,7 +164,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
       padding: const EdgeInsets.fromLTRB(26, 26, 26, 0),
       itemCount: stops.length + (isSearching ? 0 : 1),
       itemBuilder: (context, index) {
-        // 🔥 HEADER ONLY WHEN NOT SEARCHING
+        //HEADER ONLY WHEN NOT SEARCHING
         if (!isSearching && index == 0) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -176,6 +182,9 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
           district: stop["district"] ?? "",
           pincode: stop["pincode"]?.toString() ?? "",
           address: stop["address"] ?? "",
+          placeId: stop["placeId"]?.toString() ?? "",
+          isStartingStop: widget.isStartingStop,
+          isbackneeded: widget.isbackneeded,
         );
       },
     );

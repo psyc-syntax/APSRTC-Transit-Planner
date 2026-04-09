@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/screens/stop_search_screen.dart';
 
-class LocationSelectionBlock extends StatelessWidget{
+class LocationSelectionBlock extends ConsumerWidget{
   const LocationSelectionBlock({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final startingPlaceName = ref.watch(startingPlaceNameProvider);
+    final destinationPlaceName = ref.watch(destinationPlaceNameProvider);
     return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -56,11 +60,11 @@ class LocationSelectionBlock extends StatelessWidget{
                   InkWell(
                     onTap: (){
                       Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => StopSearchScreen(isbackneeded: true,),
+                        builder: (context) => StopSearchScreen(isbackneeded: true, isStartingStop: true,),
                         ),
                       );
                     },
-                    child: Text("Kakinada Main....",
+                    child: Text(startingPlaceName,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontSize: 16,
                         color: Colors.black54,
@@ -98,11 +102,14 @@ class LocationSelectionBlock extends StatelessWidget{
                       Navigator.push(
                         context, 
                         MaterialPageRoute(
-                          builder: (context) => StopSearchScreen(isbackneeded: true,)
+                          builder: (context) => StopSearchScreen(
+                            isbackneeded: true,
+                            isStartingStop: false,
+                          )
                         )
                       );
                     },
-                    child: Text("Vijayawada PNBS....",
+                    child: Text(destinationPlaceName,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontSize: 16,
                       color: Colors.black54,

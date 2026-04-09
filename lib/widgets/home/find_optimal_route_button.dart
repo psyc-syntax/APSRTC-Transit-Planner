@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/screens/route_results_screen.dart';
 
-class FindOptimalRouteButton extends StatelessWidget{
+class FindOptimalRouteButton extends ConsumerWidget{
   const FindOptimalRouteButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final bool isstartingPlaceSelected = ref.watch(isstartingPlaceSelectedProvider);
+    final bool isdestinationPlaceSelected = ref.watch(isdestinationPlaceSelectedProvider);
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -18,10 +22,13 @@ class FindOptimalRouteButton extends StatelessWidget{
       ),
       child: ElevatedButton(
         onPressed: (){
-          Navigator.push(
+          if(isstartingPlaceSelected && isdestinationPlaceSelected){
+            ref.read(runAlgorithmTriggerProvider.notifier).state++;
+            Navigator.push(
             context,
             MaterialPageRoute(builder: (ctx) => RouteResultsScreen()) 
           );
+          }
         }, 
         style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
           shape: WidgetStatePropertyAll(

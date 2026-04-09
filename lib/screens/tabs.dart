@@ -17,7 +17,7 @@ class _TabsScreenState extends State<TabsScreen>{
 
   final List<Widget> _pages = [
     HomeScreen(),
-    StopSearchScreen(isbackneeded: false),
+    StopSearchScreen(isbackneeded: false, isStartingStop: false),
     SavedTripsScreen(), 
   ];
 
