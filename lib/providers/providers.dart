@@ -49,12 +49,8 @@ final idToNameProvider = FutureProvider<Map<String, String>>(
   (ref) async {
     final dbHelper = DatabaseHelper();
     var trips = await dbHelper.getBusTrips();
-    var map = dbHelper.buildIdToNameMap(trips);
-
-    print("idToName map (first 5 entries): ${map.entries.take(5).toList()}");
-    return map;
+    return dbHelper.buildIdToNameMap(trips);
   },
-
 );
 
 final markAlgorithmProvider =

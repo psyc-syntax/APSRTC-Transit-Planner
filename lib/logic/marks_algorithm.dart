@@ -30,6 +30,7 @@ List<Map<String, double>> marksAlgorithm(
      if (stepCount < 10) {
       print("Visiting node: $currentNode, current distance: ${distances[currentNode]}");
     }
+    stepCount++;
 
     if (currentNode == destination) break;
 

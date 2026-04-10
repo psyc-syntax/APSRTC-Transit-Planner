@@ -38,7 +38,7 @@ class DatabaseHelper {
     return await openDatabase(path);
   }
 
-  //SEARCH STOPS
+  // SEARCH STOPS
   Future<List<Map<String, dynamic>>> getsearchstops(String query) async {
     final db = await database;
 
@@ -54,9 +54,8 @@ class DatabaseHelper {
     );
   }
 
-  //FETCH TRIPS (WITH CACHE + LIMIT)
+  // FETCH TRIPS (WITH CACHE + LIMIT)
   Future<List<BusTrip>> getBusTrips() async {
-    // ✅ Return cached data if available
     if (_cachedTrips != null) return _cachedTrips!;
 
     final db = await database;
@@ -75,12 +74,12 @@ class DatabaseHelper {
     _cachedTrips = results.map((row) => BusTrip(
       serviceDocId: row['serviceDocId'],
       oprsNo: row['oprsNo']?.toString() ?? "",
-      placeId: row['placeId'],
+      placeId: row['placeId'].toString(), // <-- keep as string unique ID
       seqNo: row['seqNo'],
       placeName: row['placeName'],
       stationName: row['stationName'],
       latitude: (row['latitude'] as num?)?.toDouble() ?? 0.0,
-  longitude: (row['longitude'] as num?)?.toDouble() ?? 0.0,
+      longitude: (row['longitude'] as num?)?.toDouble() ?? 0.0,
       scheduleArrTime: row['scheduleArrTime'],
       scheduleDepTime: row['scheduleDepTime'],
     )).toList();
@@ -91,11 +90,9 @@ class DatabaseHelper {
   // ID → NAME MAP
   Map<String, String> buildIdToNameMap(List<BusTrip> trips) {
     Map<String, String> idToName = {};
-
     for (var trip in trips) {
-      idToName[trip.placeId.toString()] = trip.placeName;
+      idToName[trip.placeId] = trip.placeName; // placeId is unique key
     }
-
     return idToName;
   }
 
@@ -128,8 +125,8 @@ class DatabaseHelper {
         var from = trip[i];
         var to = trip[i + 1];
 
-        final fromNode = "${from.serviceDocId}_${from.seqNo}";
-        final toNode = "${to.serviceDocId}_${to.seqNo}";
+        final fromNode = from.placeId; // <-- now placeId only
+        final toNode = to.placeId;     // <-- now placeId only
 
         int distance = calculateDistance(
           from.latitude,
