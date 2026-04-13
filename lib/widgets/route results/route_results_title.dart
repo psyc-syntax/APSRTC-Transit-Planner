@@ -22,7 +22,7 @@ class RouteResultsTitle extends StatelessWidget {
             ),
 
             Text(
-              "DIJKSTRA PATH SELECTION",
+              "MARK PATH SELECTION",
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
               ),

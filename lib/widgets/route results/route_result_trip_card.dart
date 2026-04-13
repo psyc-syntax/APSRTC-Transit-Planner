@@ -9,6 +9,17 @@ class RouteResultTripCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch the algorithm results
     final routeResultsList = ref.watch(markAlgorithmProvider);
+    final startingPlacename = ref.watch(startingPlaceNameProvider);
+
+    return routeResultsList.when(
+  loading: () => const Center(child: CircularProgressIndicator()),
+  error: (err, stack) =>
+      Text("Error: $err", style: const TextStyle(color: Colors.red)),
+  data: (results) {
+    if (results.isEmpty) return const Text("No path found.");
+
+    int hours = (((results.last.values.first.toDouble().round() / 20) * 30) / 60).toInt();
+    int minutes = (((results.last.values.first.toDouble().round() / 20) * 30) % 60).toInt();
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -27,7 +38,7 @@ class RouteResultTripCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row: Time and Duration
+          // Top Row
           Row(
             children: [
               Text(
@@ -41,43 +52,49 @@ class RouteResultTripCard extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text("2h 30m", style: Theme.of(context).textTheme.bodyMedium),
-                  Text("4 stops", style: Theme.of(context).textTheme.bodySmall),
+                  Text("${hours}H ${minutes != 0 ? "$minutes MIN" : ""}"),
+                  Text("${results.length - 1} stops"),
                 ],
               ),
             ],
           ),
+
           const Divider(height: 24),
 
-          // Result Logic
-          routeResultsList.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, stack) => Text("Error: $err", style: const TextStyle(color: Colors.red)),
-            data: (results) {
-              if (results.isEmpty) return const Text("No path found.");
+          //ListView.builder INSIDE ONE CARD
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: results.length + 1, // +1 for starting point
+            itemBuilder: (context, index) {
+              // First item = starting place
+              if (index == 0) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    "$startingPlacename - 0 km",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                );
+              }
 
-              // HORIZONTAL ROLLING LIST
-            return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: results.length,
-          itemBuilder: (context, index) {
-            final step = results[index];
-            final stopName = step.keys.first;
-            final distance = step.values.first;
+              final step = results[index - 1];
+              final stopName = step.keys.first;
+              final distance = step.values.first;
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(
-                "$stopName - ${distance.toStringAsFixed(1)} km",
-                style: const TextStyle(fontSize: 16),
-              ),
-            );
-            },
-          );
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  "$stopName - ${distance.toStringAsFixed(1)} km",
+                  style: const TextStyle(fontSize: 16),
+                ),
+              );
             },
           ),
         ],
       ),
     );
-  }}
+  },
+);
+  }
+}
