@@ -32,7 +32,7 @@ class StopBasicDetailsCard extends ConsumerWidget{
           if(isbackneeded){
             if(isStartingStop){
               ref.read(startingPlaceIdProvider.notifier).state = placeId.trim();
-              ref.read(startingPlaceNameProvider.notifier).state = stopName;
+              ref.read(startingPlaceNameProvider.notifier).state = stopName;  
               ref.read(isstartingPlaceSelectedProvider.notifier).state = true;
               print("Updated startingPlaceIdProvider: ${ref.read(startingPlaceIdProvider)}");
             }

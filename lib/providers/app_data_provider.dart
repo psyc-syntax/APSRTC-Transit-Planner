@@ -2,22 +2,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/helpers/database_helper.dart';
 import 'package:planner_demo/models/app_data.dart';
 
-final appDataProvider = FutureProvider<AppData>((ref) async {
-  final dbHelper = DatabaseHelper();
+final appdataProvider = FutureProvider<AppData>((ref) async {
+  final dbhelper = DatabaseHelper();
 
-  // 🔥 Load once
-  var trips = await dbHelper.getBusTrips();
+  final trips = await dbhelper.getBusTrips();
 
-  var grouped = dbHelper.groupBusTripsByOprsNo(trips);
-  dbHelper.sortTripsBySeqNo(grouped);
+  final grouped = dbhelper.groupBusTripsByOprsNo(trips);
 
-  var graph = dbHelper.buildGraph(grouped);
+  dbhelper.sortTripsBySeqNo(grouped);
 
-  var stopIndex = dbHelper.buildStopIndex(grouped);
+  final graph = dbhelper.buildGraph(grouped);
+
+  final stopIndex = dbhelper.buildStopIndex(grouped);
+
   addTransferEdges(graph, stopIndex);
 
-
-  print("App fully initialized");
 
   return AppData(
     graph: graph,

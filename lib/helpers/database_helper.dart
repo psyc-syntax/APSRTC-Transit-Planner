@@ -1,15 +1,15 @@
 import "dart:io";
+import "package:flutter/services.dart";
+import "package:path/path.dart";
+import "package:sqflite/sqflite.dart";
+
 import "package:planner_demo/logic/distance_calculator_by_lat_and_lon.dart";
 import "package:planner_demo/models/bus_trip.dart";
 import "package:planner_demo/models/edge.dart";
-import "package:sqflite/sqflite.dart";
-import "package:path/path.dart";
-import 'package:flutter/services.dart';
 
 class DatabaseHelper {
   static Database? _database;
 
-  // CACHE
   List<BusTrip>? _cachedTrips;
 
   Future<Database> get database async {
@@ -18,12 +18,10 @@ class DatabaseHelper {
     return _database!;
   }
 
-  // DB INIT
   Future<Database> initDb() async {
     String dbpath = await getDatabasesPath();
     String path = join(dbpath, "apsrtc_master.sqli");
 
-    // Only copy DB if it doesn't exist
     if (!await File(path).exists()) {
       ByteData data = await rootBundle.load("assets/data/apsrtc_master.sqli");
 
@@ -38,7 +36,6 @@ class DatabaseHelper {
     return await openDatabase(path);
   }
 
-  // SEARCH STOPS
   Future<List<Map<String, dynamic>>> getsearchstops(String query) async {
     final db = await database;
 
@@ -54,7 +51,6 @@ class DatabaseHelper {
     );
   }
 
-  // FETCH TRIPS (WITH CACHE + LIMIT)
   Future<List<BusTrip>> getBusTrips() async {
     if (_cachedTrips != null) return _cachedTrips!;
 
@@ -66,24 +62,22 @@ class DatabaseHelper {
              scheduleArrTime, scheduleDepTime 
       FROM route_stops 
       ORDER BY OPRSNo, SeqNo
-      """);
+    """);
 
-    _cachedTrips = results
-        .map(
-          (row) => BusTrip(
-            serviceDocId: row['serviceDocId'] ?? "",
-            oprsNo: row['oprsNo']?.toString() ?? "",
-            placeId: row['placeId']?.toString() ?? "", // <-- keep as string unique ID
-            seqNo: row['seqNo'] ?? 0,
-            placeName: row['placeName'] ?? "",
-            stationName: row['stationName'] ?? "",
-            latitude: (row['latitude'] as num?)?.toDouble() ?? 0.0,
-            longitude: (row['longitude'] as num?)?.toDouble() ?? 0.0,
-            scheduleArrTime: row['scheduleArrTime']?? "",
-            scheduleDepTime: row['scheduleDepTime'] ?? "",
-          ),
-        )
-        .toList();
+    _cachedTrips = results.map((row) {
+      return BusTrip(
+        serviceDocId: row['serviceDocId'] ?? "",
+        oprsNo: row['oprsNo']?.toString() ?? "",
+        placeId: row['placeId']?.toString() ?? "",
+        seqNo: row['seqNo'] ?? 0,
+        placeName: row['placeName'] ?? "",
+        stationName: row['stationName'] ?? "",
+        latitude: (row['latitude'] as num?)?.toDouble() ?? 0.0,
+        longitude: (row['longitude'] as num?)?.toDouble() ?? 0.0,
+        scheduleArrTime: row['scheduleArrTime'] ?? "",
+        scheduleDepTime: row['scheduleDepTime'] ?? "",
+      );
+    }).toList();
 
     return _cachedTrips!;
   }
@@ -95,54 +89,48 @@ class DatabaseHelper {
 
     for (var trip in groupedTrips.values) {
       for (var busTrip in trip) {
-        // create unique node
         String node = "${busTrip.placeId}|${busTrip.oprsNo}";
 
-        // map placeId → list of nodes
         stopIndex.putIfAbsent(busTrip.placeId, () => []);
 
-        // avoid duplicates (important)
         if (!stopIndex[busTrip.placeId]!.contains(node)) {
           stopIndex[busTrip.placeId]!.add(node);
         }
       }
     }
 
-    print("StopIndex built: ${stopIndex.length} stops");
     return stopIndex;
   }
 
-  // ID -> NAME MAP
-  Map<String, String> buildIdToNameMap(List<BusTrip> trips) {
-    Map<String, String> idToName = {};
-    for (var trip in trips) {
-      idToName[trip.placeId] = trip.placeName; // placeId is unique key
-    }
-    return idToName;
-  }
+  // Map<String, String> buildIdToNameMap(List<BusTrip> trips) {
+  //   Map<String, String> map = {};
+  //   for (var t in trips) {
+  //     map[t.placeId] = t.placeName;
+  //   }
+  //   return map;
+  // }
 
-  // GROUP BY OPRS
-  Map<String, List<BusTrip>> groupBusTripsByOprsNo(List<BusTrip> busTrips) {
-    final Map<String, List<BusTrip>> groupedTrips = {};
+  Map<String, List<BusTrip>> groupBusTripsByOprsNo(List<BusTrip> trips) {
+    final map = <String, List<BusTrip>>{};
 
-    for (var trip in busTrips) {
-      if (trip.oprsNo.isNotEmpty) {
-        groupedTrips.putIfAbsent(trip.oprsNo, () => []).add(trip);
+    for (var t in trips) {
+      if (t.oprsNo.isNotEmpty) {
+        map.putIfAbsent(t.oprsNo, () => []).add(t);
       }
     }
 
-    return groupedTrips;
+    return map;
   }
 
-  // SORT BY SEQUENCE
-  void sortTripsBySeqNo(Map<String, List<BusTrip>> groupedTrips) {
-    for (var trip in groupedTrips.values) {
-      trip.sort((a, b) => a.seqNo.compareTo(b.seqNo));
+  void sortTripsBySeqNo(Map<String, List<BusTrip>> grouped) {
+    for (var list in grouped.values) {
+      list.sort((a, b) => a.seqNo.compareTo(b.seqNo));
     }
   }
 
-  // BUILD GRAPH
-  Map<String, List<Edge>> buildGraph(Map<String, List<BusTrip>> groupedTrips) {
+  Map<String, List<Edge>> buildGraph(
+    Map<String, List<BusTrip>> groupedTrips,
+  ) {
     Map<String, List<Edge>> graph = {};
 
     for (var trip in groupedTrips.values) {
@@ -150,9 +138,8 @@ class DatabaseHelper {
         var from = trip[i];
         var to = trip[i + 1];
 
-        final fromNode =
-            "${from.placeId}|${from.oprsNo}"; // <-- now placeId only
-        final toNode = "${to.placeId}|${to.oprsNo}"; // <-- now placeId only
+        final fromNode = "${from.placeId}|${from.oprsNo}";
+        final toNode = "${to.placeId}|${to.oprsNo}";
 
         double distance = calculateDistance(
           from.latitude,
@@ -177,26 +164,19 @@ class DatabaseHelper {
       }
     }
 
-    print("Graph built: ${graph.keys.length} nodes (show 5 nodes)");
-    int count = 0;
-    graph.forEach((k, v) {
-      if (count++ < 5) {
-        print(
-          "$k -> ${v.take(3).map((e) => "${e.toplaceId}:${e.distance}").toList()}",
-        );
-      }
-    });
-
     return graph;
   }
 }
 
-void addTransferEdges(Map<String, List<Edge>> graph, Map<String, List<String>> stopIndex) {
+void addTransferEdges(
+  Map<String, List<Edge>> graph,
+  Map<String, List<String>> stopIndex,
+) {
   for (var placeId in stopIndex.keys) {
     var nodes = stopIndex[placeId]!;
+
     for (int i = 0; i < nodes.length; i++) {
       for (int j = i + 1; j < nodes.length; j++) {
-        
         String fromNode = nodes[i];
         String toNode = nodes[j];
 
@@ -209,7 +189,7 @@ void addTransferEdges(Map<String, List<Edge>> graph, Map<String, List<String>> s
             toplaceId: toNode,
             fromPlaceName: placeId,
             toPlaceName: placeId,
-            distance: 2, // very small distance for transfer
+            distance: 2,
             travelTime: 300,
           ),
         );

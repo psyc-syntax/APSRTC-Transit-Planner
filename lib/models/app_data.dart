@@ -12,4 +12,6 @@ class AppData {
 
     required this.groupedTrips,
   });
+
+  void operator [](String other) {}
 }
