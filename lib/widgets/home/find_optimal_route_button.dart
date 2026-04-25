@@ -38,11 +38,12 @@ class FindOptimalRouteButton extends ConsumerWidget{
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("FIND OPTIMAL ROUTE", style: TextStyle(fontSize: 16),),
+
+              Text("PLAN SMART TRIP", style: TextStyle(fontSize: 16),),
               Icon(Icons.bolt, size: 18,),
             ],
           ),

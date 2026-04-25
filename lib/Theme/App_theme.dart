@@ -2,27 +2,53 @@ import 'package:flutter/material.dart';
 
 const kLightColorScheme = ColorScheme(
   brightness: Brightness.light, 
+
+  //primary color for buttons and highlights
   primary: Color(0xFFF97316), 
   onPrimary: Colors.white, 
+
+  //secondary color for accents and highlights  
   secondary: Color(0xFF2562EB), 
   onSecondary: Colors.white, 
+
+  //error color for error states
   error: Color(0xFFDC2626), 
   onError: Colors.white, 
+
+  //main background color
   surface: Colors.white, 
   onSurface: Color(0xFF0F172A),
+  onSurfaceVariant: Colors.black54,
+
+  //card background color
+  surfaceContainerHighest: Colors.white,
   secondaryContainer: Colors.white,
 );
 
 const kDarkColorScheme = ColorScheme(
   brightness: Brightness.dark, 
+
   primary: Color(0xFFF97316), 
   onPrimary: Colors.white, 
+
   secondary: Color(0xFF60A5FA), 
   onSecondary: Colors.black, 
+
   error: Color(0xffef4444), 
   onError: Colors.black, 
-  surface: Color(0xff1e293b), 
+
+  //main background color
+  surface: Color(0xFF0F1C2E), 
   onSurface: Colors.white,
+  onSurfaceVariant: Colors.white70,
+
+  //card background color
+  surfaceContainerHighest: Color(0xFF16273D),
+
+  //card background color when elevated
+  surfaceContainerHigh: Color(0xFF1B2F4A),
+
+
   secondaryContainer: Color(0xFFFAF9F6),
   
 );
@@ -112,8 +138,8 @@ class AppTheme{
     ),
 
     cardTheme: CardThemeData(
-      color: kDarkColorScheme.surface,
-      elevation: 2,
+      color: kDarkColorScheme.surfaceContainerHighest,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(16),
       )

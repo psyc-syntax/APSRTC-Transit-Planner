@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:planner_demo/widgets/home/find_optimal_route_button.dart';
 import 'package:planner_demo/widgets/shared/horizontal_line.dart';
 import 'package:planner_demo/widgets/home/app_logo_text.dart';
 import 'package:planner_demo/widgets/home/quick_history.dart';
 import 'package:planner_demo/widgets/home/route_search_card.dart';
 import 'package:planner_demo/widgets/home/home_header.dart';
 
-class HomeScreen extends StatelessWidget{
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
@@ -14,32 +15,45 @@ class HomeScreen extends StatelessWidget{
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-      
           //top title(offline engine ready, database info)
           TopTitle(),
           HorizontalLine(),
-          
-          
+
           //main title (app icon and dropdown menu)
           MainTitle(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, 
-                ),
-                child: RouteSearchCard(), //trip details selection card
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: RouteSearchCard(), //trip details selection card
+                  ),
+
+                  // optimal route button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 12,
+                    ),
+              
+                    // find optimal route button
+                    child: FindOptimalRouteButton(),
+                  ),
+
+                  // recent history section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: QuickHistory(),
+                  ),
+                ],
               ),
-                    
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                  child: QuickHistory(),
-                ),
-              )
-            ],
-          )
+            ),
+          ),
         ],
       ),
     );

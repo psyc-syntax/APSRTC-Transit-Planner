@@ -10,44 +10,26 @@ class RouteSearchCard extends StatelessWidget{
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 16.0,
-            spreadRadius: 4.0,
-            offset: Offset(0, 0),
-          )
-        ],
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Theme.of(context).dividerColor,
+          width: 1,
+        ),
       ),
-      child: Card(
-        color: Theme.of(context).colorScheme.secondaryContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(32),
-        ),
-        elevation: 0,
-        child: Column(
-          children: [
-            
-            LocationSelectionBlock(),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: TravelDateSelectionBlock(),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0, 
-                vertical: 14,
-              ),
-
-              
-              // find optimal route button
-              child: FindOptimalRouteButton(),
-            ),
-
-            SizedBox(height: 10,),
-          ],
-        ),
+      child: Column(
+        children: [
+          
+          LocationSelectionBlock(),
+      
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TravelDateSelectionBlock(),
+          ),
+          
+      
+          SizedBox(height: 20,),
+        ],
       ),
     );
   }

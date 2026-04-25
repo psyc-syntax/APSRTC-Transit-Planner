@@ -10,6 +10,8 @@ class TravelDateSelectionBlock extends StatefulWidget{
 class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
 
   DateTime? _selectedDate = DateTime.now();
+  String _selectedType = "today";
+
 
   Future<void> pickDate() async{
       DateTime? date = await showDatePicker(
@@ -31,26 +33,33 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // horizontal line
           Container(
             width: double.infinity,
             height: 2,
-            color: const Color(0xFFE2E8F0),
+            color: Theme.of(context).dividerColor,
           ),
 
           //travel date title and select calendar button too
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
+                  // travel date title with calendar icon
                   children: [
-                    Icon(Icons.calendar_month, color: Colors.black54, size: 16,),
+
+                    // travel date title with calendar icon
+                    Icon(
+                      Icons.calendar_month, 
+                      color: Theme.of(context).colorScheme.onSurfaceVariant, 
+                      size: 16,
+                    ),
+
                     SizedBox(width: 2,),
                     Text("TRAVEL DATE", // travel date headding
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Colors.black54 ,
-                      ),
+                      style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ],
                 ),
@@ -59,6 +68,9 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   children: [
                     TextButton(
                       onPressed: () async{
+                        setState(() {
+                          _selectedType = "custom";
+                        });
                           await pickDate();
                         },
                       style: TextButton.styleFrom(
@@ -87,10 +99,19 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
               Container(
                 child: ElevatedButton(
                   onPressed: (){
-                    _selectedDate = DateTime.now();
+                    setState(() {
+                      _selectedType = "today";
+                      _selectedDate = DateTime.now();
+                    });
                   }, 
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                   backgroundColor: WidgetStateProperty.all(Colors.white70),
+                   backgroundColor: 
+                    WidgetStateProperty.all(
+                      _selectedType == "today"
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.surfaceContainerHigh
+                    ),
+
                     padding: const WidgetStatePropertyAll(
                       EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     ),
@@ -101,8 +122,10 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   
                   child: Text("Today",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: _selectedType == "today"
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 16,
-                    color: Colors.black54,
                     letterSpacing: 0, 
                   ),
                   ),
@@ -112,13 +135,20 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
               //tomorrow button
               Container(
                 child: ElevatedButton(
-                  
                   onPressed: (){
+                    setState(() {
+                      _selectedType = "tomorrow";
                     _selectedDate = DateTime.now().add(const Duration(days: 1));
+                    });
                   }, 
 
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                   backgroundColor: WidgetStateProperty.all(Colors.white70),
+                   backgroundColor: 
+                    WidgetStateProperty.all(
+                      _selectedType == "tomorrow"
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.surfaceContainerHigh
+                    ),
                    padding: const WidgetStatePropertyAll(
                       EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     ),
@@ -129,8 +159,10 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   
                   child: Text("Tomorrow",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: _selectedType == "tomorrow"
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 16,
-                    color: Colors.black54,
                     letterSpacing: 0,
                   ),
                   ),
@@ -140,10 +172,18 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
               // calendar icon button
               ElevatedButton(
                 onPressed: ()async{
+                  setState(() {
+                    _selectedType = "custom";
+                  });
                   await pickDate();
                 }, 
                 style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                 backgroundColor: WidgetStateProperty.all(Colors.white70),
+                 backgroundColor: 
+                    WidgetStateProperty.all(
+                      _selectedType == "custom"
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.surfaceContainerHigh
+                    ),
 
                  padding: const WidgetStatePropertyAll(
                       EdgeInsets.symmetric(vertical: 6, horizontal: 8),
@@ -153,7 +193,12 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   RoundedRectangleBorder(
                     borderRadius: BorderRadiusGeometry.circular(10))),
                   ),
-                child: Icon(Icons.calendar_month, color: Colors.black54,),
+                child: Icon(
+                  Icons.calendar_month, 
+                  color: _selectedType == "custom"
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),

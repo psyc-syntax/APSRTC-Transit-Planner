@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/Theme/app_theme.dart';
 import 'package:planner_demo/screens/root_screen.dart';
 
-import 'package:planner_demo/screens/tabs.dart';
-
 void main() {
   runApp(ProviderScope(child: const App()));
 }

@@ -2,7 +2,6 @@ import "dart:io";
 import "package:flutter/services.dart";
 import "package:path/path.dart";
 import "package:sqflite/sqflite.dart";
-
 import "package:planner_demo/logic/distance_calculator_by_lat_and_lon.dart";
 import "package:planner_demo/models/bus_trip.dart";
 import "package:planner_demo/models/edge.dart";

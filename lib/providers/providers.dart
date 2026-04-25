@@ -5,9 +5,9 @@ import 'package:planner_demo/logic/marks_algorithm.dart';
 import 'package:planner_demo/providers/app_data_provider.dart';
 
 final startingPlaceIdProvider = StateProvider<String>((ref) => "");
-final startingPlaceNameProvider = StateProvider<String>((ref) => "select starting point");
+final startingPlaceNameProvider = StateProvider<String>((ref) => "Select starting point");
 final destinationPlaceIdProvider = StateProvider<String>((ref) => "");
-final destinationPlaceNameProvider = StateProvider<String>((ref) => "select destination point ");
+final destinationPlaceNameProvider = StateProvider<String>((ref) => "Select destination point");
 final isstartingPlaceSelectedProvider = StateProvider<bool>((ref) => false);
 final isdestinationPlaceSelectedProvider = StateProvider<bool>((ref) => false);
 

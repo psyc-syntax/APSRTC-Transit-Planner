@@ -26,7 +26,7 @@ class QuickHistory extends StatelessWidget {
 
         // The List of Cards
         ListView.builder(
-          itemCount: 2,           
+          itemCount: 4,           
           shrinkWrap: true,
           padding: EdgeInsets.zero,
           physics: NeverScrollableScrollPhysics(),     

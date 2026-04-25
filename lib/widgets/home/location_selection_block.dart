@@ -28,7 +28,7 @@ class LocationSelectionBlock extends ConsumerWidget{
                 Container(
                   width: 2,
                   height: 50,
-                  color: const Color(0xFFE2E8F0),
+                  color: Theme.of(context).dividerColor,
                 ),
             
                 //too Icon
@@ -51,7 +51,6 @@ class LocationSelectionBlock extends ConsumerWidget{
                 children: [
                   Text("FROM",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Colors.black54,
                     letterSpacing: 0,
                   ),
                   ),
@@ -66,8 +65,8 @@ class LocationSelectionBlock extends ConsumerWidget{
                     },
                     child: Text(startingPlaceName,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 16,
-                        color: Colors.black54,
                         letterSpacing: 0,
                       ),
                     ),
@@ -81,7 +80,7 @@ class LocationSelectionBlock extends ConsumerWidget{
                     child: Container(
                       height: 2,
                       width: double.infinity,
-                      color: const Color(0xFFE2E8F0),
+                      color: Theme.of(context).dividerColor,
                     ),
                   ),
               
@@ -89,7 +88,6 @@ class LocationSelectionBlock extends ConsumerWidget{
               
                   Text("TO",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Colors.black54,
                     letterSpacing: 0,
                     
                   ),
@@ -111,8 +109,8 @@ class LocationSelectionBlock extends ConsumerWidget{
                     },
                     child: Text(destinationPlaceName,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
-                      color: Colors.black54,
                       letterSpacing: 0,
                     ),
                     ),
