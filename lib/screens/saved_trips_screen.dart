@@ -8,19 +8,22 @@ class SavedTripsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SavedTripsTitleCard(),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 32),
+      body: SafeArea(
+        bottom: false,
+        top : true,
+        left : true,
+        right : true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SavedTripsTitleCard(),
+            Expanded(
               child: SingleChildScrollView(
                 child: SavedConnectionsBlock(),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       )
     );
   }

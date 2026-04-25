@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/widgets/shared/button_with_icon.dart';
 
 class SearchTitle extends StatelessWidget {
   const SearchTitle({super.key, required this.isbackneeded});
@@ -12,30 +11,27 @@ class SearchTitle extends StatelessWidget {
       children: [
         //return button
         if(isbackneeded)
-          ButtonWithIcon(icon: Icons.arrow_back),
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back, 
+              color: Theme.of(context).colorScheme.onSurface, 
+              size: 24,
+            ),
+          ),
 
         //gap between title and return button
         if(isbackneeded)
           SizedBox(width: 16),
 
         //title and subtitle
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "SELECT STOP",
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(color: Colors.black),
-            ),
-
-            Text(
-              "DIJKSTRA NODE SELECTION",
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ],
+        Text(
+          "SELECT STOP",
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall,
         ),
       ],
     );

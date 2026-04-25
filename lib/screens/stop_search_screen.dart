@@ -68,27 +68,22 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
     final isSearching = controller.text.isNotEmpty;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Card(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            margin: EdgeInsets.zero,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
-              ),
-            ),
-            elevation: 8,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+      body: SafeArea(
+        bottom: false,
+        top: true,
+        left: true,
+        right: true,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  SafeArea(child: SearchTitle(isbackneeded: widget.isbackneeded)),
-
+                  SearchTitle(isbackneeded: widget.isbackneeded),
+            
                   // TEXTFIELD UI
                   Padding(
-                    padding: const EdgeInsets.only(top: 16, bottom: 32),
+                    padding: const EdgeInsets.only(top: 16, bottom: 16),
                     child: TextField(
                       controller: controller,
                       onChanged: (value) {
@@ -96,32 +91,39 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
                         if (_debounce?.isActive ?? false) {
                           _debounce!.cancel();
                         }
-
+            
                         _debounce = Timer(
                           const Duration(milliseconds: 300),
                           () {
                             searchStops(value);
                           },
                         );
-
+            
                         setState(() {}); // update header visibility
                       },
                       textAlignVertical: TextAlignVertical.center,
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(color: Colors.black54),
-
+                      style: Theme.of(context).textTheme.titleSmall,
+        
+            
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.search,
                           color: Theme.of(context).colorScheme.primary,
-                          size: 32,
+                          size: 24,
                         ),
-                        hintText: "SELECT STOP",
+                        hintText: "Select stop or city...",
                         filled: true,
                         fillColor:
-                            const Color.fromARGB(96, 211, 225, 250),
-                        hintStyle: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(color: Colors.black54),
+                            Theme.of(context).colorScheme.surfaceContainerHighest,
+                        hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
+                        
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide:
@@ -141,12 +143,12 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
                 ],
               ),
             ),
-          ),
-
-          Expanded(
-            child: _buildResults(isSearching),
-          ),
-        ],
+        
+            Expanded(
+              child: _buildResults(isSearching),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -161,13 +163,13 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(26, 26, 26, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       itemCount: stops.length + (isSearching ? 0 : 1),
       itemBuilder: (context, index) {
         //HEADER ONLY WHEN NOT SEARCHING
         if (!isSearching && index == 0) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: 6),
             child: Text(
               "POPULAR / NEARBY - STOPS",
               style: Theme.of(context).textTheme.titleSmall,

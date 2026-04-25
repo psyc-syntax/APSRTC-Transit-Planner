@@ -11,50 +11,59 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          //top title(offline engine ready, database info)
-          TopTitle(),
-          HorizontalLine(),
+    return Scaffold(
+      body: SafeArea(
+        
+        top: true,
+        bottom: false,
+        left: true,
+        right: true,
 
-          //main title (app icon and dropdown menu)
-          MainTitle(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: RouteSearchCard(), //trip details selection card
-                  ),
-
-                  // optimal route button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 12,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            //top title(offline engine ready, database info)
+            TopTitle(),
+            HorizontalLine(),
+      
+            //main title (app icon and dropdown menu)
+            MainTitle(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: RouteSearchCard(), //trip details selection card
                     ),
-              
-                    // find optimal route button
-                    child: FindOptimalRouteButton(),
-                  ),
-
-                  // recent history section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+      
+                    // optimal route button
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 12,
+                      ),
+                
+                      // find optimal route button
+                      child: FindOptimalRouteButton(),
                     ),
-                    child: QuickHistory(),
-                  ),
-                ],
+      
+                    // recent history section
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top : 16,
+                      ),
+                      child: QuickHistory(),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
