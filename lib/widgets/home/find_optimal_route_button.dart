@@ -22,13 +22,18 @@ class FindOptimalRouteButton extends ConsumerWidget{
       ),
       child: ElevatedButton(
         onPressed: (){
-          if(isstartingPlaceSelected && isdestinationPlaceSelected){
-            ref.read(runAlgorithmTriggerProvider.notifier).state++;
-            Navigator.push(
+          // if(isstartingPlaceSelected && isdestinationPlaceSelected){
+          //   ref.read(runAlgorithmTriggerProvider.notifier).state++;
+          //   Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (ctx) => RouteResultsScreen()) 
+          // );
+          // }
+
+          Navigator.push(
             context,
-            MaterialPageRoute(builder: (ctx) => RouteResultsScreen()) 
+            MaterialPageRoute(builder: (ctx) => RouteResultsScreen())
           );
-          }
         }, 
         style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
           shape: WidgetStatePropertyAll(

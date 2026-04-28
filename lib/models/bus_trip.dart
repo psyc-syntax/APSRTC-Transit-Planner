@@ -11,28 +11,26 @@ enum BusType{
 
 class BusTrip {
 
-  String serviceDocId;
+
   String oprsNo;
   String placeId;
   int seqNo;
   String placeName;
-  String 	stationName;
   double latitude;
   double longitude;
-  String scheduleArrTime;
-  String scheduleDepTime;
+  int scheduleArrTimeInMin;
+  int scheduleDepTimeInMin;
 
   BusTrip({
-    required this.serviceDocId,
+
     required this.oprsNo,
     required this.placeId,
     required this.seqNo,
     required this.placeName,
-    required this.stationName,
     required this.latitude,
     required this.longitude,
-    required this.scheduleArrTime,
-    required this.scheduleDepTime,
+    required this.scheduleArrTimeInMin,
+    required this.scheduleDepTimeInMin,
   });
 
 

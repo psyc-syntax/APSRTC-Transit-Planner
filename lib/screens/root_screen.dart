@@ -9,23 +9,22 @@ class RootScreen extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final appData = ref.watch(appdataProvider);
+    final appData = ref.watch(appdataProvider);
 
-    // return appData.when(
+    return appData.when(
 
-    //   // If data is loaded, show the main tabs screen
-    //   data: (appData) => const TabsScreen(),
+      // If data is loaded, show the main tabs screen
+      data: (appData) => const TabsScreen(),
 
-    //   // If loading, show a loading indicator
-    //   loading: () => const LoadingScreen(),
+      // If loading, show a loading indicator
+      loading: () => const LoadingScreen(),
 
-    //   // If there's an error, show an error message
-    //   error: (error, _) => Scaffold(
-    //     body: Center(child: Text('Error loading data: $error')),
-    //   ),
-    // );
+      // If there's an error, show an error message
+      error: (error, _) => Scaffold(
+        body: Center(child: Text('Error loading data: $error')),
+      ),
+    );
 
-    return const TabsScreen();
   }
 
 }

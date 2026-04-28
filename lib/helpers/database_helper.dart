@@ -1,209 +1,179 @@
-import "dart:io";
-import "package:flutter/services.dart";
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:planner_demo/logic/distance_calculator_by_lat_and_lon.dart';
+import 'package:planner_demo/models/bus_trip.dart';
+import 'package:planner_demo/models/edge.dart';
+import 'package:planner_demo/models/graph_data.dart';
+import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
-import "package:sqflite/sqflite.dart";
-import "package:planner_demo/logic/distance_calculator_by_lat_and_lon.dart";
-import "package:planner_demo/models/bus_trip.dart";
-import "package:planner_demo/models/edge.dart";
 
 class DatabaseHelper {
+  //database initialization
   static Database? _database;
 
-  List<BusTrip>? _cachedTrips;
-
+  //method to get database
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await initDb();
+  if (_database != null) {
+    return _database!;
+  } else {
+    _database = await intDatabase();
     return _database!;
   }
+}
 
-  Future<Database> initDb() async {
-    String dbpath = await getDatabasesPath();
-    String path = join(dbpath, "apsrtc_master.sqli");
+  //method to initialize database
+  Future<Database> intDatabase() async {
+    //get path of the apps database
+    String dbPath = await getDatabasesPath();
 
+    //adding the our database to app database
+    String path = join(dbPath, "apsrtc_master.sqli");
+
+    //if our database doesnt exist in the apps database then adding it to the database from the assets folder
     if (!await File(path).exists()) {
+      //getting byte format of data from the database
       ByteData data = await rootBundle.load("assets/data/apsrtc_master.sqli");
 
       List<int> bytes = data.buffer.asUint8List(
         data.offsetInBytes,
         data.lengthInBytes,
       );
-
-      await File(path).writeAsBytes(bytes, flush: true);
+      await File(path).writeAsBytes(bytes);
     }
 
+    //returning the database
     return await openDatabase(path);
   }
 
-  Future<List<Map<String, dynamic>>> getsearchstops(String query) async {
+  //method to get stop details from the database based on query
+  Future<List<Map<String, dynamic>>> getSearchStops(String query) async {
     final db = await database;
 
+    //query is empty then return all the sorted stops up to limit 100
     if (query.isEmpty) {
       return await db.rawQuery(
         "SELECT placeName, district, pincode, address, placeId FROM Place_Master ORDER BY placeName LIMIT 100",
       );
     }
-
-    return await db.rawQuery(
-      "SELECT placeName, district, pincode, address, placeId FROM Place_Master WHERE LOWER(placeName) LIKE ? ORDER BY placeName LIMIT 100",
-      ['${query.toLowerCase()}%'],
-    );
-  }
-
-  Future<List<BusTrip>> getBusTrips() async {
-    if (_cachedTrips != null) return _cachedTrips!;
-
-    final db = await database;
-
-    List<Map<String, dynamic>> results = await db.rawQuery("""
-      SELECT serviceDocId, oprsNo, placeId, seqNo, placeName, 
-             stationName, latitude, longitude, 
-             scheduleArrTime, scheduleDepTime 
-      FROM route_stops 
-      ORDER BY OPRSNo, SeqNo
-    """);
-
-    _cachedTrips = results.map((row) {
-      return BusTrip(
-        serviceDocId: row['serviceDocId'] ?? "",
-        oprsNo: row['oprsNo']?.toString() ?? "",
-        placeId: row['placeId']?.toString() ?? "",
-        seqNo: row['seqNo'] ?? 0,
-        placeName: row['placeName'] ?? "",
-        stationName: row['stationName'] ?? "",
-        latitude: (row['latitude'] as num?)?.toDouble() ?? 0.0,
-        longitude: (row['longitude'] as num?)?.toDouble() ?? 0.0,
-        scheduleArrTime: row['scheduleArrTime'] ?? "",
-        scheduleDepTime: row['scheduleDepTime'] ?? "",
+    //query is not empty return the related search stops up to limit 100
+    else {
+      return await db.rawQuery(
+        "SELECT placeName, district, pincode, address, placeId FROM Place_Master WHERE LOWER(placeName) LIKE ? ORDER BY placeName LIMIT 100",
+        ['${query.toLowerCase()}%'],
       );
-    }).toList();
-
-    return _cachedTrips!;
+    }
   }
 
-  Map<String, List<String>> buildStopIndex(
-    Map<String, List<BusTrip>> groupedTrips,
-  ) {
-    Map<String, List<String>> stopIndex = {};
+  //building stop index like  a = [a|100, a|200, b|300]
+  Map<String, List<String>> buildStopIndex(Map<String, List<BusTrip>> grouped) {
+    final Map<String, List<String>> stopIndex = {};
 
-    for (var trip in groupedTrips.values) {
-      for (var busTrip in trip) {
-        String node = "${busTrip.placeId}|${busTrip.oprsNo}";
-
-        stopIndex.putIfAbsent(busTrip.placeId, () => []);
-
-        if (!stopIndex[busTrip.placeId]!.contains(node)) {
-          stopIndex[busTrip.placeId]!.add(node);
-        }
+    for (var trip in grouped.values) {
+      for (var bustTrip in trip) {
+        String Node = "${bustTrip.placeId}|${bustTrip.oprsNo}";
+        stopIndex.putIfAbsent(bustTrip.placeId, () => []);
+        stopIndex[bustTrip.placeId]!.add(Node);
       }
     }
-
     return stopIndex;
   }
 
-  // Map<String, String> buildIdToNameMap(List<BusTrip> trips) {
-  //   Map<String, String> map = {};
-  //   for (var t in trips) {
-  //     map[t.placeId] = t.placeName;
-  //   }
-  //   return map;
-  // }
+  Future<GraphData> buildGraphAndStopIndex() async {
+  final db = await database;
 
-  Map<String, List<BusTrip>> groupBusTripsByOprsNo(List<BusTrip> trips) {
-    final map = <String, List<BusTrip>>{};
+  Map<String, List<Edge>> graph = {};
+  Map<String, List<String>> stopIndex = {};
 
-    for (var t in trips) {
-      if (t.oprsNo.isNotEmpty) {
-        map.putIfAbsent(t.oprsNo, () => []).add(t);
-      }
-    }
+  List<Map<String, dynamic>> rows = await db.rawQuery("""
+    SELECT oprsNo, placeId, placeName, seqNo,
+           latitude, longitude, 
+           arr_time_min, dept_time_min 
+    FROM route_stops 
+    WHERE oprsNo IS NOT NULL
+    ORDER BY oprsNo, seqNo
+  """);
 
-    return map;
-  }
+  for (int i = 0; i < rows.length; i++) {
+    var current = rows[i];
 
-  void sortTripsBySeqNo(Map<String, List<BusTrip>> grouped) {
-    for (var list in grouped.values) {
-      list.sort((a, b) => a.seqNo.compareTo(b.seqNo));
-    }
-  }
+    String oprsNo = current["oprsNo"]?.toString() ?? "";
+    String placeId = current["placeId"]?.toString() ?? "";
+    String placeName = current["placeName"]?.toString() ?? "";
 
-  Map<String, List<Edge>> buildGraph(
-    Map<String, List<BusTrip>> groupedTrips,
-  ) {
-    Map<String, List<Edge>> graph = {};
+    if (oprsNo.isEmpty || placeId.isEmpty) continue;
 
-    for (var trip in groupedTrips.values) {
-      for (int i = 0; i < trip.length - 1; i++) {
-        var from = trip[i];
-        var to = trip[i + 1];
+    String node = "$placeId|$oprsNo";
 
-        final fromNode = "${from.placeId}|${from.oprsNo}";
-        final toNode = "${to.placeId}|${to.oprsNo}";
+    // STOP INDEX
+    stopIndex.putIfAbsent(placeId, () => []);
+    stopIndex[placeId]!.add(node);
 
-        double distance = calculateDistance(
-          from.latitude,
-          from.longitude,
-          to.latitude,
-          to.longitude,
-        );
+    // GRAPH NODE
+    graph.putIfAbsent(node, () => []);
 
-        graph.putIfAbsent(fromNode, () => []);
-        graph.putIfAbsent(toNode, () => []);
+    // SAME ROUTE CONNECTION
+    if (i < rows.length - 1) {
+      var next = rows[i + 1];
 
-        graph[fromNode]!.add(
+      if (current["oprsNo"] == next["oprsNo"]) {
+        String nextPlaceId = next["placeId"]?.toString() ?? "";
+        String nextNode = "$nextPlaceId|$oprsNo";
+        String nextPlaceName = next["placeName"]?.toString() ?? "";
+
+        double lat1 = (current["latitude"] as num?)?.toDouble() ?? 0.0;
+        double lon1 = (current["longitude"] as num?)?.toDouble() ?? 0.0;
+
+        double lat2 = (next["latitude"] as num?)?.toDouble() ?? 0.0;
+        double lon2 = (next["longitude"] as num?)?.toDouble() ?? 0.0;
+
+        double distance = calculateDistance(lat1, lon1, lat2, lon2);
+
+        int time =
+            (next["arr_time_min"] ?? 0) - (current["dept_time_min"] ?? 0);
+
+        if (time < 0) time += 1440;
+
+        graph[node]!.add(
           Edge(
-            fromplaceId: fromNode,
-            toplaceId: toNode,
-            fromPlaceName: from.placeName,
-            toPlaceName: to.placeName,
-            distance: distance,
-            travelTime: 120,
+            fromplaceId: node,
+            toplaceId: nextNode,
+            fromPlaceName: placeName,
+            toPlaceName: nextPlaceName,
+            distance: distance.roundToDouble(),
+            travelTime: time,
           ),
         );
       }
     }
-
-    return graph;
   }
+
+  // TRANSFER EDGES
+  for (var entry in stopIndex.entries) {
+    List<String> nodes = entry.value;
+
+    if (nodes.length > 1) {
+      for (var from in nodes) {
+        for (var to in nodes) {
+          if (from != to) {
+            graph[from]!.add(
+              Edge(
+                fromplaceId: from,
+                toplaceId: to,
+                toPlaceName: "",
+                fromPlaceName: "",
+                distance: 0,
+                travelTime: 300, // 5 min transfer
+              ),
+            );
+          }
+        }
+      }
+    }
+  }
+
+  print("Graph nodes: ${graph.length}");
+  print("Stops indexed: ${stopIndex.length}");
+
+  return GraphData(graph: graph, stopIndex: stopIndex);
 }
-
-void addTransferEdges(
-  Map<String, List<Edge>> graph,
-  Map<String, List<String>> stopIndex,
-) {
-  for (var placeId in stopIndex.keys) {
-    var nodes = stopIndex[placeId]!;
-
-    for (int i = 0; i < nodes.length; i++) {
-      for (int j = i + 1; j < nodes.length; j++) {
-        String fromNode = nodes[i];
-        String toNode = nodes[j];
-
-        graph.putIfAbsent(fromNode, () => []);
-        graph.putIfAbsent(toNode, () => []);
-
-        graph[fromNode]!.add(
-          Edge(
-            fromplaceId: fromNode,
-            toplaceId: toNode,
-            fromPlaceName: placeId,
-            toPlaceName: placeId,
-            distance: 2,
-            travelTime: 300,
-          ),
-        );
-
-        graph[toNode]!.add(
-          Edge(
-            fromplaceId: toNode,
-            toplaceId: fromNode,
-            fromPlaceName: placeId,
-            toPlaceName: placeId,
-            distance: 2,
-            travelTime: 300,
-          ),
-        );
-      }
-    }
-  }
 }

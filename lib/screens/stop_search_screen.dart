@@ -46,7 +46,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
     });
 
     try {
-      final result = await _databaseHelper.getsearchstops(query);
+      final result = await _databaseHelper.getSearchStops(query);
 
       print("RESULT COUNT: ${result.length}");
 

@@ -20,6 +20,8 @@ class RouteResultTripCard extends ConsumerWidget {
 
     int hours = (((results.last.values.first.toDouble().round() / 20) * 30) / 60).toInt();
     int minutes = (((results.last.values.first.toDouble().round() / 20) * 30) % 60).toInt();
+    
+  
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -96,5 +98,5 @@ class RouteResultTripCard extends ConsumerWidget {
     );
   },
 );
-  }
+}
 }

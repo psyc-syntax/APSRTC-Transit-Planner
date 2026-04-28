@@ -61,7 +61,7 @@ class _TabsScreenState extends State<TabsScreen> {
               // makes the background blurry
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
-                // Semi-transparent background
+
                 color: Theme.of(context).colorScheme.surfaceContainerHighest, 
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -102,7 +102,7 @@ class _TabsScreenState extends State<TabsScreen> {
           ),
         
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

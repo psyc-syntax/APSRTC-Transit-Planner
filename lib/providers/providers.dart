@@ -14,30 +14,6 @@ final isdestinationPlaceSelectedProvider = StateProvider<bool>((ref) => false);
 final runAlgorithmTriggerProvider = StateProvider<int>((ref) => 0); 
 
 
-// final graphProvider = FutureProvider<Map<String, List<Edge>>>((ref) async {
-//   final db = DatabaseHelper();
-
-//   var trips = await db.getBusTrips();
-//   var grouped = db.groupBusTripsByOprsNo(trips);
-
-//   db.sortTripsBySeqNo(grouped);
-
-//   var graph = db.buildGraph(grouped);
-//   var stopIndex = db.buildStopIndex(grouped);
-
-//   addTransferEdges(graph, stopIndex);
-
-//   return graph;
-// });
-
-// final stopIndexProvider =
-//     FutureProvider<Map<String, List<String>>>((ref) async {
-//   final db = DatabaseHelper();
-//   var trips = await db.getBusTrips();
-//   var grouped = db.groupBusTripsByOprsNo(trips);
-//   return db.buildStopIndex(grouped);
-// });
-
 final markAlgorithmProvider =
     FutureProvider<List<Map<String, double>>>((ref) async {
   ref.watch(runAlgorithmTriggerProvider);

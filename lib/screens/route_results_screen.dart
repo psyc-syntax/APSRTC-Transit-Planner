@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/route%20results/route_result_trip_card.dart';
-import 'package:planner_demo/widgets/route%20results/route_results_all_details_card.dart';
+import 'package:planner_demo/widgets/route%20results/route_results_location_details.dart';
 import 'package:planner_demo/widgets/route%20results/route_results_title.dart';
+import 'package:planner_demo/widgets/route%20results/route_results_trip_params.dart';
 
 class RouteResultsScreen extends StatelessWidget {
   const RouteResultsScreen({super.key});
@@ -14,6 +15,7 @@ class RouteResultsScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               
               // TOP TITLE (Pinned, Not Scrollable)
@@ -21,21 +23,13 @@ class RouteResultsScreen extends StatelessWidget {
               SizedBox(height: 16),
 
               // SCROLLABLE CONTENT
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 16.0,
-                      spreadRadius: 4.0,
-                      offset: Offset(0, 0),
-                    ),
-                  ],
-                ),
-                child: RouteResultsAllDetailsCard(),
-              ),
-                            
-              SizedBox(height: 16),
+              RouteResultsLocationDetails(),
+
+              SizedBox(height: 6,),
+
+              RouteResultsTripParams(),
+
+              
                             
               // Trip cards
               Expanded(

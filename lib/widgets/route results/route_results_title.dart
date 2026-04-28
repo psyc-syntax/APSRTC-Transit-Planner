@@ -1,34 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/widgets/shared/button_with_icon.dart';
+
 
 class RouteResultsTitle extends StatelessWidget {
   const RouteResultsTitle({super.key});
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        ButtonWithIcon(icon: Icons.arrow_back),
-        
-        SizedBox(width: 16),
-        
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "ROUTE RESULTS",
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall,
-            ),
-
-            Text(
-              "MARK PATH SELECTION",
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ],
+        GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back),
         ),
+        Text(
+          "TRIP DETAILS",
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall,
+        ),
+
+        Icon(Icons.share),
       ],
     );
   }
