@@ -28,7 +28,7 @@ class SearchTitle extends StatelessWidget {
 
         //title and subtitle
         Text(
-          "SELECT STOP",
+          "Select Stop",
           style: Theme.of(
             context,
           ).textTheme.headlineSmall,

@@ -17,20 +17,23 @@ class MainTitle extends StatelessWidget {
               AppIcon(),
 
               // gap between app title and icon
-              SizedBox(width: 8,),
+              SizedBox(width: 6),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "MARK", // main app title 
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    "Mark", // main app title
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      height: 0.9,
+                    ),
                   ),
                   Text(
-                    "TRANSIT INTELLIGENCE", // sub title 
-                    style: Theme.of(context).textTheme.titleSmall,
+                    'Transit Intelligence', // app subtitle
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -38,8 +41,10 @@ class MainTitle extends StatelessWidget {
           ),
 
           // Drop Down menu button
-          Icon(Icons.menu,
-          size: 30,),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.menu, size: 30),
+          ),
         ],
       ),
     );

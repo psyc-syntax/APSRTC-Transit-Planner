@@ -21,20 +21,20 @@ class LocationSelectionBlock extends ConsumerWidget{
                 //from Icon
                 Icon(Icons.radio_button_on,
                 color: Theme.of(context).colorScheme.primary,
-                size: 14,
+                size: 15,
                 ),
             
                 //vertical line
                 Container(
                   width: 2,
-                  height: 50,
+                  height: 40,
                   color: Theme.of(context).dividerColor,
                 ),
             
                 //too Icon
                 Icon(Icons.location_on_outlined,
                 color: Theme.of(context).colorScheme.primary,
-                size: 20,
+                size: 22,
                 ),
               ],
             ),
@@ -49,10 +49,10 @@ class LocationSelectionBlock extends ConsumerWidget{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text("FROM",
+                  Text("From",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    letterSpacing: 0,
-                  ),
+                    height: 0.9
+                  )
                   ),
                   SizedBox(height: 4,),
               
@@ -86,11 +86,10 @@ class LocationSelectionBlock extends ConsumerWidget{
               
                   SizedBox(height: 8,),
               
-                  Text("TO",
+                  Text("To",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    letterSpacing: 0,
-                    
-                  ),
+                    height: 0.9
+                  )
                   ),
               
                   SizedBox(height: 4,),

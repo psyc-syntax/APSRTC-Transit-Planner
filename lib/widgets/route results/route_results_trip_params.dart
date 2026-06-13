@@ -11,7 +11,9 @@ class RouteResultsTripParams extends StatelessWidget{
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         RouteResultsTripParamContainer(param: "12H 10M", paramdetail: "Total Time"),
-        RouteResultsTripParamContainer(param: "487.1KM", paramdetail: "Total Distance"),
+        SizedBox(width: 8,),
+        RouteResultsTripParamContainer(param: "487.12KM", paramdetail: "Total Distance"),
+        SizedBox(width: 8,),
         RouteResultsTripParamContainer(param: "4", paramdetail: "Stops"),
 
       ],

@@ -1,10 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/home/find_optimal_route_button.dart';
-import 'package:planner_demo/widgets/shared/horizontal_line.dart';
 import 'package:planner_demo/widgets/home/app_logo_text.dart';
-import 'package:planner_demo/widgets/home/quick_history.dart';
 import 'package:planner_demo/widgets/home/route_search_card.dart';
-import 'package:planner_demo/widgets/home/home_header.dart';
+import 'package:planner_demo/widgets/home/trip_suggestion_block.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -23,8 +22,8 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             //top title(offline engine ready, database info)
-            TopTitle(),
-            HorizontalLine(),
+            // TopTitle(),
+            // HorizontalLine(),
       
             //main title (app icon and dropdown menu)
             MainTitle(),
@@ -56,8 +55,11 @@ class HomeScreen extends StatelessWidget {
                         right: 16,
                         top : 16,
                       ),
-                      child: QuickHistory(),
+                      // child: QuickHistory(),
+                      child: TripSuggestionBlock(),
                     ),
+
+                    SizedBox(height: 200,)
                   ],
                 ),
               ),

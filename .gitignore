@@ -63,3 +63,5 @@ app.*.map.json
 *.jks
 
 # iOS/XCode
+assets/data/apsrtc_v3.db
+*.sqbpro

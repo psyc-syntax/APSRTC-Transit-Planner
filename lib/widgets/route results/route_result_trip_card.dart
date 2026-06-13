@@ -3,26 +3,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/providers/providers.dart';
 
 class RouteResultTripCard extends ConsumerWidget {
-  const RouteResultTripCard({super.key});
+  const RouteResultTripCard({
+    super.key,
+    
+    });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch the algorithm results
-    final routeResultsList = ref.watch(markAlgorithmProvider);
+  //   final routeResultsList = ref.watch(markAlgorithmProvider);
     final startingPlacename = ref.watch(startingPlaceNameProvider);
 
-    return routeResultsList.when(
-  loading: () => const Center(child: CircularProgressIndicator()),
-  error: (err, stack) =>
-      Text("Error: $err", style: const TextStyle(color: Colors.red)),
-  data: (results) {
-    if (results.isEmpty) return const Text("No path found.");
+  //   return routeResultsList.when(
+  // loading: () => const Center(child: CircularProgressIndicator()),
+  // error: (err, stack) =>
+  //     Text("Error: $err", style: const TextStyle(color: Colors.red)),
+  // data: (results) {
+  //   if (results.isEmpty) return const Text("No path found.");
 
-    int hours = (((results.last.values.first.toDouble().round() / 20) * 30) / 60).toInt();
-    int minutes = (((results.last.values.first.toDouble().round() / 20) * 30) % 60).toInt();
+  //   int hours = (((results.last.values.first.toDouble().round() / 20) * 30) / 60).toInt();
+  //   int minutes = (((results.last.values.first.toDouble().round() / 20) * 30) % 60).toInt();
     
+  int minutes = 0;
+  int hours = 0;
+  final results = [];
   
-
+   
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       padding: const EdgeInsets.all(16.0),
@@ -96,7 +102,7 @@ class RouteResultTripCard extends ConsumerWidget {
         ],
       ),
     );
-  },
-);
-}
+  }
+// );
+// }
 }

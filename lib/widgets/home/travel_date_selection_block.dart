@@ -58,7 +58,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                     ),
 
                     SizedBox(width: 2,),
-                    Text("TRAVEL DATE", // travel date headding
+                    Text("Travel Date", // travel date headding
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ],

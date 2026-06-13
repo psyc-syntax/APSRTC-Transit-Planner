@@ -125,16 +125,16 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
                         ),
                         
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(20),
                           borderSide:
-                              const BorderSide(color: Colors.grey),
+                              BorderSide(color: Theme.of(context).dividerColor, width: 1),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide(
                             color:
                                 Theme.of(context).colorScheme.primary,
-                            width: 2,
+                            width: 1,
                           ),
                         ),
                       ),
@@ -171,7 +171,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
           return Padding(
             padding: const EdgeInsets.only(bottom: 6),
             child: Text(
-              "POPULAR / NEARBY - STOPS",
+              "Popualar / Nearby - Stops",
               style: Theme.of(context).textTheme.titleSmall,
             ),
           );

@@ -1,14 +1,12 @@
 
-import 'package:planner_demo/models/edge.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 class AppData {
-  final Map<String, List<Edge>> graph;
-  final Map<String, List<String>> stopIndex;
+  final Database database;
 
 
   AppData({
-    required this.graph,
-    required this.stopIndex,
+    required this.database,
   });
 
   void operator [](String other) {}

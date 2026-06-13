@@ -16,8 +16,8 @@ class QuickHistory extends StatelessWidget {
             const Icon(Icons.history, size: 16,),
             const SizedBox(width: 8),
             Text(
-              "QUICK HISTORY",
-              style: Theme.of(context).textTheme.titleSmall
+              "Quick History",
+              style: Theme.of(context).textTheme.titleMedium
             ),
           ],
         ),

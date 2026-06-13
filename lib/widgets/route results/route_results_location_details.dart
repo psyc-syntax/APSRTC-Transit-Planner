@@ -22,7 +22,7 @@ class RouteResultsLocationDetails extends ConsumerWidget {
             )
           ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         child: Column(
           children: [
             Row(

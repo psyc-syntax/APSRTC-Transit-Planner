@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:planner_demo/screens/home_screen.dart';
 import 'package:planner_demo/screens/more_options_screen.dart';
-import 'package:planner_demo/screens/saved_trips_screen.dart';
+import 'package:planner_demo/screens/trips_screen.dart';
 import 'package:planner_demo/screens/stop_search_screen.dart';
 
 class TabsScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _TabsScreenState extends State<TabsScreen> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const StopSearchScreen(isbackneeded: false, isStartingStop: false),
-    const SavedTripsScreen(),
+    const TripsScreen(),
     const MoreOptionsScreen(),
   ];
 
@@ -83,8 +83,8 @@ class _TabsScreenState extends State<TabsScreen> {
   // Simple helper to build each button
   Widget _navItem(IconData icon, String label, int index) {
     bool isSelected = _selectedIndex == index;
-    Color _activeColor = Theme.of(context).colorScheme.primary;
-    Color _inactiveColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    Color activeColor = Theme.of(context).colorScheme.primary;
+    Color inactiveColor = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return GestureDetector(
       onTap: () {
@@ -97,7 +97,7 @@ class _TabsScreenState extends State<TabsScreen> {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: isSelected ? _activeColor.withAlpha(50) : Colors.transparent,
+            color: isSelected ? activeColor.withAlpha(50) : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
           ),
         
@@ -109,14 +109,14 @@ class _TabsScreenState extends State<TabsScreen> {
               children: [
                 Icon(
                   icon,
-                  color: isSelected ? _activeColor : _inactiveColor,
+                  color: isSelected ? activeColor : inactiveColor,
                   size: 22,
                 ),
                 Text(
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isSelected ? _activeColor : _inactiveColor,
+                    color: isSelected ? activeColor : inactiveColor,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),

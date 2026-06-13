@@ -5,10 +5,9 @@ import 'package:planner_demo/models/app_data.dart';
 final appdataProvider = FutureProvider<AppData>((ref) async {
   final dbhelper = DatabaseHelper();
 
-  final graphData = await dbhelper.buildGraphAndStopIndex();
+  final database = await dbhelper.database;
 
   return AppData(
-    graph: graphData.graph,
-    stopIndex: graphData.stopIndex,
+    database: database,
   );
 });

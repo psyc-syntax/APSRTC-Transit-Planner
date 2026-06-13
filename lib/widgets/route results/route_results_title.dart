@@ -14,12 +14,6 @@ class RouteResultsTitle extends StatelessWidget {
           },
           child: Icon(Icons.arrow_back),
         ),
-        Text(
-          "TRIP DETAILS",
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall,
-        ),
 
         Icon(Icons.share),
       ],
