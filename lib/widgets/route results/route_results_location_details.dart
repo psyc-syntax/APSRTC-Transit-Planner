@@ -16,13 +16,13 @@ class RouteResultsLocationDetails extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(30),
             border: Border.all(
               color: Theme.of(context).dividerColor,
             )
           ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         child: Column(
           children: [
             Row(
@@ -65,7 +65,7 @@ class RouteResultsLocationDetails extends ConsumerWidget {
                       ),
         
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 0, right: 10),
                         child: Container(
                           width: double.infinity,
                           height: 2,
@@ -82,10 +82,11 @@ class RouteResultsLocationDetails extends ConsumerWidget {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0, left: 4),
-                  child: Icon(Icons.swap_vert, size: 32),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(right: 16.0, left: 4),
+                //   child: Icon(Icons.swap_vert, size: 32),
+                // ),
+                
               ],
             ),
           ],

@@ -15,7 +15,7 @@ class RouteResultsTripParamContainer extends StatelessWidget{
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(30),
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           border: Border.all(
             color: Theme.of(context).dividerColor,
@@ -29,12 +29,16 @@ class RouteResultsTripParamContainer extends StatelessWidget{
             children: [
               Text(
                 param,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 14
+                ),
               ),
           
               Text(
                 paramdetail,
-                style: Theme.of(context).textTheme.titleSmall
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontSize: 12
+                ),
               ),
           
             ],

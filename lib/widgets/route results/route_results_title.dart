@@ -15,7 +15,6 @@ class RouteResultsTitle extends StatelessWidget {
           child: Icon(Icons.arrow_back),
         ),
 
-        Icon(Icons.share),
       ],
     );
   }

@@ -1,108 +1,186 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:planner_demo/providers/providers.dart';
+import 'package:planner_demo/logic/marks_algorithm.dart';
+import 'package:planner_demo/widgets/route%20results/circular_coloured_icon.dart';
 
-class RouteResultTripCard extends ConsumerWidget {
-  const RouteResultTripCard({
-    super.key,
-    
-    });
+class RouteResultTripCard extends StatelessWidget {
+  const RouteResultTripCard({super.key, required this.results});
+
+  final Result? results;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the algorithm results
-  //   final routeResultsList = ref.watch(markAlgorithmProvider);
-    final startingPlacename = ref.watch(startingPlaceNameProvider);
+  Widget build(BuildContext context) {
+    final trip = results?.path ?? [];
 
-  //   return routeResultsList.when(
-  // loading: () => const Center(child: CircularProgressIndicator()),
-  // error: (err, stack) =>
-  //     Text("Error: $err", style: const TextStyle(color: Colors.red)),
-  // data: (results) {
-  //   if (results.isEmpty) return const Text("No path found.");
+    String minToTime(int minutes) {
+      minutes %= 1440;
 
-  //   int hours = (((results.last.values.first.toDouble().round() / 20) * 30) / 60).toInt();
-  //   int minutes = (((results.last.values.first.toDouble().round() / 20) * 30) % 60).toInt();
-    
-  int minutes = 0;
-  int hours = 0;
-  final results = [];
-  
-   
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16.0),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8.0,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Top Row
-          Row(
-            children: [
-              Text(
-                "08:00 - 09:30",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                    ),
-              ),
-              const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+      int hours = minutes ~/ 60;
+      int min = minutes % 60;
+
+      final String period = hours >= 12 ? "PM" : "AM";
+
+      hours = hours % 12;
+
+      return "${hours.toString().padLeft(2, '0')}:"
+          "${min.toString().padLeft(2, '0')} $period";
+    }
+
+    if (trip.isEmpty) {
+      return const Center(child: Text("No Route Found"));
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      itemCount: trip.length,
+      itemBuilder: (context, index) {
+        final stop = trip[index];
+
+        final bool isFirst = index == 0;
+        final bool isLast = index == trip.length - 1;
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 50),
+
+            /// ARRIVAL TIME
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${hours}H ${minutes != 0 ? "$minutes MIN" : ""}"),
-                  Text("${results.length - 1} stops"),
+                  !isFirst
+                      ? Text(
+                          "${minToTime(stop.arrivalTime)}",
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontSize: 12, letterSpacing: 0.1),
+                        )
+                      : Text(
+                          "Start",
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontSize: 16, color: Colors.green),
+                        ),
+
+                  if (!isFirst)
+                    Text(
+                      "arrival",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
                 ],
               ),
-            ],
-          ),
+            ),
 
-          const Divider(height: 24),
+            /// TIMELINE
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: [
+                  if (!isFirst)
+                    Container(
+                      width: 2,
+                      height: 4,
+                      color: Theme.of(context).dividerColor,
+                    ),
 
-          //ListView.builder INSIDE ONE CARD
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: results.length + 1, // +1 for starting point
-            itemBuilder: (context, index) {
-              // First item = starting place
-              if (index == 0) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(
-                    "$startingPlacename - 0 km",
-                    style: const TextStyle(fontSize: 16),
+                  isFirst
+                      ? CircularColouredIcon(
+                          iconData: Icons.directions_walk,
+                          color: Colors.green,
+                        )
+                      : !isLast
+                      ? CircularColouredIcon(
+                          iconData: Icons.bus_alert,
+                          color: Theme.of(context).dividerColor,
+                          isfillColor: false,
+                        )
+                      : CircularColouredIcon(
+                          iconData: Icons.directions_transit,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                  if (!isLast)
+                    Container(
+                      width: 2,
+                      height: 40,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                ],
+              ),
+            ),
+
+            /// STOP DETAILS
+            Expanded(
+              flex: 5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    stop.placeName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall?.copyWith(fontSize: 16),
                   ),
-                );
-              }
 
-              final step = results[index - 1];
-              final stopName = step.keys.first;
-              final distance = step.values.first;
+                  const SizedBox(height: 4),
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  "$stopName - ${distance.toStringAsFixed(1)} km",
-                  style: const TextStyle(fontSize: 16),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+                  Text(
+                    isFirst
+                        ? "Boarding Stop"
+                        : isLast
+                        ? "Destination"
+                        : "",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /// DEPARTURE TIME
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  !isLast
+                      ? Text(
+                          "${minToTime(stop.deptTime)}",
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                                fontSize: 12,
+                                letterSpacing: 0.1,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        )
+                      : Text(
+                          "End",
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontSize: 16,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
+
+                  if (!isLast)
+                    Text(
+                      "departure",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
-// );
-// }
 }

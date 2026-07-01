@@ -10,7 +10,7 @@ class RouteSearchCard extends StatelessWidget{
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(30),
         border: Border.all(
           color: Theme.of(context).dividerColor,
           width: 1,

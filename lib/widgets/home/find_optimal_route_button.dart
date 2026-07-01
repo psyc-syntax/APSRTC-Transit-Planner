@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/providers/providers.dart';
+
 import 'package:planner_demo/screens/route_results_screen.dart';
 
 class FindOptimalRouteButton extends ConsumerWidget {
@@ -12,15 +13,11 @@ class FindOptimalRouteButton extends ConsumerWidget {
     final bool isstartingPlaceSelected = ref.watch(
       isstartingPlaceSelectedProvider,
     );
-    final String startingPlaceName = ref.watch(startingPlaceNameProvider);
-    final String destinationPlaceName = ref.watch(destinationPlaceNameProvider);
+    
     final bool isdestinationPlaceSelected = ref.watch(
       isdestinationPlaceSelectedProvider,
     );
 
-    final now = DateTime.now();
-
-    int time = now.hour * 60 + now.minute;
 
     return Container(
       decoration: BoxDecoration(
@@ -34,24 +31,23 @@ class FindOptimalRouteButton extends ConsumerWidget {
       ),
       child: ElevatedButton(
         onPressed: () async {
+
+
+          
+
           if (isstartingPlaceSelected && isdestinationPlaceSelected) {
             ref.read(runAlgorithmTriggerProvider.notifier).state++;
-            final result = await marksAlgorithm(
-              ref.watch(startingPlaceIdProvider),
-              ref.watch(destinationPlaceIdProvider),
-              time,
-            );
+            ref.read(isMarkAlgorithmRunning.notifier).state = true;
 
-            if(context.mounted){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => RouteResultsScreen(
-                    results: result
-                  ),
-                ),
-              );
-            }
+            if (ref.read(isMarkAlgorithmRunning)) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (ctx) => RouteResultsScreen()),
+            );
+          }
+            
+
+            
           }
 
           // Navigator.push(
@@ -62,7 +58,7 @@ class FindOptimalRouteButton extends ConsumerWidget {
         style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(20),
+              borderRadius: BorderRadiusGeometry.circular(30),
             ),
           ),
         ),

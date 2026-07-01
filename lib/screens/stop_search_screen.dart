@@ -6,11 +6,10 @@ import 'package:planner_demo/widgets/shared/stop_basic_details_card.dart';
 
 class StopSearchScreen extends StatefulWidget {
   const StopSearchScreen({
-    super.key, 
-    required this.isbackneeded, 
-    required this.isStartingStop
-    }
-  );
+    super.key,
+    required this.isbackneeded,
+    required this.isStartingStop,
+  });
 
   final bool isbackneeded;
   final bool isStartingStop;
@@ -21,6 +20,7 @@ class StopSearchScreen extends StatefulWidget {
 
 class _StopSearchScreenState extends State<StopSearchScreen> {
   final TextEditingController controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
   List<Map<String, dynamic>> stops = [];
@@ -30,12 +30,21 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
   @override
   void initState() {
     super.initState();
-    searchStops(""); //load all data initially
+    searchStops("");
+
+    //load all data initially
+
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        setState(() {});
+      }
+    });
   }
 
   @override
   void dispose() {
     controller.dispose();
+    _focusNode.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -79,61 +88,92 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  SearchTitle(isbackneeded: widget.isbackneeded),
-            
+                  
+
+                  if(!_focusNode.hasFocus) SearchTitle(isbackneeded: widget.isbackneeded),
+
                   // TEXTFIELD UI
                   Padding(
                     padding: const EdgeInsets.only(top: 16, bottom: 16),
                     child: TextField(
                       controller: controller,
+                      focusNode: _focusNode,
                       onChanged: (value) {
                         //DEBOUNCE
                         if (_debounce?.isActive ?? false) {
                           _debounce!.cancel();
                         }
-            
+
                         _debounce = Timer(
                           const Duration(milliseconds: 300),
                           () {
                             searchStops(value);
                           },
                         );
-            
+
                         setState(() {}); // update header visibility
                       },
                       textAlignVertical: TextAlignVertical.center,
                       style: Theme.of(context).textTheme.titleSmall,
-        
-            
+
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 24,
-                        ),
+                        isDense: true,
+                        prefixIcon: _focusNode.hasFocus
+                            ? InkWell(
+                              onTap: () {
+                                controller.clear();
+                                searchStops("");
+                                _focusNode.unfocus();
+                              },
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: 22,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface,
+                              ),
+                            )
+                            : Icon(
+                                Icons.search,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                                size: 22,
+                              ),
+
+                        prefixIconConstraints: _focusNode.hasFocus
+                            ? const BoxConstraints(minWidth: 46, minHeight: 46)
+                            : const BoxConstraints(minWidth: 46, minHeight: 46),
+
                         hintText: "Select stop or city...",
+                        
                         filled: true,
-                        fillColor:
-                            Theme.of(context).colorScheme.surfaceContainerHighest,
-                        hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fillColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        hintStyle: Theme.of(context).textTheme.titleMedium!
+                            .copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
-                          
+
                         contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10,
+                          vertical: 6,
                           horizontal: 12,
                         ),
-                        
+
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide:
-                              BorderSide(color: Theme.of(context).dividerColor, width: 1),
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 1,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                           borderSide: BorderSide(
-                            color:
-                                Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).dividerColor,
                             width: 1,
                           ),
                         ),
@@ -143,10 +183,8 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
                 ],
               ),
             ),
-        
-            Expanded(
-              child: _buildResults(isSearching),
-            ),
+
+            Expanded(child: _buildResults(isSearching)),
           ],
         ),
       ),

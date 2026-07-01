@@ -1,8 +1,8 @@
 
 import "package:flutter/material.dart";
 
-class TripSuggestionBlock extends StatelessWidget {
-  const TripSuggestionBlock({super.key});
+class OnGoingTripBlock extends StatelessWidget {
+  const OnGoingTripBlock({super.key});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -14,7 +14,7 @@ class TripSuggestionBlock extends StatelessWidget {
           width: 1,
         ),
 
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(30),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,29 +23,33 @@ class TripSuggestionBlock extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.bus_alert,),
+                Icon(Icons.bus_alert, color: Theme.of(context).colorScheme.onSurfaceVariant),
         
                 const SizedBox(width: 10,),
         
-                Text("Next Recommended Trip",
+                Text("On Going Trip",
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
         
               ],
             ),
 
-            SizedBox(height: 20,),
+            SizedBox(height: 16,),
 
             Row(
               children: [
                 Text("Kakinada",
-                  style: Theme.of(context).textTheme.titleLarge
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 16
+                  )
                 ),
                 const SizedBox(width: 10,),
                 const Icon(Icons.arrow_right_alt_rounded),
                 const SizedBox(width: 10,),
                 Text("Vijayawada",
-                  style: Theme.of(context).textTheme.titleLarge
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 16
+                  )
                 ),
               ],
             ),
@@ -55,15 +59,20 @@ class TripSuggestionBlock extends StatelessWidget {
             Row(
               children: [
                 Text("08:00 AM - 09:30 PM",
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontSize: 18
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 16
                   )
                 ),
               ],
             ),
 
+            SizedBox(height: 6,),
+
             Row(
               children: [
+                
+                
+
                 Text("12h 10m",
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     letterSpacing: 0.1,

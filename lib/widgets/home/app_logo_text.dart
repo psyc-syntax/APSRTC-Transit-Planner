@@ -41,10 +41,10 @@ class MainTitle extends StatelessWidget {
           ),
 
           // Drop Down menu button
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.menu, size: 30),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Icon(Icons.menu, size: 30),
+          // ),
         ],
       ),
     );

@@ -1,6 +1,3 @@
-
-import 'package:collection/collection.dart';
-
 import 'package:planner_demo/helpers/database_helper.dart';
 
 // =========================================================
@@ -10,36 +7,21 @@ import 'package:planner_demo/helpers/database_helper.dart';
 //
 // =========================================================
 //
-//  HOW ROUNDS WORK
+//  WHY NOT A REAL "oprs_found" TABLE
 //
-//  Each round = one bus taken (one additional transfer).
-//  Within a round, you can travel the ENTIRE length
-//  of a route — not just one stop at a time.
+//  A persistent table would need to be cleared/rebuilt per
+//  search, can't safely handle two searches running at once,
+//  and the write cost per state is higher than what we'd save.
 //
-//  Round 1:  Board any bus from source.
-//            Scan ALL stops on that route forward.
-//            Source reaches 20+ stops in round 1.
+//  INSTEAD: dynamic NOT IN (...) built from the in-memory
+//  used-bus set, bound as SQL parameters. SQLite excludes
+//  those rows BEFORE joining/aggregating — no wasted I/O
+//  across the Dart↔SQLite boundary, no wasted Dart iteration.
 //
-//  Round 2:  At any stop reached in round 1,
-//            board a DIFFERENT bus. Scan its stops.
-//            1 transfer covered.
-//
-//  Round 3, 4, 5: each = one more transfer.
-//
-//  5 rounds = 4 transfers. Covers any AP/Telangana journey.
-//
-//  KEY QUERY (does all the heavy lifting):
-//
-//    SELECT e2.to_placeId, MIN(e2.arr_min)
-//    FROM edges e1
-//    JOIN edges e2
-//        ON  e1.oprsNo = e2.oprsNo        -- same bus
-//        AND e2.from_seqNo >= e1.from_seqNo -- forward only
-//    WHERE e1.from_placeId = ?            -- boarding stop
-//      AND e1.dep_min BETWEEN ? AND ?     -- departs after arrival
-//    GROUP BY e2.to_placeId
-//
-//  One call per stop per round. Scans entire routes.
+//  usedSoFar already contains the currently-ridden bus
+//  (added when that state was created), so the old separate
+//  "!= boardingOprs" param is now redundant and removed —
+//  one NOT IN list covers everything.
 //
 // =========================================================
 
@@ -52,13 +34,18 @@ class Pair<K, V> {
 
 class PathStop {
   final String placeId;
-  final String placeName; // Optional: can be fetched from DB if needed
+  final String placeName;
   final int    arrivalTime;
   final int    deptTime;
-  final String oprsNo; // Added to track the bus route taken at this stop
+  final String oprsNo;
 
-
-  PathStop(this.placeId, this.placeName, this.arrivalTime, this.deptTime, this.oprsNo);
+  PathStop({
+    required this.placeId,
+    required this.placeName,
+    required this.arrivalTime,
+    required this.deptTime,
+    required this.oprsNo,
+  });
 }
 
 class Result {
@@ -82,63 +69,107 @@ Future<Result> marksAlgorithm(
 
   print("MARKS: $sourcePlaceId → $destinationPlaceId at $startTime");
 
-  // ── State ──────────────────────────────────────────────
-  final Map<String, int>            earliestArrival = {sourcePlaceId: startTime};
-  final Map<String, String>         previous        = {};
-  final Map<String, Pair<int, int>> stopTimes       = {};
-  final Map<String, String>        oprsAtStop      = {};
-
-  // Stops improved in the last round.
-  // Round 1 starts from source.
-
-  Map<String, int> markedLastRound = {sourcePlaceId: startTime};
-
   // ── Config ─────────────────────────────────────────────
-  const int maxRounds      = 6;    // 5–6 covers any AP/Telangana journey
-  const int maxWaitMinutes = 240;  // max 4 hours wait for a connecting bus
-  const int boardingBuffer = 5;    // 5 min minimum boarding time
+  const int maxRounds      = 6;
+  const int maxWaitMinutes = 240;
+  const int boardingBuffer = 5;
+
+  // ── State ──────────────────────────────────────────────
+
+  Map<String, int>            earliestArrival = {};
+  Map<String, String>         previous        = {};
+  Map<String, Pair<int, int>> stopTimes       = {};
+
+
+
+
+  /// global pruning map, keyed by PLACE ONLY
+  Map<String, int> globalBest = {sourcePlaceId: startTime};
+
+
+
+
+  /// buses already ridden to reach each state — bounded by
+  Map<String, Set<String>> usedOprsAtStop = {};
+
+
+
+  final String startKey = "$sourcePlaceId|null";
+  earliestArrival[startKey] = startTime;
+  usedOprsAtStop[startKey]  = <String>{};
+
+
+  List<String> currentRoundStops = [startKey];
 
   // =========================================================
-  // MAIN LOOP
-  // Each iteration = one round = one bus taken
+  // MAIN LOOP — each round = one bus taken
   // =========================================================
+
+  
 
   for (int round = 1; round <= maxRounds; round++) {
 
-    if (markedLastRound.isEmpty) break;
+    if (currentRoundStops.isEmpty) break;
 
-    print("Round $round | boarding from ${markedLastRound.length} stop(s)");
+    print("Round $round | exploring ${currentRoundStops.length} stop(s)");
 
-    final Map<String, int> improvedThisRound = {};
+    List<String> nextRoundStops = [];
 
-    for (final entry in markedLastRound.entries) {
+    for (final String stopKeyNow in currentRoundStops) {
 
-      final String boardingStop  = entry.key;
-      final int    arrivalHere   = entry.value;
-      final int    earliestBoard = arrivalHere + boardingBuffer;
-      final int    latestBoard   = arrivalHere + maxWaitMinutes;
+      final String boardingStop = stopKeyNow.split('|')[0];
+      final int    currArr      = earliestArrival[stopKeyNow] ?? startTime;
 
-      // ── ROUTE SCAN QUERY ───────────────────────────────
-      //
-      // e1 = boarding edge at boardingStop
-      // e2 = any subsequent edge on the SAME route (same oprsNo)
-      //
-      // Returns every stop this bus reaches,
-      // with the earliest arrival time at each.
-      //
-      // This is what makes 5-6 rounds sufficient:
-      // one query scans an entire 20-stop route,
-      // not just the next single hop.
-      //
-      // ──────────────────────────────────────────────────
+      Set<String> usedSoFar = {};
+      if(usedOprsAtStop.containsKey(stopKeyNow)){
+        usedSoFar = usedOprsAtStop[stopKeyNow]!;
+      }
+
+      // ── Build dynamic exclusion clause ───────────────────
+      // Empty usedSoFar at source → no clause, any bus eligible.
+      // Otherwise excludes every bus already ridden this journey,
+      // done at the SQL level so excluded routes never get
+      // joined/aggregated or sent back to Dart at all.
+
+
+      final List<String> usedList = usedSoFar.toList();
+      
+
+
+
+      String exclusionClause = "";
+
+      if(usedList.isNotEmpty){
+        exclusionClause = "AND e1.oprsNo NOT IN(";
+
+        for(int i = 0; i < usedList.length; i++){
+          exclusionClause += "?";
+
+          if(i != usedList.length - 1){
+            exclusionClause += ",";
+          }
+
+
+        }
+        exclusionClause += ")";
+      }
+
+      List <Object> params = [];
+
+      params.add(boardingStop);
+      params.add(currArr + boardingBuffer);
+      params.add(currArr + maxWaitMinutes);
+
+      for(int i = 0; i < usedList.length; i++){
+        params.add(usedList[i]);
+      }
 
       final List<Map<String, dynamic>> reachable =
           await database.rawQuery('''
         SELECT
             e2.to_placeId        AS to_placeId,
-            e2.from_placeId      AS from_placeId,
             e2.oprsNo            AS oprsNo,
-            e2.dep_min           AS dep_min,
+            e1.dep_min           AS dep_min,
             MIN(e2.arr_min)      AS arr_min
         FROM edges e1
         JOIN edges e2
@@ -146,104 +177,452 @@ Future<Result> marksAlgorithm(
             AND e2.from_seqNo >= e1.from_seqNo
         WHERE e1.from_placeId = ?
           AND e1.dep_min BETWEEN ? AND ?
+          $exclusionClause
         GROUP BY e2.to_placeId
         ORDER BY arr_min ASC
-      ''', [boardingStop, earliestBoard, latestBoard]);
+      ''', params);
+
+      // No client-side usedSoFar.contains(oprsNo) check needed —
+      // SQL already excluded them before this point.
 
       for (final row in reachable) {
 
-        final String? toId   = row['to_placeId']   as String?;
-        final String? fromId = row['from_placeId'] as String?;
-        final String? oprsNo = row['oprsNo']       as String?;
-        final int?    dep    = row['dep_min']       as int?;
-        final int?    arr    = row['arr_min']       as int?;
+        final String? toPlaceId = row['to_placeId'] as String?;
+        final String? oprsNo    = row['oprsNo']     as String?;
+        final int?    dept      = row['dep_min']    as int?;
+        final int?    arr       = row['arr_min']    as int?;
 
-        if (toId == null || dep == null || arr == null) continue;
+        if (toPlaceId == null || oprsNo == null ||
+            dept == null || arr == null) continue;
 
-        final bool isBetter = !earliestArrival.containsKey(toId) ||
-                               arr < earliestArrival[toId]!;
+        final String newKey = "$toPlaceId|$oprsNo";
 
-        if (isBetter) {
-          earliestArrival[toId]    = arr;
-          previous[toId]           = fromId ?? boardingStop;
-          stopTimes[toId]          = Pair(arr, dep);
-          oprsAtStop[toId]         = oprsNo ?? '';
-          improvedThisRound[toId]  = arr;
+        final bool isBetterForRoute =
+            !earliestArrival.containsKey(newKey) ||
+             arr < earliestArrival[newKey]!;
+
+        if (!isBetterForRoute) continue;
+
+        earliestArrival[newKey] = arr;
+        previous[newKey]        = stopKeyNow;
+        stopTimes[newKey]       = Pair(dept, arr);
+        usedOprsAtStop[newKey]  = {...usedSoFar, oprsNo};
+
+        final bool isBetterGlobally =
+            !globalBest.containsKey(toPlaceId) ||
+             arr < globalBest[toPlaceId]!;
+
+        if (isBetterGlobally) {
+          globalBest[toPlaceId] = arr;
+          nextRoundStops.add(newKey);
         }
       }
     }
 
     print(
-      "  Round $round: ${improvedThisRound.length} stops improved"
-      " | dest=${earliestArrival[destinationPlaceId] ?? 'not yet'}",
+      "  Round $round done: ${nextRoundStops.length} stop(s) to expand next"
+      " | dest=${globalBest[destinationPlaceId] ?? 'not yet'}",
     );
 
-    // ── Destination found — stop after this full round ──
-    // Finishing the round guarantees best time within
-    // this transfer count (not just first-found).
-    if (earliestArrival.containsKey(destinationPlaceId)) {
-      print("  ✅ Destination found in round $round");
+    if (globalBest.containsKey(destinationPlaceId)) {
+      print("  ✅ Destination reached in round $round");
       break;
     }
 
-    markedLastRound = improvedThisRound;
+    if (nextRoundStops.isEmpty) break;
+    currentRoundStops = nextRoundStops;
   }
 
-  // =========================================================
-  // NO ROUTE FOUND
-  // =========================================================
+  return _buildResult(
+    sourcePlaceId,
+    destinationPlaceId,
+    startTime,
+    previous,
+    stopTimes,
+    database,
+  );
+}
 
-  if (!earliestArrival.containsKey(destinationPlaceId)) {
-    print("❌ No route found in $maxRounds rounds.");
+
+// =========================================================
+// BUILD RESULT — reconstruct path from destination back to source
+// =========================================================
+
+Future<Result> _buildResult(
+  String sourcePlaceId,
+  String destinationPlaceId,
+  int    startTime,
+  Map<String, String>         previous,
+  Map<String, Pair<int, int>> stopTimes,
+  dynamic database,
+) async {
+
+  final List<String> destKeys = [];
+  for (final key in stopTimes.keys) {
+    if (key.startsWith("$destinationPlaceId|")) {
+      destKeys.add(key);
+    }
+  }
+
+  if (destKeys.isEmpty) {
+    print("❌ No route found.");
     return Result([], 0);
   }
 
-  // =========================================================
-  // RECONSTRUCT PATH
-  // Walk backwards from destination to source
-  // =========================================================
+  String bestKey = destKeys.first;
+  for (final key in destKeys) {
+    if (stopTimes[key]!.value < stopTimes[bestKey]!.value) {
+      bestKey = key;
+    }
+  }
 
-  final List<PathStop> path = [];
-  String? curr = destinationPlaceId;
-  String? lastOprs = null;
+  final List<PathStop> rawPath = [];
+  String? currentKey = bestKey;
 
-  while (curr != null) {
+  while (currentKey != null) {
 
-    final List<Map<String, dynamic>> stopInfo = await database.rawQuery(
-        'SELECT placeName FROM place_master WHERE placeId = ?',
-        [curr],
-      );
+    final String placeId = currentKey.split('|')[0];
+    final String oprsNo  = currentKey.split('|')[1];
 
-    final String safePlaceName = stopInfo.isNotEmpty 
-        ? stopInfo.first['placeName'] as String 
-        : 'Unknown Stop';
-
-    if (curr == sourcePlaceId) {
-      path.insert(0, PathStop(curr, safePlaceName, startTime, startTime, oprsAtStop[curr] ?? ''));
+    if (placeId == sourcePlaceId) {
+      rawPath.insert(0, PathStop(
+        placeId:     placeId,
+        placeName:   '',
+        arrivalTime: startTime,
+        deptTime:    startTime,
+        oprsNo:      '',
+      ));
       break;
     }
 
+    final Pair<int, int>? times = stopTimes[currentKey];
+    if (times == null) break;
 
-    final timing = stopTimes[curr];
+    rawPath.insert(0, PathStop(
+      placeId:     placeId,
+      placeName:   '',
+      arrivalTime: times.value,
+      deptTime:    times.key,
+      oprsNo:      oprsNo,
+    ));
 
-
-    if (timing == null) break;
-
-
-    final oprsNo = oprsAtStop[curr];
-
-    // If it's a new bus route OR we are at the destination (lastOprs == null), add it.
-    if (lastOprs == null || oprsNo != lastOprs) {
-      
-      path.insert(0, PathStop(curr, safePlaceName, timing.key, timing.value, oprsNo ?? ''));
-      lastOprs = oprsNo; // Track the route we are currently walking backward on
-    }
-    curr = previous[curr];
+    currentKey = previous[currentKey];
   }
 
-  print("Done: ${path.length} stops | arrival=${earliestArrival[destinationPlaceId]}");
-  return Result(path, earliestArrival[destinationPlaceId]!);
+  // shift deptTime: each stop shows the NEXT leg's boarding time
+  for (int i = 0; i < rawPath.length - 1; i++) {
+    rawPath[i] = PathStop(
+      placeId:     rawPath[i].placeId,
+      placeName:   rawPath[i].placeName,
+      arrivalTime: rawPath[i].arrivalTime,
+      deptTime:    rawPath[i + 1].deptTime,
+      oprsNo:      rawPath[i].oprsNo,
+    );
+  }
+  if (rawPath.isNotEmpty) {
+    final last = rawPath.last;
+    rawPath[rawPath.length - 1] = PathStop(
+      placeId:     last.placeId,
+      placeName:   last.placeName,
+      arrivalTime: last.arrivalTime,
+      deptTime:    last.arrivalTime,
+      oprsNo:      last.oprsNo,
+    );
+  }
+
+  // batch place name lookup
+  final List<String> placeIds = rawPath.map((p) => p.placeId).toList();
+  Map<String, String> nameLookup = {};
+  if (placeIds.isNotEmpty) {
+    final placeholders = List.filled(placeIds.length, '?').join(',');
+    final List<Map<String, dynamic>> rows = await database.rawQuery(
+      'SELECT placeId, placeName FROM place_master WHERE placeId IN ($placeholders)',
+      placeIds,
+    );
+    for (final row in rows) {
+      nameLookup[row['placeId'].toString()] = row['placeName']?.toString() ?? '';
+    }
+  }
+
+  final List<PathStop> path = rawPath.map((p) => PathStop(
+    placeId:     p.placeId,
+    placeName:   nameLookup[p.placeId] ?? '',
+    arrivalTime: p.arrivalTime,
+    deptTime:    p.deptTime,
+    oprsNo:      p.oprsNo,
+  )).toList();
+
+  print("Path: ${path.length} stop(s) | arrival=${stopTimes[bestKey]!.value}");
+  for (int i = 0; i < path.length; i++) {
+    final s = path[i];
+    print(
+      "  [${i + 1}] ${s.placeName} (${s.placeId})"
+      "  bus=${s.oprsNo.isEmpty ? 'source' : s.oprsNo}"
+      "  board=${s.deptTime}  arrive=${s.arrivalTime}",
+    );
+  }
+
+  return Result(path, stopTimes[bestKey]!.value);
 }
+
+
+
+
+
+
+
+// import 'dart:collection';
+
+// import 'package:collection/collection.dart';
+// import 'package:path/path.dart';
+
+// import 'package:planner_demo/helpers/database_helper.dart';
+
+// // =========================================================
+// //
+// //   MARKS ALGORITHM — ROUND-BASED (RAPTOR-style)
+// //   MARK — Transit Intelligence
+// //
+// // =========================================================
+// //
+// //  HOW ROUNDS WORK
+// //
+// //  Each round = one bus taken (one additional transfer).
+// //  Within a round, you can travel the ENTIRE length
+// //  of a route — not just one stop at a time.
+// //
+// //  Round 1:  Board any bus from source.
+// //            Scan ALL stops on that route forward.
+// //            Source reaches 20+ stops in round 1.
+// //
+// //  Round 2:  At any stop reached in round 1,
+// //            board a DIFFERENT bus. Scan its stops.
+// //            1 transfer covered.
+// //
+// //  Round 3, 4, 5: each = one more transfer.
+// //
+// //  5 rounds = 4 transfers. Covers any AP/Telangana journey.
+// //
+// //  KEY QUERY (does all the heavy lifting):
+// //
+// //    SELECT e2.to_placeId, MIN(e2.arr_min)
+// //    FROM edges e1
+// //    JOIN edges e2
+// //        ON  e1.oprsNo = e2.oprsNo        -- same bus
+// //        AND e2.from_seqNo >= e1.from_seqNo -- forward only
+// //    WHERE e1.from_placeId = ?            -- boarding stop
+// //      AND e1.dep_min BETWEEN ? AND ?     -- departs after arrival
+// //    GROUP BY e2.to_placeId
+// //
+// //  One call per stop per round. Scans entire routes.
+// //
+// // =========================================================
+
+// class Pair<K, V> {
+//   final K key;
+//   final V value;
+//   Pair(this.key, this.value);
+// }
+
+// class PathStop {
+//   final String placeId;
+//   final String placeName;
+//   final int arrivalTime;
+//   final int deptTime;
+//   final String oprsNo; // Added to track the bus route taken at this stop
+
+//   PathStop({
+//     required this.placeId,
+
+//     required this.placeName,
+//     required this.arrivalTime,
+//     required this.deptTime,
+//     required this.oprsNo,
+//   });
+// }
+
+// class Result {
+//   final List<PathStop> path;
+//   final int time;
+//   Result(this.path, this.time);
+// }
+
+// Future<Result> marksAlgorithm(
+//   String sourcePlaceId,
+//   String destinationPlaceId,
+//   int startTime,
+// ) async {
+//   if (sourcePlaceId.isEmpty || destinationPlaceId.isEmpty) {
+//     return Result([], 0);
+//   }
+
+//   final database = await DatabaseHelper().database;
+
+//   print("MARKS: $sourcePlaceId → $destinationPlaceId at $startTime");
+
+//   const int maxRounds = 6; // 5–6 covers any AP/Telangana journey
+//   const int maxWaitMinutes = 1000; // max 4 hours wait for a connecting bus
+//   const int boardingBuffer = 5;
+
+//   // 5 min minimum boarding time
+
+//   Map<String, String> previous = {};
+//   Map<String, Pair<int, int>> stopTimes = {};
+//   Map<String, int> earliestArrival = {};
+
+//   String startKey = "$sourcePlaceId|null";
+//   earliestArrival[startKey] = startTime;
+//   List<String> currentRoundStops = [startKey];
+
+
+//   for (int round = 1; round <= maxRounds; round++) {
+
+
+
+//     List<String> nextRoundStops = [];
+//     print("current round $round");
+//     print("current round lenght ${currentRoundStops.length}.");
+
+
+    
+
+//     for (String stop in currentRoundStops) {
+
+
+//       String boardingStop = stop.split('|')[0];
+
+//       int currarr = earliestArrival[stop] ?? startTime;
+
+//       final List<Map<String, dynamic>> reachable = await database.rawQuery(
+//         '''
+//         WITH best_arrival AS (
+//           SELECT
+//             e2.to_placeId,
+//             MIN(e2.arr_min) AS arr_min
+//           FROM edges e1
+//           JOIN edges e2
+//             ON e1.oprsNo = e2.oprsNo
+//             AND e2.from_seqNo >= e1.from_seqNo
+//           WHERE e1.from_placeId = ?
+//             AND e1.dep_min BETWEEN ? AND ?
+            
+//           Group BY e2.to_placeId
+
+//         )
+//         SELECT
+//             e1.from_placeId      AS from_placeId,
+//             e2.to_placeId        AS to_placeId,
+//             e2.oprsNo            AS oprsNo,
+//             e1.dep_min           AS dep_min,
+//             e2.arr_min           AS arr_min
+//         FROM edges e1
+//         JOIN edges e2
+//             ON  e1.oprsNo     = e2.oprsNo
+//             AND e2.from_seqNo >= e1.from_seqNo
+//         JOIN best_arrival b
+//           ON b.to_placeId = e2.to_placeId
+//           AND b.arr_min = e2.arr_min
+//         LEFT JOIN oprs_found ofnd
+//             ON e2.oprsNO = ofnd.oprsNO
+//           WHERE e1.from_placeId = ?
+//             AND e1.dep_min BETWEEN ? AND ?
+//             AND ofnd.oprsNo is NULL
+//         ORDER BY dep_min
+//       ''',
+//         [
+//           boardingStop, currarr + boardingBuffer, currarr + maxWaitMinutes, 
+//           boardingStop, currarr + boardingBuffer, currarr + maxWaitMinutes
+//         ],
+//       );
+
+//       for (final row in reachable) {
+        
+//         final String toPlaceId = row['to_placeId'];
+//         final String oprsNo = row['oprsNo'];
+//         final int dept = row['dep_min'];
+//         final int arr = row['arr_min'];
+
+//         final String stopKey = "$toPlaceId|$oprsNo";
+
+//         if (!earliestArrival.containsKey(stopKey) ||
+//             arr < earliestArrival[stopKey]!) {
+//           earliestArrival[stopKey] = arr;
+//           previous[stopKey] = stop;
+//           stopTimes[stopKey] = Pair(dept, arr);
+//           nextRoundStops.add(stopKey);
+//         }
+//       }
+//     }
+//     if(nextRoundStops.isEmpty) break;
+//     currentRoundStops = nextRoundStops;
+//   }
+
+//   return await _buildResult(destinationPlaceId, previous, stopTimes);
+// }
+
+// Future<Result> _buildResult(
+//   String destinationPlaceId, 
+//   Map<String, String> previous, 
+//   Map<String, Pair<int, int>> stopTimes
+// ) async{
+//   final List<String> destKeys = [];
+
+//   final database = await DatabaseHelper().database;
+
+//   // 1. Gather all keys that correspond to our destination
+//   for (final key in stopTimes.keys) {
+//     if (key.startsWith("$destinationPlaceId|")) {
+//       destKeys.add(key);
+//     }
+//   }
+
+//   // 2. If the destination was never reached, return an empty result
+//   if (destKeys.isEmpty) return Result([], 0);
+
+//   // 3. Find the key with the earliest arrival time
+//   String bestKey = destKeys.first;
+//   for (final key in destKeys) {
+//     if (stopTimes[key]!.value < stopTimes[bestKey]!.value) {
+//       bestKey = key;
+//     }
+//   }
+
+//   // 4. Backtrack from destination to source
+//   List<PathStop> path = [];
+//   String? currentKey = bestKey;
+
+//   while (currentKey != null && currentKey != "null") {
+//     final times = stopTimes[currentKey];
+//     final parts = currentKey.split('|');
+    
+//     if (times != null) {
+
+//       final List<Map<String, dynamic>> row = await database.rawQuery(
+//         '''
+//           SELECT placeName from place_master where placeId = ?
+//         ''',
+//         [parts[0]],
+//       );
+//       // Insert at index 0 to build the path in chronological order
+//       path.insert(0, PathStop(
+//         placeId: parts[0],
+//         arrivalTime: times.value,
+//         placeName: row[0]['placeName'],
+//         deptTime: times.key,
+//         oprsNo: parts[1],
+//       ));
+//     }
+    
+//     // Move to the previous stop in the chain
+//     currentKey = previous[currentKey];
+//   }
+
+//   // 5. Return the final constructed path and the best arrival time
+//   return Result(path, stopTimes[bestKey]!.value);
+// }
+
+  
+
 
 
 // class Pair<K, V> {

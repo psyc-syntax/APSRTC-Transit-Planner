@@ -117,7 +117,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                     ),
                    shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(10))),
+                      borderRadius: BorderRadiusGeometry.circular(30))),
                     ),
                   
                   child: Text("Today",
@@ -154,7 +154,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                     ),
                    shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(10))),
+                      borderRadius: BorderRadiusGeometry.circular(30))),
                     ),
                   
                   child: Text("Tomorrow",
@@ -191,7 +191,7 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   
                  shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadiusGeometry.circular(10))),
+                    borderRadius: BorderRadiusGeometry.circular(30))),
                   ),
                 child: Icon(
                   Icons.calendar_month, 
