@@ -75,119 +75,150 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final isSearching = controller.text.isNotEmpty;
+    final Color bgColor = Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        top: true,
-        left: true,
-        right: true,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  
-
-                  if(!_focusNode.hasFocus) SearchTitle(isbackneeded: widget.isbackneeded),
-
-                  // TEXTFIELD UI
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16, bottom: 16),
-                    child: TextField(
-                      controller: controller,
-                      focusNode: _focusNode,
-                      onChanged: (value) {
-                        //DEBOUNCE
-                        if (_debounce?.isActive ?? false) {
-                          _debounce!.cancel();
-                        }
-
-                        _debounce = Timer(
-                          const Duration(milliseconds: 300),
-                          () {
-                            searchStops(value);
-                          },
-                        );
-
-                        setState(() {}); // update header visibility
-                      },
-                      textAlignVertical: TextAlignVertical.center,
-                      style: Theme.of(context).textTheme.titleSmall,
-
-                      decoration: InputDecoration(
-                        isDense: true,
-                        prefixIcon: _focusNode.hasFocus
-                            ? InkWell(
-                              onTap: () {
-                                controller.clear();
-                                searchStops("");
-                                _focusNode.unfocus();
-                              },
-                              child: Icon(
-                                Icons.arrow_back,
-                                size: 22,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface,
-                              ),
-                            )
-                            : Icon(
-                                Icons.search,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: Stack(
+        children: [
+          SafeArea(
+          bottom: false,
+          top: true,
+          left: true,
+          right: true,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    
+        
+                    if(!_focusNode.hasFocus) SearchTitle(isbackneeded: widget.isbackneeded),
+        
+                    // TEXTFIELD UI
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 16),
+                      child: TextField(
+                        controller: controller,
+                        focusNode: _focusNode,
+                        onChanged: (value) {
+                          //DEBOUNCE
+                          if (_debounce?.isActive ?? false) {
+                            _debounce!.cancel();
+                          }
+        
+                          _debounce = Timer(
+                            const Duration(milliseconds: 300),
+                            () {
+                              searchStops(value);
+                            },
+                          );
+        
+                          setState(() {}); // update header visibility
+                        },
+                        textAlignVertical: TextAlignVertical.center,
+                        style: Theme.of(context).textTheme.titleSmall,
+        
+                        decoration: InputDecoration(
+                          isDense: true,
+                          prefixIcon: _focusNode.hasFocus
+                              ? InkWell(
+                                onTap: () {
+                                  controller.clear();
+                                  searchStops("");
+                                  _focusNode.unfocus();
+                                },
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  size: 22,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                              )
+                              : Icon(
+                                  Icons.search,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                  size: 22,
+                                ),
+        
+                          prefixIconConstraints: _focusNode.hasFocus
+                              ? const BoxConstraints(minWidth: 46, minHeight: 46)
+                              : const BoxConstraints(minWidth: 46, minHeight: 46),
+        
+                          hintText: "Select stop or city...",
+                          
+                          filled: true,
+                          fillColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          hintStyle: Theme.of(context).textTheme.titleMedium!
+                              .copyWith(
                                 color: Theme.of(
                                   context,
                                 ).colorScheme.onSurfaceVariant,
-                                size: 22,
                               ),
-
-                        prefixIconConstraints: _focusNode.hasFocus
-                            ? const BoxConstraints(minWidth: 46, minHeight: 46)
-                            : const BoxConstraints(minWidth: 46, minHeight: 46),
-
-                        hintText: "Select stop or city...",
-                        
-                        filled: true,
-                        fillColor: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        hintStyle: Theme.of(context).textTheme.titleMedium!
-                            .copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 6,
-                          horizontal: 12,
-                        ),
-
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).dividerColor,
-                            width: 1,
+        
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 12,
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).dividerColor,
-                            width: 1,
+        
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).dividerColor,
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).dividerColor,
+                              width: 1,
+                            ),
                           ),
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+        
+              Expanded(child: _buildResults(isSearching)),
+            ],
+          ),
+        ),
+
+        if(widget.isbackneeded)Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 100, // Height covers the floating card background buffer area perfectly
+            child: IgnorePointer(
+              // CRITICAL: IgnorePointer ensures users can still scroll or click elements through the gradient overlay
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      bgColor.withOpacity(0.0), // Starts fully transparent
+                      bgColor.withOpacity(0.8), // Smooth transition buildup
+                      bgColor,                  // Ends completely solid at the device edge
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
                   ),
-                ],
+                ),
               ),
             ),
-
-            Expanded(child: _buildResults(isSearching)),
-          ],
-        ),
+          ),
+        ]
       ),
+      
     );
   }
 

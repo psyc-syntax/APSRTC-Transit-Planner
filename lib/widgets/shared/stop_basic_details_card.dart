@@ -26,7 +26,7 @@ class StopBasicDetailsCard extends ConsumerWidget{
   @override
   Widget build(BuildContext context, ref) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: InkWell(
         onTap: () {
           if(isbackneeded){
@@ -77,7 +77,7 @@ class StopBasicDetailsCard extends ConsumerWidget{
                       child: Icon(
                         Icons.business, 
                         color: Theme.of(context).dividerColor,
-                        size: 42,
+                        size: 32,
                       ),
                     ),
                   ),
@@ -93,7 +93,7 @@ class StopBasicDetailsCard extends ConsumerWidget{
                           :stopName, 
                           
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontSize: 18,
+                        fontSize: 16,
                       ),
                     ),
             
@@ -105,6 +105,7 @@ class StopBasicDetailsCard extends ConsumerWidget{
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontSize: 12,
                         letterSpacing: 0,
                       ),
                     ),
@@ -112,10 +113,12 @@ class StopBasicDetailsCard extends ConsumerWidget{
                     Row(
                       children: [
                         Text("$district- ", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontSize: 12,
                         letterSpacing: 0,
                       ),
                       ),
                         Text(pincode, style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontSize: 12,
                         letterSpacing: 0,
                       ),
                         ),
@@ -126,7 +129,7 @@ class StopBasicDetailsCard extends ConsumerWidget{
                   )
                 ],
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 6,),
               Container(
                  height: 2,
                  width: double.infinity,

@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:planner_demo/logic/marks_algorithm.dart';
+import 'package:planner_demo/screens/trip_navigation_screen.dart';
 
 class StartTripButton extends StatelessWidget{
-  const StartTripButton({super.key});
+  const StartTripButton(
+    {
+      super.key,
+      required this.results
+    }
+    );
+
+  final Result results;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +20,13 @@ class StartTripButton extends StatelessWidget{
         
       ),
       child: ElevatedButton(
-        onPressed: (){},
+        onPressed: (){
+          Navigator.of(context).push(
+          MaterialPageRoute(builder: (context){
+            return TripNavigationScreen(results: results,);
+          })
+        );
+        },
         style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
           
           shape: WidgetStatePropertyAll(

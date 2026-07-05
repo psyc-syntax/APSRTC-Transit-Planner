@@ -16,7 +16,7 @@ const kLightColorScheme = ColorScheme(
   // Used for:
   // Secondary actions
   // Special highlights
-  secondary: Color(0xFF2562EB),
+  secondary: Colors.lightBlueAccent,
   onSecondary: Colors.white,
 
   // Error color
@@ -28,7 +28,7 @@ const kLightColorScheme = ColorScheme(
 
   // Main app background
   // Whole screen background color
-  surface: Colors.white,
+  surface: Color(0xFFF8FAFC),
 
   // Primary text color
   // Main  text color in light mode
@@ -36,11 +36,12 @@ const kLightColorScheme = ColorScheme(
 
   // Slightly faded text color
   // Used for subtitles and helper text
-  onSurfaceVariant: Colors.black54,
+  onSurfaceVariant: Color(0xFF64748B),
 
   // Card colors
   // White cards on white background gives clean modern look
   surfaceContainerHighest: Colors.white,
+  surfaceContainerHigh: Color(0xFFF1F5F9),
   secondaryContainer: Colors.white,
 );
 
@@ -126,8 +127,8 @@ class AppTheme {
     /// - Smart insight section
     ///
     cardTheme: CardThemeData(
-      color: kLightColorScheme.surface,
-      elevation: 2,
+      color: kLightColorScheme.surfaceContainerHighest,
+      elevation: 1,
 
       // Rounded corners exactly like your design
       shape: RoundedRectangleBorder(
@@ -167,13 +168,13 @@ class AppTheme {
     /// More
     ///
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: kLightColorScheme.surface,
+      backgroundColor: kLightColorScheme.surfaceContainerHighest,
 
       // Active tab color
       selectedItemColor: kLightColorScheme.primary,
 
       // Inactive tab color
-      unselectedItemColor: const Color(0xFF64748B),
+      unselectedItemColor: kLightColorScheme.onSurfaceVariant,
     ),
 
     /// 

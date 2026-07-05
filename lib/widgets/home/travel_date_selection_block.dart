@@ -1,33 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:planner_demo/helpers/date_time_update_helper.dart';
 
-class TravelDateSelectionBlock extends StatefulWidget{
+import 'package:planner_demo/providers/providers.dart';
+
+class TravelDateSelectionBlock extends ConsumerWidget {
   const TravelDateSelectionBlock({super.key});
 
+ 
+
+
+  
   @override
-  State<TravelDateSelectionBlock> createState() => _TravelDateSelectionBlockState();
-}
+  Widget build(BuildContext context, ref) {
 
-class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
-
-  DateTime? _selectedDate = DateTime.now();
-  String _selectedType = "today";
-
-
-  Future<void> pickDate() async{
-      DateTime? date = await showDatePicker(
+  Future<void> pickDate() async {
+    DateTime? date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(), 
-      firstDate: DateTime.now(), 
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2050),
     );
 
-    if(date != null){
-      _selectedDate = date;
+    if (date != null) {
+      
+      
+      updateTempDateAndDefaultTime(ref, date);
+      
+      
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -49,16 +53,16 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                 Row(
                   // travel date title with calendar icon
                   children: [
-
                     // travel date title with calendar icon
                     Icon(
-                      Icons.calendar_month, 
-                      color: Theme.of(context).colorScheme.onSurfaceVariant, 
+                      Icons.calendar_month,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       size: 16,
                     ),
 
-                    SizedBox(width: 2,),
-                    Text("Travel Date", // travel date headding
+                    SizedBox(width: 2),
+                    Text(
+                      "Travel Date", // travel date headding
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ],
@@ -67,28 +71,23 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     TextButton(
-                      onPressed: () async{
-                        setState(() {
-                          _selectedType = "custom";
-                        });
-                          await pickDate();
-                        },
+                      onPressed: () async {
+                        
+                        await pickDate();
+                      },
                       style: TextButton.styleFrom(
                         minimumSize: Size.zero,
                         padding: EdgeInsets.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        "Select Calendar", // select calendar button 
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.blue,
-                        ),
+                        "Select Calendar", // select calendar button
+                        style: TextStyle(fontSize: 13, color: Colors.blue),
                       ),
                     ),
-                    Text(" >")
+                    Text(" >"),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -98,104 +97,107 @@ class _TravelDateSelectionBlockState extends State<TravelDateSelectionBlock> {
               //today button
               Container(
                 child: ElevatedButton(
-                  onPressed: (){
-                    setState(() {
-                      _selectedType = "today";
-                      _selectedDate = DateTime.now();
-                    });
-                  }, 
+                  onPressed: () {
+                    
+
+                      updateTempDateAndDefaultTime(ref, DateTime.now());
+                  },
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                   backgroundColor: 
-                    WidgetStateProperty.all(
-                      _selectedType == "today"
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surfaceContainerHigh
+                    backgroundColor: WidgetStateProperty.all(
+                      ref.watch(tempDateCategoryProvider) == "Today"
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.surfaceContainerHigh,
                     ),
 
                     padding: const WidgetStatePropertyAll(
                       EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     ),
-                   shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(30))),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(30),
+                      ),
                     ),
-                  
-                  child: Text("Today",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: _selectedType == "today"
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 16,
-                    letterSpacing: 0, 
                   ),
+
+                  child: Text(
+                    "Today",
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: ref.watch(tempDateCategoryProvider) == "Today"
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 16,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ),
-              
+
               //tomorrow button
               Container(
                 child: ElevatedButton(
-                  onPressed: (){
-                    setState(() {
-                      _selectedType = "tomorrow";
-                    _selectedDate = DateTime.now().add(const Duration(days: 1));
-                    });
-                  }, 
+                  onPressed: () {
+                    
+                      updateTempDateAndDefaultTime(ref, DateTime.now().add(Duration(days: 1)));
+
+                    
+                  },
 
                   style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                   backgroundColor: 
-                    WidgetStateProperty.all(
-                      _selectedType == "tomorrow"
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surfaceContainerHigh
+                    backgroundColor: WidgetStateProperty.all(
+                      ref.watch(tempDateCategoryProvider) == "Tomorrow"
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.surfaceContainerHigh,
                     ),
-                   padding: const WidgetStatePropertyAll(
+                    padding: const WidgetStatePropertyAll(
                       EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     ),
-                   shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(30))),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(30),
+                      ),
                     ),
-                  
-                  child: Text("Tomorrow",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: _selectedType == "tomorrow"
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 16,
-                    letterSpacing: 0,
                   ),
+
+                  child: Text(
+                    "Tomorrow",
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: ref.watch(tempDateCategoryProvider) == "Tomorrow"
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 16,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ),
-          
+
               // calendar icon button
               ElevatedButton(
-                onPressed: ()async{
-                  setState(() {
-                    _selectedType = "custom";
-                  });
+                onPressed: () async {
+                
+                    
                   await pickDate();
-                }, 
+                },
                 style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                 backgroundColor: 
-                    WidgetStateProperty.all(
-                      _selectedType == "custom"
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surfaceContainerHigh
-                    ),
-
-                 padding: const WidgetStatePropertyAll(
-                      EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                    ),
-                  
-                 shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadiusGeometry.circular(30))),
+                  backgroundColor: WidgetStateProperty.all(
+                    ref.watch(tempDateCategoryProvider) == "Custom"
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surfaceContainerHigh,
                   ),
+
+                  padding: const WidgetStatePropertyAll(
+                    EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                  ),
+
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadiusGeometry.circular(30),
+                    ),
+                  ),
+                ),
                 child: Icon(
-                  Icons.calendar_month, 
-                  color: _selectedType == "custom"
+                  Icons.calendar_month,
+                  color: ref.watch(tempDateCategoryProvider) == "Custom"
                       ? Theme.of(context).colorScheme.onPrimary
                       : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),

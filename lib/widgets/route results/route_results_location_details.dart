@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:planner_demo/providers/providers.dart';
+import 'package:planner_demo/screens/stop_search_screen.dart';
 
 class RouteResultsLocationDetails extends ConsumerWidget {
-  const RouteResultsLocationDetails({super.key});
+  const RouteResultsLocationDetails({
+    super.key,
+   
+    });
+
+  
 
   @override
   Widget build(BuildContext context, ref) {
+
+   
 
     //provider starting-destination place names
     final String startingPlaceName = ref.watch(startingPlaceNameProvider);
@@ -15,7 +24,8 @@ class RouteResultsLocationDetails extends ConsumerWidget {
     //Widget container of location details
     return Container(
       decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            // color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(30),
             border: Border.all(
               color: Theme.of(context).dividerColor,
@@ -57,15 +67,27 @@ class RouteResultsLocationDetails extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        startingPlaceName,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall?.copyWith(fontSize: 16),
+                      GestureDetector(
+
+                        onTap: () {
+                          
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(builder: (ctx){
+                              return StopSearchScreen(isbackneeded: true, isStartingStop: true);
+                            })
+                            );
+                        },
+                        child: Text(
+                          startingPlaceName,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall?.copyWith(fontSize: 16),
+                        ),
                       ),
         
                       Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 0, right: 10),
+                        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 0, right: 8),
                         child: Container(
                           width: double.infinity,
                           height: 2,
@@ -73,19 +95,44 @@ class RouteResultsLocationDetails extends ConsumerWidget {
                         ),
                       ),
         
-                      Text(
-                        destinationPlaceName,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall?.copyWith(fontSize: 16),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (ctx){
+                              return StopSearchScreen(isbackneeded: true, isStartingStop: false);
+                            })
+                          );
+                        },
+                        child: Text(
+                          destinationPlaceName,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall?.copyWith(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(right: 16.0, left: 4),
-                //   child: Icon(Icons.swap_vert, size: 32),
-                // ),
+                GestureDetector(
+                  onTap: () {
+                    
+                    String startingPlaceId = ref.read(startingPlaceIdProvider);
+                            String destinationPlaceId = ref.read(destinationPlaceIdProvider);
+                            String startingPlaceName = ref.read(startingPlaceNameProvider);
+                            String destinationPlaceName = ref.read(destinationPlaceNameProvider);
+                            ref.read(startingPlaceNameProvider.notifier).state = destinationPlaceName;
+                            ref.read(destinationPlaceNameProvider.notifier).state = startingPlaceName;
+                            ref.read(startingPlaceIdProvider.notifier).state = destinationPlaceId;
+                            ref.read(destinationPlaceIdProvider.notifier).state = startingPlaceId;
+                            ref.read(runAlgorithmTriggerProvider.notifier).state++;
+                            ref.read(isMarkAlgorithmRunning.notifier).state = true;
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0, left: 4),
+                    child: Icon(Icons.swap_vert, size: 28),
+                  ),
+                ),
                 
               ],
             ),

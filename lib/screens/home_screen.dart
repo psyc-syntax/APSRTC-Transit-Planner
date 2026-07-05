@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/home/find_optimal_route_button.dart';
 import 'package:planner_demo/widgets/home/app_logo_text.dart';
 import 'package:planner_demo/widgets/home/route_search_card.dart';
-import 'package:planner_demo/widgets/home/on_goind_trip_block.dart';
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -56,26 +56,26 @@ class HomeScreen extends StatelessWidget {
                       ),
         
                       // recent history section
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top : 16,
-                        ),
-                        // child: QuickHistory(),
-                        child: OnGoingTripBlock(),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(
+                      //     left: 16,
+                      //     right: 16,
+                      //     top : 16,
+                      //   ),
+                      //   // child: QuickHistory(),
+                      //   child: OnGoingTripBlock(),
+                      // ),
 
 
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          top : 16,
-                        ),
-                        // child: QuickHistory(),
-                        child: OnGoingTripBlock(),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(
+                      //     left: 16,
+                      //     right: 16,
+                      //     top : 16,
+                      //   ),
+                      //   // child: QuickHistory(),
+                      //   child: OnGoingTripBlock(),
+                      // ),
         
                       SizedBox(height: 200,)
                     ],

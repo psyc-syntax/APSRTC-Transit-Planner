@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:planner_demo/helpers/database_helper.dart';
+import 'package:planner_demo/logic/distance_calculator_by_lat_and_lon.dart';
 
 // =========================================================
 //
@@ -38,6 +41,8 @@ class PathStop {
   final int    arrivalTime;
   final int    deptTime;
   final String oprsNo;
+  final double? distance;
+  final int? time;
 
   PathStop({
     required this.placeId,
@@ -45,6 +50,8 @@ class PathStop {
     required this.arrivalTime,
     required this.deptTime,
     required this.oprsNo,
+    this.time,
+    this.distance
   });
 }
 
@@ -164,7 +171,7 @@ Future<Result> marksAlgorithm(
         params.add(usedList[i]);
       }
 
-      final List<Map<String, dynamic>> reachable =
+      List<Map<String, dynamic>> reachable =
           await database.rawQuery('''
         SELECT
             e2.to_placeId        AS to_placeId,
@@ -185,6 +192,37 @@ Future<Result> marksAlgorithm(
       // No client-side usedSoFar.contains(oprsNo) check needed —
       // SQL already excluded them before this point.
 
+      if(currArr + maxWaitMinutes >= 1440){
+
+       params[0] = boardingStop;
+       params[1] = max(0, currArr - 1440) + boardingBuffer;
+       params[2] = min(currArr - 1440 + maxWaitMinutes, 480);
+
+        final  List<Map<String, dynamic>> midNightReachable =
+          await database.rawQuery('''
+        SELECT
+            e2.to_placeId        AS to_placeId,
+            e2.oprsNo            AS oprsNo,
+            e1.dep_min           AS dep_min,
+            MIN(e2.arr_min)      AS arr_min
+        FROM edges e1
+        JOIN edges e2
+            ON  e1.oprsNo     = e2.oprsNo
+            AND e2.from_seqNo >= e1.from_seqNo
+        WHERE e1.from_placeId = ?
+          AND e1.dep_min BETWEEN ? AND ?
+          $exclusionClause
+        GROUP BY e2.to_placeId
+        ORDER BY arr_min ASC
+      ''', params);
+
+       reachable = [
+        ...reachable,
+        ...midNightReachable
+       ];
+      }
+
+      
       for (final row in reachable) {
 
         final String? toPlaceId = row['to_placeId'] as String?;
@@ -304,6 +342,8 @@ Future<Result> _buildResult(
       arrivalTime: times.value,
       deptTime:    times.key,
       oprsNo:      oprsNo,
+      time: times.value - times.key
+
     ));
 
     currentKey = previous[currentKey];
@@ -316,7 +356,8 @@ Future<Result> _buildResult(
       placeName:   rawPath[i].placeName,
       arrivalTime: rawPath[i].arrivalTime,
       deptTime:    rawPath[i + 1].deptTime,
-      oprsNo:      rawPath[i].oprsNo,
+      oprsNo:      rawPath[i + 1].oprsNo,
+      time : rawPath[i].time
     );
   }
   if (rawPath.isNotEmpty) {
@@ -341,6 +382,8 @@ Future<Result> _buildResult(
   }
 
   Map<String, String> nameLookup = {};
+  Map<String, double> latLookup = {};
+  Map<String, double> lonLookup = {};
 
   if (placeIds.isNotEmpty) {
     String placeholders = "";
@@ -352,21 +395,67 @@ Future<Result> _buildResult(
       }
     }
     final List<Map<String, dynamic>> rows = await database.rawQuery(
-      'SELECT placeId, placeName FROM place_master WHERE placeId IN ($placeholders)',
+      'SELECT placeId, placeName, latitude, longitude FROM place_master WHERE placeId IN ($placeholders)',
       placeIds,
     );
     for (final row in rows) {
-      nameLookup[row['placeId'].toString()] = row['placeName']?.toString() ?? '';
+
+      final id = row['placeId'].toString();
+
+      nameLookup[id] = row['placeName']?.toString() ?? '';
+      latLookup[id] = (row['latitude'] as num?)?.toDouble() ?? 0.0;
+      lonLookup[id] = (row['longitude'] as num?)?.toDouble() ?? 0.0;
     }
   }
 
-  final List<PathStop> path = rawPath.map((p) => PathStop(
-    placeId:     p.placeId,
-    placeName:   nameLookup[p.placeId] ?? '',
-    arrivalTime: p.arrivalTime,
-    deptTime:    p.deptTime,
-    oprsNo:      p.oprsNo,
-  )).toList();
+  final List<PathStop> path = [];
+
+for (int i = 0; i < rawPath.length; i++) {
+
+  double distance = 0;
+
+  int time = 0;
+
+  if(i < rawPath.length - 1){
+    final fromId = rawPath[i].placeId;
+    final toId = rawPath[i + 1].placeId;
+
+     time = (rawPath[i].deptTime) -  (rawPath[i + 1].arrivalTime);
+
+     int arrival = rawPath[i+ 1].arrivalTime;
+      int dept = rawPath[i].deptTime;
+
+    distance = calculateDistance(
+      latLookup[fromId]!,
+       lonLookup[fromId]!, 
+       latLookup[toId]!, 
+       lonLookup[toId]!
+    );
+
+    if(arrival < dept)
+    {
+      arrival += 1440;
+    }
+
+    time = arrival - dept;
+
+    distance = (distance + (distance / 100) * 30) + time * (2 / 3);
+    distance /= 2;
+
+  }
+  path.add(
+    PathStop(
+      placeId: rawPath[i].placeId,
+      placeName: nameLookup[rawPath[i].placeId] ?? '',
+      arrivalTime: rawPath[i].arrivalTime,
+      deptTime: rawPath[i].deptTime,
+      oprsNo: rawPath[i].oprsNo,
+      distance: distance,
+      time: time
+      
+    ),
+  );
+}
 
   print("Path: ${path.length} stop(s) | arrival=${stopTimes[bestKey]!.value}");
 
@@ -376,7 +465,9 @@ Future<Result> _buildResult(
     print(
       "  [${i + 1}] ${s.placeName} (${s.placeId})"
       "  bus=${s.oprsNo.isEmpty ? 'source' : s.oprsNo}"
-      "  board=${s.deptTime}  arrive=${s.arrivalTime}",
+      "  board=${s.deptTime}  arrive=${s.arrivalTime} "
+      " distance = ${s.distance}"
+      "  time = ${s.time}"
     );
   }
 

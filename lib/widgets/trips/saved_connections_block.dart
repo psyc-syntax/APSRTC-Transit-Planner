@@ -18,21 +18,21 @@ class SavedConnectionsBlock extends StatelessWidget {
 
           TripsTypeBar(),
           
-          SizedBox(height: 25,),
+          // SizedBox(height: 25,),
 
-          TripCard(),
-          SizedBox(height: 10,),
-          TripCard(),
-          SizedBox(height: 10,),
-          TripCard(),
-          SizedBox(height: 10,),
-          TripCard(),
-          SizedBox(height: 10,),
-          TripCard(),
-          SizedBox(height: 10,),
-          TripCard(),
-          SizedBox(height: 10,),
-          TripCard(),
+          // TripCard(),
+          // SizedBox(height: 10,),
+          // TripCard(),
+          // SizedBox(height: 10,),
+          // TripCard(),
+          // SizedBox(height: 10,),
+          // TripCard(),
+          // SizedBox(height: 10,),
+          // TripCard(),
+          // SizedBox(height: 10,),
+          // TripCard(),
+          // SizedBox(height: 10,),
+          // TripCard(),
 
           
 

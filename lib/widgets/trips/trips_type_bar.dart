@@ -42,11 +42,15 @@ class _TripsTypeBarState extends State<TripsTypeBar> {
                 ),
             
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Container(
+                    decoration: BoxDecoration(
+                      color: selectedIndex == 0 ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(30)
+                    ),
                     width: double.infinity,
                     height: 3,
-                    color: selectedIndex == 0 ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                    
                   ),
                 )
               ],
@@ -69,11 +73,15 @@ class _TripsTypeBarState extends State<TripsTypeBar> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
                   child: Container(
+                    decoration: BoxDecoration(
+                      color: selectedIndex == 1 ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(30)
+                    ),
                     width: double.infinity,
                     height: 3,
-                    color: selectedIndex == 1 ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                    
                   ),
                 )
               ],

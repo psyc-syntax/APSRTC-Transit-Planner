@@ -24,55 +24,78 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Dynamically fetch the scaffold background color for a perfect seamless fade
+    final Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+
     return Scaffold(
-      //for floating effect
+      // Keeps the screen content scrolling entirely behind the floating nav bar area
       extendBody: true,
-      body: _pages[_selectedIndex],
       
-      //build bottom navigation bar custom floating
+      // FIX: Changed body to a Stack to host the ambient Telegram-style fade layer
+      body: Stack(
+        children: [
+          // Layer 1: The actual active screen content
+          _pages[_selectedIndex],
+
+          // Layer 2: True Telegram-Style Ambient Bottom Scrim Gradient
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 140, // Generous height gives the gradient plenty of runway to fade out smoothly
+            child: IgnorePointer(
+              // CRITICAL: Allows users to click and scroll scrollviews right through the gradient layer
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      bgColor.withOpacity(0.0), // Starts completely transparent up high
+                      bgColor.withOpacity(0.5), // Soft intermediate transition
+                      bgColor.withOpacity(0.9), // Richer buildup
+                      bgColor,                  // Closes 100% solid at the absolute device edge
+                    ],
+                    stops: const [0.0, 0.4, 0.8, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      // Custom floating navigation bar (now cleanly separated from the background mask)
       bottomNavigationBar: _buildBottomBar(),
     );
   }
 
   Widget _buildBottomBar() {
     return SafeArea(
+      
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 15), 
+        
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
         child: Container(
+          // Translucent Floating Navigation Bar Pill
           decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(30),
             border: Border.all(
               color: Theme.of(context).dividerColor,
-              width: 2,
+              width: 1,
             ),
-            // The shadow below the bar
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                blurRadius: 30,
-                spreadRadius: 8,
-                offset: const Offset(0, 16),
-              ),
-            ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: BackdropFilter(
-              // makes the background blurry
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-
-                color: Theme.of(context).colorScheme.surfaceContainerHighest, 
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(child: _navItem(Icons.home, "Home", 0)),
-                    Expanded(child: _navItem(Icons.location_pin, "Stops", 1)),
-                    Expanded(child: _navItem(Icons.save, "Trips", 2)),
-                    Expanded(child: _navItem(Icons.more_horiz, "More", 3)),
-                  ],
-                ),
-              ),
+          child: Padding(
+            padding: const EdgeInsets.all(2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(child: _navItem(Icons.home, "Home", 0)),
+                Expanded(child: _navItem(Icons.location_pin, "Stops", 1)),
+                Expanded(child: _navItem(Icons.save, "Trips", 2)),
+                Expanded(child: _navItem(Icons.more_horiz, "More", 3)),
+              ],
             ),
           ),
         ),
@@ -100,7 +123,6 @@ class _TabsScreenState extends State<TabsScreen> {
             color: isSelected ? activeColor.withAlpha(50) : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
           ),
-        
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: Column(

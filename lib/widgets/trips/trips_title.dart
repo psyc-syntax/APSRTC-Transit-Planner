@@ -12,17 +12,7 @@ class TripsTitle extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(Icons.add, size: 32,),
-          ),
-        )
+        
     
       ]
     );      

@@ -16,7 +16,8 @@ class RouteResultsTripParamContainer extends StatelessWidget{
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          // color:Colors.transparent,
           border: Border.all(
             color: Theme.of(context).dividerColor,
           )

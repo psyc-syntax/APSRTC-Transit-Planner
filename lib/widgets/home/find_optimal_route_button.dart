@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:planner_demo/helpers/date_time_update_helper.dart';
 
 import 'package:planner_demo/providers/providers.dart';
 
@@ -36,8 +37,20 @@ class FindOptimalRouteButton extends ConsumerWidget {
           
 
           if (isstartingPlaceSelected && isdestinationPlaceSelected) {
+            if(ref.read(tempDateCategoryProvider) == "Today"){
+              ref.read(tempSelectedStartTimeProvider.notifier).state = DateTime.now().hour * 60 + DateTime.now().minute;
+            }
+            else{
+              ref.read(tempSelectedStartTimeProvider.notifier).state = 480;
+            }
+            
+            updateDateAndTime(ref);
+            
             ref.read(runAlgorithmTriggerProvider.notifier).state++;
             ref.read(isMarkAlgorithmRunning.notifier).state = true;
+
+            
+          
 
             if (ref.read(isMarkAlgorithmRunning)) {
             Navigator.push(
