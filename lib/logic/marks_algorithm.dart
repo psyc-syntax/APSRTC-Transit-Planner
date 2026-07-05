@@ -331,10 +331,26 @@ Future<Result> _buildResult(
   }
 
   // batch place name lookup
-  final List<String> placeIds = rawPath.map((p) => p.placeId).toList();
+  // final List<String> placeIds = rawPath.map((p) => p.placeId).toList();
+
+  List<String> placeIds = [];
+  for (var p in rawPath) {
+    if (!placeIds.contains(p.placeId)) {
+      placeIds.add(p.placeId);
+    }
+  }
+
   Map<String, String> nameLookup = {};
+
   if (placeIds.isNotEmpty) {
-    final placeholders = List.filled(placeIds.length, '?').join(',');
+    String placeholders = "";
+
+    for (int i = 0; i < placeIds.length; i++) {
+      placeholders += "?";
+      if (i != placeIds.length - 1) {
+        placeholders += ",";
+      }
+    }
     final List<Map<String, dynamic>> rows = await database.rawQuery(
       'SELECT placeId, placeName FROM place_master WHERE placeId IN ($placeholders)',
       placeIds,
@@ -353,6 +369,8 @@ Future<Result> _buildResult(
   )).toList();
 
   print("Path: ${path.length} stop(s) | arrival=${stopTimes[bestKey]!.value}");
+
+  
   for (int i = 0; i < path.length; i++) {
     final s = path[i];
     print(
