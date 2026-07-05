@@ -1,8 +1,7 @@
 import 'package:intl/intl.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+
 import 'package:planner_demo/logic/marks_algorithm.dart';
-import 'package:planner_demo/providers/providers.dart';
+
 
 class DateTimeData {
   /// Converts a native DateTime into your planner's shared Map configuration structure
