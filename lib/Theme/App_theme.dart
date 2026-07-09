@@ -16,7 +16,7 @@ const kLightColorScheme = ColorScheme(
   // Used for:
   // Secondary actions
   // Special highlights
-  secondary: Colors.lightBlueAccent,
+  secondary: Color(0xFF60A5FA),
   onSecondary: Colors.white,
 
   // Error color

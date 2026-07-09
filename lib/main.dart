@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/Theme/app_theme.dart';
+import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/screens/tabs.dart';
 
 void main() {
@@ -23,18 +24,15 @@ void main() {
   runApp(ProviderScope(child: const App()));
 }
 
-class App extends StatefulWidget { 
+class App extends ConsumerWidget { 
   const App({super.key});
 
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  final ThemeMode _themeMode = ThemeMode.system;
+  
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+
+    final _themeMode = ref.watch(themeModeProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false, 
       themeMode: _themeMode,

@@ -19,7 +19,7 @@ class _TripsTypeBarState extends State<TripsTypeBar> {
           color: Theme.of(context).dividerColor,
           width: 1,
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

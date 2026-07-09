@@ -14,51 +14,6 @@ class TransitEndchildCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    var theme = Theme.of(context);
-    // return Card(
-    //   elevation: 0,
-    //   margin: EdgeInsets.zero,
-    //   color: theme.colorScheme.secondary.withOpacity(0.2),
-    //   shape: RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.circular(12),
-    //     side: BorderSide(color: theme.colorScheme.secondary.withOpacity(0.8)),
-    //   ),
-    //   child: Padding(
-    //     padding: const EdgeInsets.all(12.0),
-    //     child: Row(
-    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //       children: [
-    //         Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             Text(
-    //               title,
-    //               style: theme.textTheme.titleMedium?.copyWith(
-    //                 fontSize: 14,
-                   
-    //               ),
-    //             ),
-    //             const SizedBox(height: 2),
-    //             Text(
-    //               subtitle,
-    //               style: theme.textTheme.titleMedium?.copyWith(
-    //                 fontSize: 12
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //         Text(
-    //           timeString,
-    //           style: theme.textTheme.labelMedium?.copyWith(
-    //             fontWeight: FontWeight.bold,
-    //             color: theme.colorScheme.onSecondaryContainer,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
     return Container(
       margin: EdgeInsets.zero,
       decoration: BoxDecoration(
@@ -68,24 +23,45 @@ class TransitEndchildCard extends StatelessWidget {
           color: Theme.of(context).colorScheme.secondary,
         )
       ),
-
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 22),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // 1. Wrapped in Expanded so it calculates remaining width and wraps lines
+            Expanded(
+              child: Text(
+                title.toUpperCase(),
+                maxLines: null, // Allows infinite lines word-by-word
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            
+            // 2. Added spacing so long titles don't touch the vehicle info block
+            const SizedBox(width: 16),
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
+              // Forces the vehicle info column to keep its exact required space
+              mainAxisSize: MainAxisSize.min, 
               children: [
-                Text(title.toUpperCase(), style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 14,
-                ),),
-                Text(subtitle, style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 14,
-                ),),
+                Text(
+                  "VEHICLE NO", 
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle, 
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 12,
+                  ),
+                ),
               ],
             )
           ],

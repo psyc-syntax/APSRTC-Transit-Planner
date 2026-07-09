@@ -229,8 +229,8 @@ class TripNavDetailedTripDetails extends StatelessWidget {
                   endChild: Padding(
                     padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
                     child: TransitEndchildCard(
-                      title: "Ultra Deluxe", 
-                      subtitle: "Service No: 1234",
+                      title: stop.serviceType.toString(), 
+                      subtitle: "${stop.vehicleNo}",
                       timeString: "Dept: ${dateTimeData.minToTime(stop.deptTime)}",
                     ),
                   ),

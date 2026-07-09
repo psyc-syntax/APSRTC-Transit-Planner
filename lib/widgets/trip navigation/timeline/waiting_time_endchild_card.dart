@@ -19,8 +19,8 @@ class WaitingTimeEndchild extends StatelessWidget{
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withAlpha(8),
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.yellow.withAlpha(10),
+        borderRadius: BorderRadius.circular(30),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(

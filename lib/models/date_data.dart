@@ -101,7 +101,7 @@ int totalTimeCalc(Result results){
     if(path[i].time != null){
       totaltime += path[i].time!;
     }
-    if(i < path.length - 1){
+    if(i < path.length - 1 && i > 0){
       totaltime += waitingTimeFinder(path[i].arrivalTime, path[i].deptTime);
     }
   }
@@ -110,9 +110,26 @@ int totalTimeCalc(Result results){
 }
 
 double totalDistanceCalc(Result results){
-  int totalTime = totalTimeCalc(results);
+  
+  final path = results.path;
+  int totalTime = 0;
+  for(int i = 0; i < path.length - 1; i++){
+    if(path[i].time != null){
+      totalTime += path[i].time!;
+    }
+    
+  }
 
-  return totalTime * (2 / 3);
+  return totalTime * getMultiplier(totalTime);
+}
+
+double getMultiplier(int totalTime) {
+  if (totalTime <= 15) return 0.75;      // 45 km/h
+  if (totalTime <= 30) return 0.70;      // 42 km/h
+  if (totalTime <= 60) return 0.65;      // 40 km/h
+  if (totalTime <= 120) return 0.60;     // 37.2 km/h
+  if (totalTime <= 240) return 0.58;     // 34.8 km/h
+  return 0.55;                           // 33 km/h
 }
 
 

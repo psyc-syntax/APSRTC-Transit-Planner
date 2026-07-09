@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:planner_demo/helpers/database_helper.dart';
-import 'package:planner_demo/logic/distance_calculator_by_lat_and_lon.dart';
+
 
 // =========================================================
 //
@@ -43,6 +43,8 @@ class PathStop {
   final String oprsNo;
   final double? distance;
   final int? time;
+  final String? serviceType;
+  final String? vehicleNo;
 
   PathStop({
     required this.placeId,
@@ -51,7 +53,9 @@ class PathStop {
     required this.deptTime,
     required this.oprsNo,
     this.time,
-    this.distance
+    this.distance,
+    this.serviceType,
+    this.vehicleNo
   });
 }
 
@@ -196,7 +200,7 @@ Future<Result> marksAlgorithm(
 
        params[0] = boardingStop;
        params[1] = max(0, currArr - 1440) + boardingBuffer;
-       params[2] = min(currArr - 1440 + maxWaitMinutes, 480);
+       params[2] = max(currArr - 1440 + maxWaitMinutes, 390);
 
         final  List<Map<String, dynamic>> midNightReachable =
           await database.rawQuery('''
@@ -375,15 +379,19 @@ Future<Result> _buildResult(
   // final List<String> placeIds = rawPath.map((p) => p.placeId).toList();
 
   List<String> placeIds = [];
+  List<String> oprsNo = [];
   for (var p in rawPath) {
     if (!placeIds.contains(p.placeId)) {
       placeIds.add(p.placeId);
+      oprsNo.add(p.oprsNo);
     }
   }
 
   Map<String, String> nameLookup = {};
-  Map<String, double> latLookup = {};
-  Map<String, double> lonLookup = {};
+  Map<String, String> serviceTypeLookup = {};
+  Map<String, String> vehicleNoLookup = {};
+  // Map<String, double> latLookup = {};
+  // Map<String, double> lonLookup = {};
 
   if (placeIds.isNotEmpty) {
     String placeholders = "";
@@ -398,15 +406,46 @@ Future<Result> _buildResult(
       'SELECT placeId, placeName, latitude, longitude FROM place_master WHERE placeId IN ($placeholders)',
       placeIds,
     );
+
+    
+
+    
+
     for (final row in rows) {
 
       final id = row['placeId'].toString();
 
-      nameLookup[id] = row['placeName']?.toString() ?? '';
-      latLookup[id] = (row['latitude'] as num?)?.toDouble() ?? 0.0;
-      lonLookup[id] = (row['longitude'] as num?)?.toDouble() ?? 0.0;
+      nameLookup[id] = row['placeName']?.toString() ?? 'Unknown';
+
+      // latLookup[id] = (row['latitude'] as num?)?.toDouble() ?? 0.0;
+      // lonLookup[id] = (row['longitude'] as num?)?.toDouble() ?? 0.0;
     }
   }
+
+  
+    
+   if (oprsNo.isNotEmpty) {
+  final placeholders = List.filled(oprsNo.length, '?').join(',');
+
+  final List<Map<String, dynamic>> serviceDetails =
+      await database.rawQuery(
+    '''
+    SELECT oprsNo, vehicleNumber, serviceType
+    FROM service_details
+    WHERE oprsNo IN ($placeholders)
+    ''',
+    oprsNo,
+  );
+
+  for (final row in serviceDetails) {
+    final id = row['oprsNo'] as String;
+
+    serviceTypeLookup[id] = row['serviceType']?.toString() ?? '';
+    vehicleNoLookup[id] = row['vehicleNumber']?.toString() ?? '';
+  }
+}
+
+  
 
   final List<PathStop> path = [];
 
@@ -417,20 +456,16 @@ for (int i = 0; i < rawPath.length; i++) {
   int time = 0;
 
   if(i < rawPath.length - 1){
-    final fromId = rawPath[i].placeId;
-    final toId = rawPath[i + 1].placeId;
+    
 
      time = (rawPath[i].deptTime) -  (rawPath[i + 1].arrivalTime);
 
      int arrival = rawPath[i+ 1].arrivalTime;
       int dept = rawPath[i].deptTime;
 
-    distance = calculateDistance(
-      latLookup[fromId]!,
-       lonLookup[fromId]!, 
-       latLookup[toId]!, 
-       lonLookup[toId]!
-    );
+     
+
+    
 
     if(arrival < dept)
     {
@@ -439,19 +474,21 @@ for (int i = 0; i < rawPath.length; i++) {
 
     time = arrival - dept;
 
-    distance = (distance + (distance / 100) * 30) + time * (2 / 3);
+    
     distance /= 2;
 
   }
   path.add(
     PathStop(
       placeId: rawPath[i].placeId,
-      placeName: nameLookup[rawPath[i].placeId] ?? '',
+      placeName: nameLookup[rawPath[i].placeId] ?? 'UNKNOWN',
       arrivalTime: rawPath[i].arrivalTime,
       deptTime: rawPath[i].deptTime,
       oprsNo: rawPath[i].oprsNo,
       distance: distance,
-      time: time
+      time: time,
+      serviceType: serviceTypeLookup[rawPath[i].oprsNo] ?? "UNKNOWN",
+      vehicleNo: vehicleNoLookup[rawPath[i].oprsNo] ?? "UNKNOWN"
       
     ),
   );

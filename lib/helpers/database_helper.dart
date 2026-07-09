@@ -25,12 +25,12 @@ class DatabaseHelper {
     String dbPath = await getDatabasesPath();
 
     //adding the our database to app database
-    String path = join(dbPath, "apsrtc_v3.db");
+    String path = join(dbPath, "apsrtc_v1.db");
 
     //if our database doesnt exist in the apps database then adding it to the database from the assets folder
     if (!await File(path).exists()) {
       //getting byte format of data from the database
-      ByteData data = await rootBundle.load("assets/data/apsrtc_v3.db");
+      ByteData data = await rootBundle.load("assets/data/apsrtc_v1.db");
 
       List<int> bytes = data.buffer.asUint8List(
         data.offsetInBytes,
@@ -45,22 +45,33 @@ class DatabaseHelper {
 
   //method to get stop details from the database based on query
   Future<List<Map<String, dynamic>>> getSearchStops(String query) async {
-    final db = await database;
+  final db = await database;
+  final cleanQuery = query.trim();
 
-    //query is empty then return all the sorted stops up to limit 100
-    if (query.isEmpty) {
-      return await db.rawQuery(
-        "SELECT placeName, district, pincode, address, placeId FROM place_master ORDER BY placeName LIMIT 100",
-      );
-    }
-    //query is not empty return the related search stops up to limit 100
-    else {
-      return await db.rawQuery(
-        "SELECT placeName, district, pincode, address, placeId FROM place_master WHERE LOWER(placeName) LIKE ? ORDER BY placeName LIMIT 100",
-        ['${query.toLowerCase()}%'],
-      );
-    }
+  // 1. If query is empty, return top 100 stops that have at least some metadata
+  if (cleanQuery.isEmpty) {
+    return await db.rawQuery('''
+      SELECT placeName, district, pincode, address, placeId 
+      FROM place_master 
+      WHERE placeId IS NOT NULL
+        AND (pincode IS NOT NULL OR address IS NOT NULL OR district IS NOT NULL)
+      ORDER BY placeName 
+      LIMIT 100
+    ''');
+  } 
+  
+  // 2. Search query matches name AND has at least some metadata
+  else {
+    return await db.rawQuery('''
+      SELECT placeName, district, pincode, address, placeId 
+      FROM place_master 
+      WHERE placeName LIKE ? 
+        AND (pincode IS NOT NULL OR address IS NOT NULL OR district IS NOT NULL)
+      ORDER BY placeName 
+      LIMIT 100
+    ''', ['$cleanQuery%']);
   }
+}
 
 //   //building stop index like  a = [a|100, a|200, b|300]
 //   Map<String, List<String>> buildStopIndex(Map<String, List<BusTrip>> grouped) {

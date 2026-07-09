@@ -1,9 +1,11 @@
 
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:planner_demo/logic/marks_algorithm.dart';
 import 'package:planner_demo/models/date_data.dart';
+import 'package:planner_demo/screens/settings/app_theme_screen.dart';
 
 enum SelectedDateCategory  {
   today,
@@ -18,6 +20,11 @@ final destinationPlaceNameProvider = StateProvider<String>((ref) => "Select dest
 final isstartingPlaceSelectedProvider = StateProvider<bool>((ref) => false);
 final isdestinationPlaceSelectedProvider = StateProvider<bool>((ref) => false);
 final isMarkAlgorithmRunning = StateProvider<bool>((ref) => false);
+
+
+final themeModeProvider = StateProvider<ThemeMode>((ref){
+  return ThemeMode.system;
+});
 
 final SelectedDateCategoryProvider = StateProvider<String>((ref){
   return "Today";

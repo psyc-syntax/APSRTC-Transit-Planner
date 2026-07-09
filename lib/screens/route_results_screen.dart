@@ -21,6 +21,7 @@ class RouteResultsScreen extends ConsumerWidget {
     return resultsAsync.when(
       loading: () => LoadingPartWhileAlgorithmRunning(),
       error: (error, stackTrace) =>
+          
           Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,
             body: Center(child: Text("Error: $error"))),
