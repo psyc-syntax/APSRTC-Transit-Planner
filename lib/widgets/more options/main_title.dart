@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/widgets/shared/app_icon.dart';
+
 
 class MainTitle extends StatelessWidget {
   const MainTitle({super.key});
@@ -14,7 +14,7 @@ class MainTitle extends StatelessWidget {
           Row(
             children: [
               //main app Icon
-              AppIcon(),
+              // AppIcon(),
 
               // gap between app title and icon
               SizedBox(width: 6),
@@ -22,16 +22,29 @@ class MainTitle extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Mark", // main app title
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      height: 0.9,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "Mark", // main app title
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          height: 0.9,
+                          color: Theme.of(context).colorScheme.primary
+                        ),
+                        
+                      ),
+                      Text(
+                        "Bus", // main app title
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          height: 0.9,
+                        ),
+                        
+                      ),
+                    ],
                   ),
                   Text(
-                    'Transit Intelligence', // app subtitle
+                    'MARK YOUR BUS', // app subtitle
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontSize: 13,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

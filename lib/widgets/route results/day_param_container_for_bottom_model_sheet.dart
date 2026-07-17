@@ -37,9 +37,9 @@ class DayParamContainerForBottomModelSheet extends ConsumerWidget {
             return dateTimeData.displayDayMonthYear(
             dateTimeData.dateDetailsGetter(ref.read(tempSelectedDateProvider)));
           }
-          return "                ";
+          return "                  ";
         }
-        return "            ";
+        return "                ";
 
       }
     
@@ -69,7 +69,7 @@ class DayParamContainerForBottomModelSheet extends ConsumerWidget {
             Text(
               dateCategory,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
             ),
             
@@ -77,7 +77,8 @@ class DayParamContainerForBottomModelSheet extends ConsumerWidget {
             Text(
               getDateText(),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontSize: 12,
+                    fontSize: 10,
+                    overflow: TextOverflow.ellipsis
                   ),
             ),
           ],

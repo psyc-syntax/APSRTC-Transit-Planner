@@ -44,13 +44,13 @@ class TransitEndchildCard extends StatelessWidget {
             const SizedBox(width: 16),
 
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               // Forces the vehicle info column to keep its exact required space
               mainAxisSize: MainAxisSize.min, 
               children: [
                 Text(
-                  "VEHICLE NO", 
+                  "SERVICE NO", 
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontSize: 10,
                   ),

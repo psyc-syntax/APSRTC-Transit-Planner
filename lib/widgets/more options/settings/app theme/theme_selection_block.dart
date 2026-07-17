@@ -40,50 +40,59 @@ class ThemeSelectionBlock extends ConsumerWidget {
             ),
 
 
-            RadioListTile<String>(
-              value: "System Default",
-              groupValue: selectedValue,
-               visualDensity: const VisualDensity(vertical: -4),
-               horizontalTitleGap: 3,
-              onChanged: (value) {
-                
-                  ref.read(themeModeProvider.notifier).state = ThemeMode.system;
+            Material(
+              child: RadioListTile<String>(
+                value: "System Default",
+                groupValue: selectedValue,
+                 visualDensity: const VisualDensity(vertical: -4),
+                 horizontalTitleGap: 3,
+                 tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                onChanged: (value) {
+                  
+                    ref.read(themeModeProvider.notifier).state = ThemeMode.system;
+                   
                  
-               
-              },
-              title: const Text("System Default"),
-              contentPadding: EdgeInsets.zero,
+                },
+                title: const Text("System Default"),
+                contentPadding: EdgeInsets.zero,
+              ),
             ),
 
 
 
-            RadioListTile<String>(
-              value: "Light",
-              groupValue: selectedValue,
-               visualDensity: const VisualDensity(vertical: -4),
-               horizontalTitleGap: 3,
-              onChanged: (value) {
-                
-                   ref.read(themeModeProvider.notifier).state = ThemeMode.light;
-              },
-              title: const Text("Light"),
-              contentPadding: EdgeInsets.zero,
+            Material(
+              child: RadioListTile<String>(
+                value: "Light",
+                groupValue: selectedValue,
+                 visualDensity: const VisualDensity(vertical: -4),
+                 horizontalTitleGap: 3,
+                  tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                onChanged: (value) {
+                  
+                     ref.read(themeModeProvider.notifier).state = ThemeMode.light;
+                },
+                title: const Text("Light"),
+                contentPadding: EdgeInsets.zero,
+              ),
             ),
 
 
 
-            RadioListTile<String>(
-              value: "Dark",
-              groupValue: selectedValue,
-               visualDensity: const VisualDensity(vertical: -4),
-               horizontalTitleGap: 3,
-              onChanged: (value) {
-               
-                   ref.read(themeModeProvider.notifier).state = ThemeMode.dark;
-               
-              },
-              title: const Text("Dark"),
-              contentPadding: EdgeInsets.zero,
+            Material(
+              child: RadioListTile<String>(
+                value: "Dark",
+                groupValue: selectedValue,
+                 visualDensity: const VisualDensity(vertical: -4),
+                 horizontalTitleGap: 3,
+                  tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                onChanged: (value) {
+                 
+                     ref.read(themeModeProvider.notifier).state = ThemeMode.dark;
+                 
+                },
+                title: const Text("Dark"),
+                contentPadding: EdgeInsets.zero,
+              ),
             ),
           ],
         ),

@@ -43,6 +43,7 @@ class RouteResultTripCard extends StatelessWidget {
 
     return ListView.builder(
       shrinkWrap: true, 
+      physics: NeverScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
       itemCount: trip.length,
       itemBuilder: (context, index) {

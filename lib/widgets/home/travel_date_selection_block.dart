@@ -63,26 +63,25 @@ class TravelDateSelectionBlock extends ConsumerWidget {
                     SizedBox(width: 2),
                     Text(
                       "Travel Date", // travel date headding
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        overflow: TextOverflow.ellipsis
+                      ),
                     ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    TextButton(
-                      onPressed: () async {
+                    InkWell(
+                      onTap: () async {
                         
                         await pickDate();
                       },
-                      style: TextButton.styleFrom(
-                        minimumSize: Size.zero,
-                        padding: EdgeInsets.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
                       child: Text(
                         "Select Calendar", // select calendar button
-                        style: TextStyle(fontSize: 13, color: Colors.blue),
+                        style: TextStyle(fontSize: 13, color: Colors.blue,
+                        overflow: TextOverflow.ellipsis
+                        ),
                       ),
                     ),
                     Text(" >"),

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 
 class TopTitle extends StatelessWidget{
-  const TopTitle({super.key});
+  const TopTitle({super.key, required this.isbackNeeded, required this.title});
+
+  final bool isbackNeeded;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
+
+    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
                 children: [
-                  GestureDetector(
+                  if(isbackNeeded) GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
                     },
@@ -20,10 +26,11 @@ class TopTitle extends StatelessWidget{
 
                   SizedBox(width: 16),
                   Text(
-                    "Update Data",
-                    style: Theme.of(context).textTheme.headlineSmall,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                    title,
+                    style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
                   ),
 
                   

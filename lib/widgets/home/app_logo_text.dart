@@ -14,7 +14,7 @@ class MainTitle extends StatelessWidget {
           Row(
             children: [
               //main app Icon
-              AppIcon(),
+              // AppIcon(),
 
               // gap between app title and icon
               SizedBox(width: 6),
@@ -23,16 +23,17 @@ class MainTitle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Mark", // main app title
+                    "MarkBus", // main app title
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       height: 0.9,
                     ),
                   ),
                   Text(
-                    'Transit Intelligence', // app subtitle
+                    'MARK YOUR BUS', // app subtitle
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                      overflow: TextOverflow.ellipsis
+                      // fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],

@@ -54,7 +54,10 @@ class LocationSelectionBlock extends ConsumerWidget {
                   "From",
                   style: Theme.of(
                     context,
-                  ).textTheme.titleSmall?.copyWith(height: 0.9),
+                  ).textTheme.titleSmall?.copyWith(
+                    height: 0.9,
+                    overflow: TextOverflow.ellipsis
+                  ),
                 ),
                 SizedBox(height: 4),
 
@@ -76,6 +79,7 @@ class LocationSelectionBlock extends ConsumerWidget {
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                       letterSpacing: 0,
+                      overflow: TextOverflow.ellipsis
                     ),
                   ),
                 ),
@@ -98,7 +102,8 @@ class LocationSelectionBlock extends ConsumerWidget {
                   "To",
                   style: Theme.of(
                     context,
-                  ).textTheme.titleSmall?.copyWith(height: 0.9),
+                  ).textTheme.titleSmall?.copyWith(height: 0.9, overflow: TextOverflow.ellipsis),
+                  
                 ),
 
                 SizedBox(height: 4),
@@ -121,6 +126,7 @@ class LocationSelectionBlock extends ConsumerWidget {
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                       letterSpacing: 0,
+                      overflow: TextOverflow.ellipsis
                     ),
                   ),
                 ),

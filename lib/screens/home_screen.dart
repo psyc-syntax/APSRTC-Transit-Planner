@@ -36,6 +36,7 @@ class HomeScreen extends StatelessWidget {
               MainTitle(),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -54,6 +55,8 @@ class HomeScreen extends StatelessWidget {
                         // find optimal route button
                         child: FindOptimalRouteButton(),
                       ),
+
+                     
         
                       // recent history section
                       // Padding(
@@ -77,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                       //   child: OnGoingTripBlock(),
                       // ),
         
-                      SizedBox(height: 200,)
+                      
                     ],
                   ),
                 ),

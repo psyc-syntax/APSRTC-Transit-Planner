@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/widgets/trips/saved_connections_block.dart';
-import 'package:planner_demo/widgets/trips/trips_title.dart';
+import 'package:planner_demo/widgets/shared/top_title.dart';
 
-class TripsScreen extends StatelessWidget {
+
+class TripsScreen extends ConsumerStatefulWidget {
   const TripsScreen({super.key});
 
+  ConsumerState<TripsScreen> createState() => _TripsScreenState();
+}
+
+class _TripsScreenState extends ConsumerState<TripsScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      loadSavedTrips(ref);
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,14 +33,25 @@ class TripsScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const TripsTitle(),
+              const TopTitle(isbackNeeded: false, title: "Saved Trips",),
+              const SizedBox(height: 16,),
               Expanded(
                 child: SingleChildScrollView(
-                  child: const SavedConnectionsBlock(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      
+                      const SavedConnectionsBlock(),
+                  
+                      SizedBox(height: 100,),
+
+                      
+                    ],
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),

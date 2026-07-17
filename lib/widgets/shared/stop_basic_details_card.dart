@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/providers/providers.dart';
+import 'package:planner_demo/widgets/stop%20search/stop_details_alert_dialog.dart';
 
 class StopBasicDetailsCard extends ConsumerWidget{
   const StopBasicDetailsCard({
@@ -12,6 +14,8 @@ class StopBasicDetailsCard extends ConsumerWidget{
     required this.placeId,
     required this.isStartingStop,
     required this.isbackneeded,
+    required this.latitude,
+    required this.longitude
 
   });
 
@@ -22,12 +26,20 @@ class StopBasicDetailsCard extends ConsumerWidget{
   final String placeId;
   final bool isStartingStop;
   final bool isbackneeded;
+  final String?latitude;
+  final String?longitude;
 
   @override
   Widget build(BuildContext context, ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: InkWell(
+
+        onLongPress: (){
+          showDialog(context: context, builder: (context){
+            return StopDetailsAlertDialog(placeName: stopName, placeId: placeId, address: address, latitude: latitude, longitude: longitude, pincode: pincode, district: district);
+          });
+        },
         onTap: () {
           if(isbackneeded){
             if(isStartingStop){

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/route%20results/route_results_location_details.dart';
-import 'package:planner_demo/widgets/route%20results/route_results_title.dart';
+
+import 'package:planner_demo/widgets/shared/top_title.dart';
 
 class LoadingPartWhileAlgorithmRunning extends StatelessWidget {
   const LoadingPartWhileAlgorithmRunning({super.key});
@@ -14,7 +15,7 @@ class LoadingPartWhileAlgorithmRunning extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    RouteResultsTitle(),
+                    TopTitle(isbackNeeded: true, title: ""),
                     const SizedBox(height: 16),
                     RouteResultsLocationDetails(),
 

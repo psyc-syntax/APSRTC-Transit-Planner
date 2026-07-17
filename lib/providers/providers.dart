@@ -3,9 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:planner_demo/helpers/database_helper.dart';
 import 'package:planner_demo/logic/marks_algorithm.dart';
 import 'package:planner_demo/models/date_data.dart';
-import 'package:planner_demo/screens/settings/app_theme_screen.dart';
+
 
 enum SelectedDateCategory  {
   today,
@@ -14,12 +15,14 @@ enum SelectedDateCategory  {
 }
 
 final startingPlaceIdProvider = StateProvider<String>((ref) => "");
-final startingPlaceNameProvider = StateProvider<String>((ref) => "Select starting point");
+final startingPlaceNameProvider = StateProvider<String>((ref) => "Leaving From");
 final destinationPlaceIdProvider = StateProvider<String>((ref) => "");
-final destinationPlaceNameProvider = StateProvider<String>((ref) => "Select destination point");
+final destinationPlaceNameProvider = StateProvider<String>((ref) => "Going To");
 final isstartingPlaceSelectedProvider = StateProvider<bool>((ref) => false);
 final isdestinationPlaceSelectedProvider = StateProvider<bool>((ref) => false);
 final isMarkAlgorithmRunning = StateProvider<bool>((ref) => false);
+
+final runAlgorithmTriggerProvider = StateProvider<int>((ref) => 0); 
 
 
 final themeModeProvider = StateProvider<ThemeMode>((ref){
@@ -75,4 +78,35 @@ final routeResultsProvider = FutureProvider<Result?>((ref){
   return marksAlgorithm(sourcePlaceId, destinationPlaceId, startTime);
 });
 
-final runAlgorithmTriggerProvider = StateProvider<int>((ref) => 0); 
+
+
+
+
+final savedTripsProvider = StateProvider<List<Result>>((ref) => []);
+
+Future<void> loadSavedTrips(WidgetRef ref) async {
+
+  final trips = await DatabaseHelper().getSavedTrips();
+
+  ref.read(savedTripsProvider.notifier).state = trips;
+}
+
+Future<void> saveTrip(
+    WidgetRef ref,
+    Result result,
+) async{
+
+  await DatabaseHelper().saveTrip(result);
+
+  final trips =
+      ref.read(savedTripsProvider);
+
+  ref.read(savedTripsProvider.notifier).state = [
+
+    result,
+
+    ...trips,
+
+  ];
+
+}

@@ -5,16 +5,10 @@ class MarkTitleBlock extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text("MARK", style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          color:  Theme.of(context).colorScheme.primary,
-          fontSize: 62,
-          height: 0.8
-        ),),
-
-        Text("Plan Your Journey", style: Theme.of(context).textTheme.titleLarge,)
-      ],
-    );
+    return Image.asset(
+  Theme.of(context).brightness == Brightness.dark
+      ? "assets/images/about_dark_image.png"
+      : "assets/images/about_light_image.png",
+);
   }
 }

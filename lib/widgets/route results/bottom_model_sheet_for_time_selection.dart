@@ -13,14 +13,8 @@ class BottomModelSheetForTimeSelection extends ConsumerWidget {
   const BottomModelSheetForTimeSelection({super.key});
 
   
-
-  
-
   @override
   Widget build(BuildContext context, ref) {
-
-
-  
 
   Future<void> pickDate() async {
     DateTime? date = await showDatePicker(
@@ -31,15 +25,27 @@ class BottomModelSheetForTimeSelection extends ConsumerWidget {
     );
 
     if (date != null) {
-      
+
       updateTempDate(ref, date);
+      updateTempTime(ref, 360);
     }
   }
+
+  final totalMinutes = ref.watch(selectedStartTimeProvider);
+
+final tempTime = DateTime(
+  DateTime.now().year,
+  DateTime.now().month,
+  DateTime.now().day,
+  (totalMinutes ~/ 60),
+  totalMinutes % 60,
+);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        
         children: [
           Padding(
             padding: const EdgeInsets.all(4),
@@ -68,51 +74,56 @@ class BottomModelSheetForTimeSelection extends ConsumerWidget {
 
           const SizedBox(height: 16),
 
-          Row(
-            children: [
-              const SizedBox(width: 12),
-
-              GestureDetector(
-                onTap: () {
-                  // Handle day parameter press
-                    updateTempDate(ref, DateTime.now());
-
-                  
-                },
-                child: DayParamContainerForBottomModelSheet(
-                  dateCategory: "Today",
-                  
-                  ),
-                ),
-
-              const SizedBox(width: 12),
-
-              GestureDetector(
-                onTap: () {
-                  // Handle day parameter press
-                  updateTempDate(ref, DateTime.now().add(Duration(days: 1)));
-                },
-                child: DayParamContainerForBottomModelSheet(
-                      dateCategory: "Tomorrow",
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+               
+            
+                GestureDetector(
+                  onTap: () {
+                    // Handle day parameter press
+                      updateTempDate(ref, DateTime.now());
+            
+                    
+                  },
+                  child: DayParamContainerForBottomModelSheet(
+                    dateCategory: "Today",
+                    
                     ),
                   ),
-
-              const SizedBox(width: 12),
-
-              GestureDetector(
-                onTap: () async {
-                  // Handle day parameter press
-                  
-                  await pickDate();
-                  
-                   
-                  
-                },
-                child: DayParamContainerForBottomModelSheet(
-                  dateCategory: "Custom",
+            
+                const SizedBox(width: 12),
+            
+                GestureDetector(
+                  onTap: () {
+                    // Handle day parameter press
+                    updateTempDate(ref, DateTime.now().add(Duration(days: 1)));
+                    updateTempTime(ref, 360);
+                  },
+                  child: DayParamContainerForBottomModelSheet(
+                        dateCategory: "Tomorrow",
+                      ),
+                    ),
+            
+                const SizedBox(width: 12),
+            
+                GestureDetector(
+                  onTap: () async {
+                    // Handle day parameter press
+                    
+                    await pickDate();
+                    
+                     
+                    
+                  },
+                  child: DayParamContainerForBottomModelSheet(
+                    dateCategory: "Custom",
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           Expanded(
@@ -132,7 +143,8 @@ class BottomModelSheetForTimeSelection extends ConsumerWidget {
                 ),
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.time,
-                  initialDateTime: DateTime.now(),
+                  key: ValueKey(totalMinutes),
+                  initialDateTime: tempTime,
                   use24hFormat: false,
                   onDateTimeChanged: (DateTime value) {
                     // Handle the selected date here

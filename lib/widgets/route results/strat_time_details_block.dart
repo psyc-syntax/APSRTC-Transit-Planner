@@ -14,6 +14,7 @@ class StratTimeDetailsBlock extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final _selectedDateData = ref.watch(selectedDateDataProvider);
 
+
     DateTimeData dateTimeData = DateTimeData();
 
     return GestureDetector(

@@ -18,7 +18,7 @@ class DevelopedByBlock extends StatelessWidget{
               fontSize: 22
             ),),
 
-            SizedBox(height: 20,),
+            SizedBox(height: 30,),
 
             Text("Made with ❤️ in India" ,style: Theme.of(context).textTheme.titleSmall?.copyWith(
           fontSize: 14,

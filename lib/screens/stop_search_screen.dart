@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:planner_demo/helpers/database_helper.dart';
-import '../widgets/stop seraching/search_title.dart';
+import 'package:planner_demo/widgets/shared/top_title.dart';
 import 'package:planner_demo/widgets/shared/stop_basic_details_card.dart';
 
 class StopSearchScreen extends StatefulWidget {
@@ -94,7 +94,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
                   children: [
                     
         
-                    if(!_focusNode.hasFocus) SearchTitle(isbackneeded: widget.isbackneeded),
+                    if(!_focusNode.hasFocus) TopTitle(isbackNeeded: widget.isbackneeded, title: "Select Stop"),
         
                     // TEXTFIELD UI
                     Padding(
@@ -233,6 +233,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16),
+  
       itemCount: stops.length + (isSearching ? 0 : 1),
       itemBuilder: (context, index) {
         //HEADER ONLY WHEN NOT SEARCHING
@@ -240,7 +241,7 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
           return Padding(
             padding: const EdgeInsets.only(bottom: 6),
             child: Text(
-              "Popualar / Nearby - Stops",
+              "Popular / Nearby - Stops",
               style: Theme.of(context).textTheme.titleSmall,
             ),
           );
@@ -251,9 +252,11 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
         return StopBasicDetailsCard(
           stopName: stop["placeName"] ?? "",
           district: stop["district"] ?? "",
-          pincode: stop["pincode"]?.toString() ?? "",
+          pincode: stop["pincode"]?.toString() ?? "-",
           address: stop["address"] ?? "",
-          placeId: stop["placeId"]?.toString() ?? "",
+          placeId: stop["placeId"]?.toString() ?? "-",
+          latitude: stop["latitude"]?.toString() ?? "-",
+          longitude: stop["longitude"]?.toString() ?? "-",
           isStartingStop: widget.isStartingStop,
           isbackneeded: widget.isbackneeded,
         );

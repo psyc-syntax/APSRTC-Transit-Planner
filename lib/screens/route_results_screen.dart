@@ -26,7 +26,9 @@ class RouteResultsScreen extends ConsumerWidget {
             backgroundColor: Theme.of(context).colorScheme.surface,
             body: Center(child: Text("Error: $error"))),
 
-      data: (data) => RouteResultsDataPart(results: data!),
+      data: (data) {
+        return RouteResultsDataPart(results: data!);
+      } 
     );
 
     // return FutureBuilder<Result>(

@@ -19,6 +19,16 @@ class TripNavLocationParams extends StatelessWidget {
 
     int totalTime = dateTimeData.totalTimeCalc(results!);
 
+    String totalStringTime = "";
+
+    if((totalTime / 60).toInt() > 0){
+         totalStringTime += "${(totalTime / 60).toInt()}H";
+    }
+    
+    if((totalTime % 60).toInt() > 0){
+      totalStringTime += "${(totalTime % 60).toInt()}M";
+    }
+
     double totalDistance = dateTimeData.totalDistanceCalc(results!);
     return Container(
       decoration: BoxDecoration(
@@ -65,7 +75,7 @@ class TripNavLocationParams extends StatelessWidget {
               icon: Icons.route,
               title: "Total Time",
      
-              paramDetail: "${(totalTime / 60).toInt()}H ${(totalTime % 60).toInt()}M",
+              paramDetail: totalStringTime,
                iconColor: Theme.of(context).dividerColor,
             ),
           ],

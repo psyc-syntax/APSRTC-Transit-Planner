@@ -24,7 +24,9 @@ class PoliciesSingleParamBlock extends StatelessWidget{
           children: [
             Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant),
             SizedBox(width: 10,),
-            Text(detail, style: Theme.of(context).textTheme.titleLarge,),
+            Text(detail, style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant
+            ),),
           ],
         ),
       ),

@@ -9,13 +9,13 @@ class FindOptimalRouteButtonDemo extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Container(
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.primary.withAlpha(75),
-              blurRadius: 16.0,
-              offset: Offset(0, 8),
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Theme.of(context).colorScheme.primary.withAlpha(75),
+          //     blurRadius: 16.0,
+          //     offset: Offset(0, 8),
+          //   ),
+          // ],
         ),
         child: ElevatedButton(
           onPressed: () {},
@@ -31,7 +31,10 @@ class FindOptimalRouteButtonDemo extends StatelessWidget {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text("Plan Smart Trip", style: TextStyle(fontSize: 10))],
+            children: [Text("Plan Smart Trip", style: TextStyle(
+              fontSize: 10,
+              overflow: TextOverflow.ellipsis
+            ))],
           ),
         ),
       ),

@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/logic/marks_algorithm.dart';
 import 'package:planner_demo/models/date_data.dart';
+
 import 'package:planner_demo/widgets/route%20results/route_result_trip_card.dart';
 import 'package:planner_demo/widgets/route%20results/route_results_location_details.dart';
-import 'package:planner_demo/widgets/route%20results/route_results_title.dart';
+import 'package:planner_demo/widgets/shared/top_title.dart';
 import 'package:planner_demo/widgets/route%20results/route_results_trip_params.dart';
 import 'package:planner_demo/widgets/route%20results/start_trip_button.dart';
 import 'package:planner_demo/widgets/route%20results/strat_time_details_block.dart';
 
-class RouteResultsDataPart extends StatelessWidget {
+class RouteResultsDataPart extends ConsumerWidget {
   const RouteResultsDataPart({super.key, required this.results});
 
   final Result results;
 
+
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
 
     DateTimeData dateTimeData = DateTimeData();
+
+    
+    
+
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -52,31 +60,41 @@ class RouteResultsDataPart extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              RouteResultsTitle(),
+              TopTitle(isbackNeeded: true, title: ""),
 
               const SizedBox(height: 16),
 
-              RouteResultsLocationDetails(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      RouteResultsLocationDetails(),
+                      const SizedBox(height: 6),
+                
+                if (results.path.isNotEmpty && results.path.length > 1)
+                  RouteResultsTripParams(results: results),
+                
+                if (results.path.isNotEmpty && results.path.length > 1)
+                const SizedBox(height: 6),
+                
+                if (results.path.isNotEmpty && results.path.length > 1)
+                  StratTimeDetailsBlock(
+                    startTime: results.path[0].deptTime.toString(),
+                  ),
+                
+                
+                RouteResultTripCard(
+                  results: results, 
+                  selectedtime: (dateTimeData.timeToMin(DateTime.now())).toString(),
+                  ),
 
-              const SizedBox(height: 6),
-
-              if (results.path.isNotEmpty && results.path.length > 1)
-                RouteResultsTripParams(results: results),
-
-              if (results.path.isNotEmpty && results.path.length > 1)
-              const SizedBox(height: 6),
-
-              if (results.path.isNotEmpty && results.path.length > 1)
-                StratTimeDetailsBlock(
-                  startTime: results.path[0].deptTime.toString(),
+                  SizedBox(height: 60,)
+                    ],
+                  )
                 ),
-
-
-              Expanded(child: RouteResultTripCard(
-                results: results, 
-                selectedtime: (dateTimeData.timeToMin(DateTime.now())).toString(),
-                )
               ),
+
+              
             ],
           ),
         ),

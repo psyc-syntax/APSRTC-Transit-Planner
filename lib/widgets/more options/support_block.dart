@@ -10,7 +10,7 @@ class SupportBlock extends StatelessWidget{
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(
           color: Theme.of(context).dividerColor

@@ -1,9 +1,8 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:planner_demo/logic/marks_algorithm.dart';
 import 'package:planner_demo/models/date_data.dart';
 import 'package:planner_demo/widgets/route%20results/circular_coloured_icon.dart';
+import 'package:planner_demo/widgets/stop%20search/stop_details_alert_dialog.dart';
 import 'package:planner_demo/widgets/trip%20navigation/timeline/transit_endchild_card.dart';
 import 'package:planner_demo/widgets/trip%20navigation/timeline/waiting_time_endchild_card.dart';
 import 'package:timeline_tile/timeline_tile.dart';
@@ -13,13 +12,10 @@ class TripNavDetailedTripDetails extends StatelessWidget {
 
   final Result results;
 
-  
-
   @override
   Widget build(BuildContext context) {
-
     final DateTimeData dateTimeData = DateTimeData();
-    
+
     final ColorScheme scheme = Theme.of(context).colorScheme;
     final TextTheme textTheme = Theme.of(context).textTheme;
     final trip = results.path;
@@ -27,7 +23,7 @@ class TripNavDetailedTripDetails extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      
+
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: results.path.length,
       itemBuilder: (context, index) {
@@ -36,12 +32,16 @@ class TripNavDetailedTripDetails extends StatelessWidget {
         final bool isFirst = index == 0;
         final bool isLast = index == trip.length - 1;
         final bool hasWaitTime = stop.arrivalTime != stop.deptTime && !isLast;
-       
-        int waitingTime = dateTimeData.waitingTimeFinder(stop.arrivalTime, stop.deptTime);
-        
-        
 
-        final LineStyle currentLineStyle = LineStyle(color: Theme.of(context).disabledColor.withOpacity(0.2), thickness: 2.5);
+        int waitingTime = dateTimeData.waitingTimeFinder(
+          stop.arrivalTime,
+          stop.deptTime,
+        );
+
+        final LineStyle currentLineStyle = LineStyle(
+          color: Theme.of(context).disabledColor.withOpacity(0.2),
+          thickness: 2.5,
+        );
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -75,15 +75,21 @@ class TripNavDetailedTripDetails extends StatelessWidget {
                     textAlign: TextAlign.right,
                     style: textTheme.titleSmall?.copyWith(
                       fontSize: 12,
-                      
-                      color: isFirst 
+
+                      color: isFirst
                           ? Colors.green
-                          : (isLast ? Theme.of(context).colorScheme.primary : scheme.onSurface),
+                          : (isLast
+                                ? Theme.of(context).colorScheme.primary
+                                : scheme.onSurface),
                     ),
                   ),
                 ),
                 endChild: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 12),
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    top: 12,
+                    bottom: 12,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -105,10 +111,26 @@ class TripNavDetailedTripDetails extends StatelessWidget {
                             letterSpacing: 1.2,
                           ),
                         ),
-                      Text(
-                        stop.placeName,
-                        style: textTheme.titleMedium?.copyWith(
-                          fontSize: 14
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return StopDetailsAlertDialog(
+                                placeName: stop.stopDetails!['placeName'] ?? '',
+                                placeId: stop.stopDetails!['placeId'] ?? '',
+                                address: stop.stopDetails!['address'] ?? '',
+                                latitude: stop.stopDetails!['latitude'] ?? '',
+                                longitude: stop.stopDetails!['longitude'] ?? '',
+                                pincode: stop.stopDetails!['pincode'] ?? '',
+                                district: stop.stopDetails!['district'] ?? '',
+                              );
+                            },
+                          );
+                        },
+                        child: Text(
+                          stop.placeName,
+                          style: textTheme.titleMedium?.copyWith(fontSize: 14),
                         ),
                       ),
                     ],
@@ -130,6 +152,7 @@ class TripNavDetailedTripDetails extends StatelessWidget {
                   indicatorStyle: IndicatorStyle(
                     width: 20,
                     height: 20,
+
                     // indicator: Container(
                     //   decoration: BoxDecoration(
                     //     color: scheme.surfaceContainerHigh,
@@ -138,20 +161,21 @@ class TripNavDetailedTripDetails extends StatelessWidget {
                     //   ),
                     //   child: Icon(Icons.access_time_filled, size: 12, color: scheme.primary),
                     // ),
-
                     indicator: CircularColouredIcon(
-                      iconData: Icons.access_time_filled, 
+                      iconData: Icons.access_time_filled,
                       color: const Color.fromARGB(255, 255, 203, 31),
-                      )
+                    ),
                   ),
                   endChild: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 6, bottom: 6),
-                    child: WaitingTimeEndchild(
-                      duration: waitingTime
-                    )
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      top: 6,
+                      bottom: 6,
+                    ),
+                    child: WaitingTimeEndchild(duration: waitingTime),
                   ),
                 ),
-                
+
                 // Departure tracking node following a layover
                 TimelineTile(
                   alignment: TimelineAlign.manual,
@@ -183,12 +207,34 @@ class TripNavDetailedTripDetails extends StatelessWidget {
                     ),
                   ),
                   endChild: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 12),
-                    child: Text(
-                      "${stop.placeName} (Departure)",
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        fontStyle: FontStyle.italic,
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      top: 12,
+                      bottom: 12,
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return StopDetailsAlertDialog(
+                                placeName: stop.stopDetails!['placeName'] ?? '',
+                                placeId: stop.stopDetails!['placeId'] ?? '',
+                                address: stop.stopDetails!['address'] ?? '',
+                                latitude: stop.stopDetails!['latitude'] ?? '',
+                                longitude: stop.stopDetails!['longitude'] ?? '',
+                                pincode: stop.stopDetails!['pincode'] ?? '',
+                                district: stop.stopDetails!['district'] ?? '',
+                              );
+                            },
+                          );
+                        },
+                      child: Text(
+                        "${stop.placeName} (Departure)",
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ),
                   ),
@@ -211,27 +257,33 @@ class TripNavDetailedTripDetails extends StatelessWidget {
                     height: 24,
                     indicator: Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Theme.of(context).dividerColor
-                        )
+                          color: Theme.of(context).dividerColor,
+                        ),
                       ),
 
-                    
                       child: Icon(
                         Icons.directions_bus_rounded,
-                        size: 16 ,
+                        size: 16,
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ),
                   endChild: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8),
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      top: 8,
+                      bottom: 8,
+                    ),
                     child: TransitEndchildCard(
-                      title: stop.serviceType.toString(), 
-                      subtitle: "${stop.vehicleNo}",
-                      timeString: "Dept: ${dateTimeData.minToTime(stop.deptTime)}",
+                      title: stop.serviceType.toString(),
+                      subtitle: stop.oprsNo,
+                      timeString:
+                          "Dept: ${dateTimeData.minToTime(stop.deptTime)}",
                     ),
                   ),
                 ),
@@ -246,7 +298,11 @@ class TripNavDetailedTripDetails extends StatelessWidget {
   // SUB-WIDGET UTILITY METHODS
   // ===========================================================================
 
-  Widget _buildIndicatorDot(BuildContext context, {required bool isFirst, required bool isLast}) {
+  Widget _buildIndicatorDot(
+    BuildContext context, {
+    required bool isFirst,
+    required bool isLast,
+  }) {
     final scheme = Theme.of(context).colorScheme;
     Color dotColor = Theme.of(context).dividerColor;
     IconData? nodeIcon;
@@ -268,13 +324,9 @@ class TripNavDetailedTripDetails extends StatelessWidget {
           width: nodeIcon != null ? 0 : 3,
         ),
       ),
-      child: nodeIcon != null 
-          ? Icon(nodeIcon, size: 14, color: scheme.onPrimary) 
+      child: nodeIcon != null
+          ? Icon(nodeIcon, size: 14, color: scheme.onPrimary)
           : const SizedBox.shrink(),
     );
   }
-
-  
-
-  
 }

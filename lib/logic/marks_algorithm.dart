@@ -1,5 +1,6 @@
 import 'dart:math';
 
+
 import 'package:planner_demo/helpers/database_helper.dart';
 
 
@@ -45,6 +46,7 @@ class PathStop {
   final int? time;
   final String? serviceType;
   final String? vehicleNo;
+  Map<String, String>? stopDetails;
 
   PathStop({
     required this.placeId,
@@ -55,7 +57,9 @@ class PathStop {
     this.time,
     this.distance,
     this.serviceType,
-    this.vehicleNo
+    this.vehicleNo,
+    this.stopDetails
+    
   });
 }
 
@@ -390,6 +394,7 @@ Future<Result> _buildResult(
   Map<String, String> nameLookup = {};
   Map<String, String> serviceTypeLookup = {};
   Map<String, String> vehicleNoLookup = {};
+  Map<String, Map<String, String>>stopDetailsLookup = {};
   // Map<String, double> latLookup = {};
   // Map<String, double> lonLookup = {};
 
@@ -403,7 +408,7 @@ Future<Result> _buildResult(
       }
     }
     final List<Map<String, dynamic>> rows = await database.rawQuery(
-      'SELECT placeId, placeName, latitude, longitude FROM place_master WHERE placeId IN ($placeholders)',
+      'SELECT * FROM place_master WHERE placeId IN ($placeholders)',
       placeIds,
     );
 
@@ -416,6 +421,16 @@ Future<Result> _buildResult(
       final id = row['placeId'].toString();
 
       nameLookup[id] = row['placeName']?.toString() ?? 'Unknown';
+
+      stopDetailsLookup[id] = {
+        "placeId" : row['placeId'].toString(),
+        "placeName" :  row['placeName']?.toString() ?? 'Unknown',
+        "pincode" : row['pincode'].toString(),
+        "address" : row['address'].toString(),
+        'latitude' : row['latitude'].toString(),
+        'longitude' : row['longitude'].toString(),
+        'district' : row['district'].toString(),
+      };
 
       // latLookup[id] = (row['latitude'] as num?)?.toDouble() ?? 0.0;
       // lonLookup[id] = (row['longitude'] as num?)?.toDouble() ?? 0.0;
@@ -488,7 +503,8 @@ for (int i = 0; i < rawPath.length; i++) {
       distance: distance,
       time: time,
       serviceType: serviceTypeLookup[rawPath[i].oprsNo] ?? "UNKNOWN",
-      vehicleNo: vehicleNoLookup[rawPath[i].oprsNo] ?? "UNKNOWN"
+      vehicleNo: vehicleNoLookup[rawPath[i].oprsNo] ?? "UNKNOWN",
+      stopDetails: stopDetailsLookup[rawPath[i].placeId]
       
     ),
   );

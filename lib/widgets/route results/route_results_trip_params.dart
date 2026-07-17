@@ -14,6 +14,18 @@ class RouteResultsTripParams extends StatelessWidget{
     DateTimeData dateTimeData = DateTimeData();
 
     int totalTime = dateTimeData.totalTimeCalc(results!);
+    
+    String time = "";
+
+    if((totalTime / 60).toInt() > 0){
+         time += "${(totalTime / 60).toInt()}H";
+    }
+    
+    if((totalTime % 60).toInt() > 0){
+      time += "${(totalTime % 60).toInt()}M";
+    }
+    
+  
 
     double totalDistance = dateTimeData.totalDistanceCalc(results!);
     return Row(
@@ -21,7 +33,7 @@ class RouteResultsTripParams extends StatelessWidget{
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         RouteResultsTripParamContainer(
-          param: "${(totalTime / 60).toInt()}H ${(totalTime % 60).toInt()}M",
+          param: time,
           paramdetail: "~Time"
         ),
         SizedBox(width: 6,),
