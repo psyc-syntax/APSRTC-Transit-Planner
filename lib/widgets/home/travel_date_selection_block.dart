@@ -105,7 +105,7 @@ class TravelDateSelectionBlock extends ConsumerWidget {
                     backgroundColor: WidgetStateProperty.all(
                       ref.watch(tempDateCategoryProvider) == "Today"
                           ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.surfaceContainerHigh,
+                          : Theme.of(context).colorScheme.surface,
                     ),
 
                     padding: const WidgetStatePropertyAll(
@@ -145,7 +145,7 @@ class TravelDateSelectionBlock extends ConsumerWidget {
                     backgroundColor: WidgetStateProperty.all(
                       ref.watch(tempDateCategoryProvider) == "Tomorrow"
                           ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.surfaceContainerHigh,
+                          : Theme.of(context).colorScheme.surface,
                     ),
                     padding: const WidgetStatePropertyAll(
                       EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -181,9 +181,9 @@ class TravelDateSelectionBlock extends ConsumerWidget {
                   backgroundColor: WidgetStateProperty.all(
                     ref.watch(tempDateCategoryProvider) == "Custom"
                         ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.surfaceContainerHigh,
+                        : Theme.of(context).colorScheme.surface,
                   ),
-
+ 
                   padding: const WidgetStatePropertyAll(
                     EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                   ),

@@ -8,7 +8,7 @@ class DataVersionBlock extends StatelessWidget{
   Widget build(BuildContext context) {
     return Container(
        decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
           color: Theme.of(context).dividerColor
         ),

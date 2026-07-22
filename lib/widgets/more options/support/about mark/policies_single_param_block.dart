@@ -10,7 +10,7 @@ class PoliciesSingleParamBlock extends StatelessWidget{
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
           width: 1,
           color: Theme.of(context).dividerColor,

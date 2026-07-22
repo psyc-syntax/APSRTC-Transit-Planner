@@ -71,9 +71,16 @@ Provider<Map<String, dynamic>>((ref) {
 });
 
 final routeResultsProvider = FutureProvider<Result?>((ref){
+
+  ref.watch(runAlgorithmTriggerProvider);
+
+
   final sourcePlaceId = ref.watch(startingPlaceIdProvider);
   final destinationPlaceId = ref.watch(destinationPlaceIdProvider);
+
   final startTime = ref.watch(selectedStartTimeProvider);
+
+   print('RUNNING ALGORITHM WITH TIME: $startTime');
 
   return marksAlgorithm(sourcePlaceId, destinationPlaceId, startTime);
 });

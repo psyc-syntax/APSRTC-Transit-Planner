@@ -7,7 +7,7 @@ class DescriptionBlock extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text("Mark is an intelligent offline journey\nplanner designed to simplify APSRTC\ntravel by providing smart routes,\ntransfers and trip guidance.",
+      child: Text("markBus is your smart, offline travel companion. Designed for Andhra Pradesh commuters, it simplifies your journey with instant routes, seamless transfer tracking, and reliable trip guidance — all without needing an internet connection.",
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
           fontSize: 14,
           letterSpacing: 0.2,

@@ -69,19 +69,24 @@ class SavedConnectionsBlock extends ConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   behavior: SnackBarBehavior.floating,
-                  
+
                   elevation: 0,
-                  margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   duration: const Duration(seconds: 4),
-                  persist: false, // <-- FIX: Force auto-dismiss despite having an action button
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  persist:
+                      false, // <-- FIX: Force auto-dismiss despite having an action button
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHigh,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusGeometry.circular(32),
-                    
                   ),
                   content: Text(
                     "Trip removed",
-                    style: Theme.of(context).textTheme.labelMedium
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                   action: SnackBarAction(
                     label: "UNDO",
@@ -96,39 +101,37 @@ class SavedConnectionsBlock extends ConsumerWidget {
 
           child: Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainer,
+            child: Material(
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: Theme.of(context).dividerColor),
+                side: BorderSide(color: Theme.of(context).dividerColor),
               ),
-              child: Material(
-                child: ListTile(
-                  leading: Icon(
-                    Icons.bookmark_rounded,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(
-                    "${trip.path.first.placeName} → ${trip.path.last.placeName}",
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 13),
-                  ),
-                  subtitle: Text(
-                    "${trip.path.length - 1} Stop(s)",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  trailing: Icon(
-                    Icons.chevron_right_rounded,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => TripNavigationScreen(results: trip),
-                      ),
-                    );
-                  },
+              clipBehavior: Clip.antiAlias,
+              child: ListTile(
+                leading: Icon(
+                  Icons.bookmark_rounded,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
+                title: Text(
+                  "${trip.path.first.placeName} → ${trip.path.last.placeName}",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelSmall?.copyWith(fontSize: 13),
+                ),
+                subtitle: Text("${trip.path.length - 1} Stop(s)"),
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TripNavigationScreen(results: trip),
+                    ),
+                  );
+                },
               ),
             ),
           ),

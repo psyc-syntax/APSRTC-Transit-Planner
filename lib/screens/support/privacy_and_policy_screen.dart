@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -8,6 +9,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final Color bgColor = theme.scaffoldBackgroundColor;
+    const String contactEmail = 'contact.manoglabs@gmail.com';
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -331,14 +333,58 @@ class PrivacyPolicyScreen extends StatelessWidget {
                             ),
                           ),
                           Divider(height: 1, color: theme.dividerColor,),
-                          Material(
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.email_outlined,
-                                color: colorScheme.primary,
+                          Container(
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: theme.dividerColor, width: 0.5),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                leading: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primary.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(Icons.email_outlined, color: colorScheme.primary),
+                                ),
+                                title: Text(
+                                  'Email Support',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    contactEmail,
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface,
+                                      letterSpacing: -0.3,
+                                    ),
+                                  ),
+                                ),
+                                trailing: Icon(Icons.copy_rounded, color: colorScheme.onSurfaceVariant.withOpacity(0.6), size: 20),
+                                onTap: () {
+                                  // Copies the email directly to the user's clipboard
+                                  Clipboard.setData(const ClipboardData(text: contactEmail));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text('Email address copied to clipboard!'),
+                                      backgroundColor: colorScheme.primary,
+                                      behavior: SnackBarBehavior.floating,
+                                      duration: const Duration(seconds: 2),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                  );
+                                },
                               ),
-                              title: Text('contact.manoglabs@gmail.com'),
-                              subtitle: Text('Tap to copy support email'),
                             ),
                           ),
                         ],

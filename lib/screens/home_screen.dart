@@ -56,29 +56,6 @@ class HomeScreen extends StatelessWidget {
                         child: FindOptimalRouteButton(),
                       ),
 
-                     
-        
-                      // recent history section
-                      // Padding(
-                      //   padding: const EdgeInsets.only(
-                      //     left: 16,
-                      //     right: 16,
-                      //     top : 16,
-                      //   ),
-                      //   // child: QuickHistory(),
-                      //   child: OnGoingTripBlock(),
-                      // ),
-
-
-                      // Padding(
-                      //   padding: const EdgeInsets.only(
-                      //     left: 16,
-                      //     right: 16,
-                      //     top : 16,
-                      //   ),
-                      //   // child: QuickHistory(),
-                      //   child: OnGoingTripBlock(),
-                      // ),
         
                       
                     ],

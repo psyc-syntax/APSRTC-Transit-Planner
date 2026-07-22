@@ -31,7 +31,8 @@ class RouteResultsTripParamContainer extends StatelessWidget{
               Text(
                 param,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 14
+                  fontSize: 14,
+                  overflow: TextOverflow.ellipsis
                 ),
               ),
           

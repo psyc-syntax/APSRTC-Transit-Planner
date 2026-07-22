@@ -20,7 +20,7 @@ class ThemeSelectionBlock extends ConsumerWidget {
 };
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
           color: Theme.of(context).dividerColor
         ),
@@ -46,7 +46,12 @@ class ThemeSelectionBlock extends ConsumerWidget {
                 groupValue: selectedValue,
                  visualDensity: const VisualDensity(vertical: -4),
                  horizontalTitleGap: 3,
-                 tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                
+            
+            hoverColor: Colors.transparent,
+            
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+                 tileColor: Theme.of(context).colorScheme.surface,
                 onChanged: (value) {
                   
                     ref.read(themeModeProvider.notifier).state = ThemeMode.system;
@@ -66,7 +71,7 @@ class ThemeSelectionBlock extends ConsumerWidget {
                 groupValue: selectedValue,
                  visualDensity: const VisualDensity(vertical: -4),
                  horizontalTitleGap: 3,
-                  tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  tileColor: Theme.of(context).colorScheme.surface,
                 onChanged: (value) {
                   
                      ref.read(themeModeProvider.notifier).state = ThemeMode.light;
@@ -84,7 +89,7 @@ class ThemeSelectionBlock extends ConsumerWidget {
                 groupValue: selectedValue,
                  visualDensity: const VisualDensity(vertical: -4),
                  horizontalTitleGap: 3,
-                  tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  tileColor: Theme.of(context).colorScheme.surface,
                 onChanged: (value) {
                  
                      ref.read(themeModeProvider.notifier).state = ThemeMode.dark;

@@ -10,7 +10,7 @@ class DataIncludesBlock extends StatelessWidget{
     
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
           color: Theme.of(context).dividerColor
         ),

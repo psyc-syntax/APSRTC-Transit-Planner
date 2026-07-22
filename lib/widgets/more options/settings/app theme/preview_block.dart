@@ -9,10 +9,10 @@ class PreviewBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        border: Border.all(
-          color: Theme.of(context).dividerColor
-        ),
+        color: Theme.of(context).colorScheme.surface,
+        // border: Border.all(
+        //   // color: Theme.of(context).dividerColor
+        // ),
         borderRadius: BorderRadius.circular(30),
       ),
       child: Padding(

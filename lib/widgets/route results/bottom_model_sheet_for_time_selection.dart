@@ -7,45 +7,40 @@ import "package:planner_demo/providers/providers.dart";
 
 import "package:planner_demo/widgets/route%20results/day_param_container_for_bottom_model_sheet.dart";
 
-
-
 class BottomModelSheetForTimeSelection extends ConsumerWidget {
-  const BottomModelSheetForTimeSelection({super.key});
+  const BottomModelSheetForTimeSelection({super.key, required this.startTime});
 
-  
+  final int startTime;
+
   @override
   Widget build(BuildContext context, ref) {
+    Future<void> pickDate() async {
+      DateTime? date = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2050),
+      );
 
-  Future<void> pickDate() async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2050),
-    );
-
-    if (date != null) {
-
-      updateTempDate(ref, date);
-      updateTempTime(ref, 360);
+      if (date != null) {
+        updateTempDate(ref, date);
+        updateTempTime(ref, 360);
+      }
     }
-  }
 
-  final totalMinutes = ref.watch(selectedStartTimeProvider);
+    final totalMinutes = startTime;
 
-final tempTime = DateTime(
-  DateTime.now().year,
-  DateTime.now().month,
-  DateTime.now().day,
-  (totalMinutes ~/ 60),
-  totalMinutes % 60,
-);
+    final tempTime = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    ).add(Duration(minutes: totalMinutes));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        
+
         children: [
           Padding(
             padding: const EdgeInsets.all(4),
@@ -79,23 +74,18 @@ final tempTime = DateTime(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-               
-            
                 GestureDetector(
                   onTap: () {
                     // Handle day parameter press
-                      updateTempDate(ref, DateTime.now());
-            
-                    
+                    updateTempDate(ref, DateTime.now());
                   },
                   child: DayParamContainerForBottomModelSheet(
                     dateCategory: "Today",
-                    
-                    ),
                   ),
-            
+                ),
+
                 const SizedBox(width: 12),
-            
+
                 GestureDetector(
                   onTap: () {
                     // Handle day parameter press
@@ -103,20 +93,17 @@ final tempTime = DateTime(
                     updateTempTime(ref, 360);
                   },
                   child: DayParamContainerForBottomModelSheet(
-                        dateCategory: "Tomorrow",
-                      ),
-                    ),
-            
+                    dateCategory: "Tomorrow",
+                  ),
+                ),
+
                 const SizedBox(width: 12),
-            
+
                 GestureDetector(
                   onTap: () async {
                     // Handle day parameter press
-                    
+
                     await pickDate();
-                    
-                     
-                    
                   },
                   child: DayParamContainerForBottomModelSheet(
                     dateCategory: "Custom",
@@ -162,12 +149,15 @@ final tempTime = DateTime(
               onPressed: () {
                 print(ref.watch(selectedStartTimeProvider));
 
-               updateDateAndTime(ref);
+                updateDateAndTime(ref);
+
+                final finalTime = ref.read(selectedStartTimeProvider);
+                final finalDate = ref.read(selectedDateProvider);
+                print('FINAL DATE: $finalDate');
+                print('FINAL TIME: $finalTime');
 
                 ref.read(runAlgorithmTriggerProvider.notifier).state++;
                 ref.read(isMarkAlgorithmRunning.notifier).state = true;
-
-                
 
                 Navigator.pop(context);
               },

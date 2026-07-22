@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/screens/support/about_mark_screen.dart';
+import 'package:planner_demo/screens/support/contack_support_screen.dart';
 import 'package:planner_demo/widgets/more%20options/each_block_of_option.dart';
 
 class SupportBlock extends StatelessWidget{
@@ -24,7 +25,25 @@ class SupportBlock extends StatelessWidget{
           
       
           
-           EachBlockOfOption(title: "Contact Support", icon: Icons.mail_outline,),
+           InkWell(
+            onTap: (){
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context){
+                  return ContactScreen();
+                })
+              );
+            },
+
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+
+            child: EachBlockOfOption(
+              title: "Contact Support", icon: Icons.mail_outline,
+            )
+          ),
          
       
           Padding(

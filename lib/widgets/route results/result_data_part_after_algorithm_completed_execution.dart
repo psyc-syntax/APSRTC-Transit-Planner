@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/logic/marks_algorithm.dart';
 import 'package:planner_demo/models/date_data.dart';
 
+
 import 'package:planner_demo/widgets/route%20results/route_result_trip_card.dart';
 import 'package:planner_demo/widgets/route%20results/route_results_location_details.dart';
 import 'package:planner_demo/widgets/shared/top_title.dart';
@@ -21,6 +22,14 @@ class RouteResultsDataPart extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
 
     DateTimeData dateTimeData = DateTimeData();
+
+ if(results.path.isNotEmpty){
+   print(
+    "RouteResultsDataPart rebuilt: "
+    "first departure = ${results.path.first.deptTime}, "
+    "destination arrival = ${results.path.last.arrivalTime}",
+  );
+ }
 
     
     
@@ -66,6 +75,7 @@ class RouteResultsDataPart extends ConsumerWidget {
 
               Expanded(
                 child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
                   child: Column(
                     children: [
                       RouteResultsLocationDetails(),
@@ -80,6 +90,7 @@ class RouteResultsDataPart extends ConsumerWidget {
                 if (results.path.isNotEmpty && results.path.length > 1)
                   StratTimeDetailsBlock(
                     startTime: results.path[0].deptTime.toString(),
+                    startTimeMin: results.path[0].deptTime,
                   ),
                 
                 
@@ -88,7 +99,7 @@ class RouteResultsDataPart extends ConsumerWidget {
                   selectedtime: (dateTimeData.timeToMin(DateTime.now())).toString(),
                   ),
 
-                  SizedBox(height: 60,)
+                  SizedBox(height: 200,)
                     ],
                   )
                 ),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/logic/marks_algorithm.dart';
 import 'package:planner_demo/models/date_data.dart';
+import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/widgets/route%20results/circular_coloured_icon.dart';
 import 'package:planner_demo/widgets/route%20results/strat_time_details_block.dart';
 
-class RouteResultTripCard extends StatelessWidget {
+class RouteResultTripCard extends ConsumerWidget {
   const RouteResultTripCard({
     super.key, 
     required this.results, 
@@ -15,10 +17,12 @@ class RouteResultTripCard extends StatelessWidget {
   final String selectedtime;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     final trip = results?.path ?? [];
 
     DateTimeData dateTimeData = DateTimeData();
+
+
 
     
     if (trip.isEmpty) {
@@ -26,10 +30,11 @@ class RouteResultTripCard extends StatelessWidget {
 
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
+
         children: [
           
 
-          StratTimeDetailsBlock(startTime: selectedtime),
+          StratTimeDetailsBlock(startTime: selectedtime, startTimeMin: ref.watch(selectedStartTimeProvider)),
 
 
           Text("No route found!!"),

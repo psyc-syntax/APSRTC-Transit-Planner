@@ -5,9 +5,10 @@ import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/widgets/route%20results/bottom_model_sheet_for_time_selection.dart';
 
 class StratTimeDetailsBlock extends ConsumerWidget {
-  const StratTimeDetailsBlock({super.key, required this.startTime});
+  const StratTimeDetailsBlock({super.key, required this.startTime, required this.startTimeMin});
 
   final String startTime;
+  final int startTimeMin;
 
 
   @override
@@ -23,7 +24,7 @@ class StratTimeDetailsBlock extends ConsumerWidget {
         ref.read(tempSelectedDateProvider.notifier).state = ref.read(selectedDateProvider);
         showModalBottomSheet(
           context: context,
-          builder: (context) => const BottomModelSheetForTimeSelection(),
+          builder: (context) => BottomModelSheetForTimeSelection(startTime: startTimeMin,),
         );
       },
       child: Padding(

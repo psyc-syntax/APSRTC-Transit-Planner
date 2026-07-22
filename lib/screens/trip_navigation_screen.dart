@@ -60,6 +60,7 @@ class TripNavigationScreen extends ConsumerWidget {
 
                   Expanded(
                     child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
                       child: Column(
                         children: [
                           TripNavLocationDetails(results: results),

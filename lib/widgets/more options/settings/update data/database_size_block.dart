@@ -9,7 +9,7 @@ class DatabaseSizeBlock extends StatelessWidget{
   Widget build(BuildContext context) {
     return Container(
        decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: Theme.of(context).colorScheme.surface,
         border: Border.all(
           color: Theme.of(context).dividerColor
         ),
@@ -26,7 +26,7 @@ class DatabaseSizeBlock extends StatelessWidget{
               children: [
                 Text("Database Size", style: Theme.of(context).textTheme.titleSmall,),
                 SizedBox(height: 4,),
-                Text("52.8 MB", style: Theme.of(context).textTheme.titleMedium,)
+                Text("79.3 MB", style: Theme.of(context).textTheme.titleMedium,)
               ],
             ),
           ],
