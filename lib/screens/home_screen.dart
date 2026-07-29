@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/home/find_optimal_route_button.dart';
 import 'package:planner_demo/widgets/home/app_logo_text.dart';
 import 'package:planner_demo/widgets/home/route_search_card.dart';
+import 'package:planner_demo/widgets/route%20results/loading_animation_block.dart';
+import 'package:planner_demo/widgets/route%20results/strat_time_details_block.dart';
 
 
 class HomeScreen extends StatelessWidget {
@@ -44,17 +46,28 @@ class HomeScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: RouteSearchCard(), //trip details selection card
                       ),
+
+                      Padding(
+            padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 10),
+            child:  StratTimeDetailsBlock(
+              startTimeMin: DateTime.now().hour * 60 + DateTime.now().minute,
+              startTime: (DateTime.now().hour * 60 + DateTime.now().minute,).toString(),
+              inHome: true,
+              ),
+          ),
         
                       // optimal route button
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24.0,
-                          vertical: 12,
+                        
                         ),
                   
                         // find optimal route button
                         child: FindOptimalRouteButton(),
                       ),
+
+
 
         
                       

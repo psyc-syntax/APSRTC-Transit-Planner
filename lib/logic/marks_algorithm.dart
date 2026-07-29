@@ -1,8 +1,8 @@
 import 'dart:math';
+import 'dart:isolate';
 
-
+import 'package:sqlite3/sqlite3.dart' as ffi;
 import 'package:planner_demo/helpers/database_helper.dart';
-
 
 // =========================================================
 //
@@ -10,25 +10,6 @@ import 'package:planner_demo/helpers/database_helper.dart';
 //   MARK — Transit Intelligence
 //
 // =========================================================
-//
-//  WHY NOT A REAL "oprs_found" TABLE
-//
-//  A persistent table would need to be cleared/rebuilt per
-//  search, can't safely handle two searches running at once,
-//  and the write cost per state is higher than what we'd save.
-//
-//  INSTEAD: dynamic NOT IN (...) built from the in-memory
-//  used-bus set, bound as SQL parameters. SQLite excludes
-//  those rows BEFORE joining/aggregating — no wasted I/O
-//  across the Dart↔SQLite boundary, no wasted Dart iteration.
-//
-//  usedSoFar already contains the currently-ridden bus
-//  (added when that state was created), so the old separate
-//  "!= boardingOprs" param is now redundant and removed —
-//  one NOT IN list covers everything.
-//
-// =========================================================
-
 
 class Pair<K, V> {
   final K key;
@@ -59,7 +40,6 @@ class PathStop {
     this.serviceType,
     this.vehicleNo,
     this.stopDetails
-    
   });
 }
 
@@ -70,122 +50,115 @@ class Result {
 }
 
 
+// =========================================================
+// MAIN ENTRY POINT (Runs on Main UI Thread)
+// =========================================================
 Future<Result> marksAlgorithm(
   String sourcePlaceId,
   String destinationPlaceId,
   int    startTime,
 ) async {
-
   if (sourcePlaceId.isEmpty || destinationPlaceId.isEmpty) {
     return Result([], 0);
   }
 
-  final database = await DatabaseHelper().database;
+  // 1. Get the actual file path from sqflite (safely on the main thread)
+  final dbPath = await DatabaseHelper().getDatabaseFilePath();
 
-  print("MARKS: $sourcePlaceId → $destinationPlaceId at $startTime");
+  print("MARKS: $sourcePlaceId → $destinationPlaceId at $startTime (Spawning Isolate)");
 
+  // 2. Spawn a background Isolate to prevent UI freezing
+  return await Isolate.run(() {
+    // 3. Open the database synchronously in the background using sqlite3 FFI
+    final db = ffi.sqlite3.open(dbPath);
+    
+    try {
+      // 4. Run the high-speed synchronous algorithm
+      return _runMarksAlgorithmSync(db, sourcePlaceId, destinationPlaceId, startTime);
+    } finally {
+      // 5. CRITICAL: Always dispose of the background database connection
+      db.dispose();
+    }
+  });
+}
+
+// =========================================================
+// SYNCHRONOUS ROUTING ENGINE (Runs on Background Isolate)
+// =========================================================
+Result _runMarksAlgorithmSync(
+  ffi.Database db, 
+  String sourcePlaceId, 
+  String destinationPlaceId, 
+  int startTime
+) {
   // ── Config ─────────────────────────────────────────────
   const int maxRounds      = 6;
-  const int maxWaitMinutes = 240;
+  const int maxWaitMinutes = 180;
   int boardingBuffer = 5;
   int destinationFoundState = 0;
 
   // ── State ──────────────────────────────────────────────
-
   Map<String, int>            earliestArrival = {};
   Map<String, String>         previous        = {};
   Map<String, Pair<int, int>> stopTimes       = {};
 
-
-
-
   /// global pruning map, keyed by PLACE ONLY
   Map<String, int> globalBest = {sourcePlaceId: startTime};
 
-
-
-
   /// buses already ridden to reach each state — bounded by
   Map<String, Set<String>> usedOprsAtStop = {};
-
-
 
   final String startKey = "$sourcePlaceId|null";
   earliestArrival[startKey] = startTime;
   usedOprsAtStop[startKey]  = <String>{};
 
-
   List<String> currentRoundStops = [startKey];
-
+  
   // =========================================================
   // MAIN LOOP — each round = one bus taken
   // =========================================================
-
-  
-
   for (int round = 1; round <= maxRounds; round++) {
-
     if (currentRoundStops.isEmpty) break;
-
-    if(destinationFoundState > 1) break;
+    if (destinationFoundState > 1 ) break;
 
     print("Round $round | exploring ${currentRoundStops.length} stop(s)");
 
     List<String> nextRoundStops = [];
 
     for (final String stopKeyNow in currentRoundStops) {
-
       final String boardingStop = stopKeyNow.split('|')[0];
       final int    currArr      = earliestArrival[stopKeyNow] ?? startTime;
-
+      
       Set<String> usedSoFar = {};
-      if(usedOprsAtStop.containsKey(stopKeyNow)){
+      if (usedOprsAtStop.containsKey(stopKeyNow)){
         usedSoFar = usedOprsAtStop[stopKeyNow]!;
       }
 
-      // ── Build dynamic exclusion clause ───────────────────
-      // Empty usedSoFar at source → no clause, any bus eligible.
-      // Otherwise excludes every bus already ridden this journey,
-      // done at the SQL level so excluded routes never get
-      // joined/aggregated or sent back to Dart at all.
-
-
       final List<String> usedList = usedSoFar.toList();
-      
-
-
-
       String exclusionClause = "";
 
-      if(usedList.isNotEmpty){
+      if (usedList.isNotEmpty){
         exclusionClause = "AND e1.oprsNo NOT IN(";
-
         for(int i = 0; i < usedList.length; i++){
           exclusionClause += "?";
-
           if(i != usedList.length - 1){
             exclusionClause += ",";
           }
-
-
         }
         exclusionClause += ")";
       }
 
-      List <Object> params = [];
-
-      
-
+      List<Object?> params = [];
       params.add(boardingStop);
       params.add(currArr + (round != 1 ? boardingBuffer : 0));
       params.add(currArr + maxWaitMinutes);
 
-      for(int i = 0; i < usedList.length; i++){
+      for (int i = 0; i < usedList.length; i++){
         params.add(usedList[i]);
       }
 
-      List<Map<String, dynamic>> reachable =
-          await database.rawQuery('''
+      // Synchronous Query - extremely fast execution
+      ffi.ResultSet reachable = db.select('''
         SELECT
             e2.to_placeId        AS to_placeId,
             e2.oprsNo            AS oprsNo,
@@ -202,17 +175,12 @@ Future<Result> marksAlgorithm(
         ORDER BY arr_min ASC
       ''', params);
 
-      // No client-side usedSoFar.contains(oprsNo) check needed —
-      // SQL already excluded them before this point.
+      if (currArr + maxWaitMinutes > 1440){
+        params[0] = boardingStop;
+        params[1] = max(0, currArr - 1440) + boardingBuffer;
+        params[2] = max(currArr - 1440 + maxWaitMinutes, 390);
 
-      if(currArr + maxWaitMinutes >= 1440){
-
-       params[0] = boardingStop;
-       params[1] = max(0, currArr - 1440) + boardingBuffer;
-       params[2] = min(currArr - 1440 + maxWaitMinutes, 390);
-
-        final  List<Map<String, dynamic>> midNightReachable =
-          await database.rawQuery('''
+        final ffi.ResultSet midNightReachable = db.select('''
         SELECT
             e2.to_placeId        AS to_placeId,
             e2.oprsNo            AS oprsNo,
@@ -229,44 +197,11 @@ Future<Result> marksAlgorithm(
         ORDER BY arr_min ASC
       ''', params);
 
-       reachable = [
-        ...reachable,
-        ...midNightReachable
-       ];
-      }
-
-      
-      for (final row in reachable) {
-
-        final String? toPlaceId = row['to_placeId'] as String?;
-        final String? oprsNo    = row['oprsNo']     as String?;
-        final int?    dept      = row['dep_min']    as int?;
-        final int?    arr       = row['arr_min']    as int?;
-
-        if (toPlaceId == null || oprsNo == null ||
-            dept == null || arr == null) continue;
-
-        final String newKey = "$toPlaceId|$oprsNo";
-
-        final bool isBetterForRoute =
-            !earliestArrival.containsKey(newKey) ||
-             arr < earliestArrival[newKey]!;
-
-        if (!isBetterForRoute) continue;
-
-        earliestArrival[newKey] = arr;
-        previous[newKey]        = stopKeyNow;
-        stopTimes[newKey]       = Pair(dept, arr);
-        usedOprsAtStop[newKey]  = {...usedSoFar, oprsNo};
-
-        final bool isBetterGlobally =
-            !globalBest.containsKey(toPlaceId) ||
-             arr < globalBest[toPlaceId]!;
-
-        if (isBetterGlobally) {
-          globalBest[toPlaceId] = arr;
-          nextRoundStops.add(newKey);
-        }
+        // Convert ResultSets to lists to merge them easily
+        var mergedReachable = [...reachable, ...midNightReachable];
+        _processReachableRows(mergedReachable, earliestArrival, previous, stopTimes, usedOprsAtStop, globalBest, nextRoundStops, stopKeyNow, usedSoFar);
+      } else {
+        _processReachableRows(reachable, earliestArrival, previous, stopTimes, usedOprsAtStop, globalBest, nextRoundStops, stopKeyNow, usedSoFar);
       }
     }
 
@@ -278,36 +213,79 @@ Future<Result> marksAlgorithm(
     if (globalBest.containsKey(destinationPlaceId)) {
       print("  ✅ Destination reached in round $round");
       destinationFoundState++;
+      if(round >= 3) break;
     }
 
     if (nextRoundStops.isEmpty) break;
     currentRoundStops = nextRoundStops;
   }
 
-  return _buildResult(
+  return _buildResultSync(
     sourcePlaceId,
     destinationPlaceId,
     startTime,
     previous,
     stopTimes,
-    database,
+    db,
   );
+}
+
+void _processReachableRows(
+  Iterable<ffi.Row> reachable,
+  Map<String, int> earliestArrival,
+  Map<String, String> previous,
+  Map<String, Pair<int, int>> stopTimes,
+  Map<String, Set<String>> usedOprsAtStop,
+  Map<String, int> globalBest,
+  List<String> nextRoundStops,
+  String stopKeyNow,
+  Set<String> usedSoFar
+) {
+  for (final row in reachable) {
+    final String? toPlaceId = row['to_placeId'] as String?;
+    final String? oprsNo    = row['oprsNo']     as String?;
+    final int?    dept      = row['dep_min']    as int?;
+    final int?    arr       = row['arr_min']    as int?;
+
+    if (toPlaceId == null || oprsNo == null ||
+        dept == null || arr == null) continue;
+
+    final String newKey = "$toPlaceId|$oprsNo";
+
+    final bool isBetterForRoute =
+        !earliestArrival.containsKey(newKey) ||
+         arr < earliestArrival[newKey]!;
+
+    if (!isBetterForRoute) continue;
+
+    earliestArrival[newKey] = arr;
+    previous[newKey]        = stopKeyNow;
+    stopTimes[newKey]       = Pair(dept, arr);
+    usedOprsAtStop[newKey]  = {...usedSoFar, oprsNo};
+
+    final bool isBetterGlobally =
+        !globalBest.containsKey(toPlaceId) ||
+         arr < globalBest[toPlaceId]!;
+
+    if (isBetterGlobally) {
+      globalBest[toPlaceId] = arr;
+      nextRoundStops.add(newKey);
+    }
+  }
 }
 
 
 // =========================================================
-// BUILD RESULT — reconstruct path from destination back to source
+// BUILD RESULT (Synchronous Version with Inline Scoring)
 // =========================================================
-
-Future<Result> _buildResult(
+Result _buildResultSync(
   String sourcePlaceId,
   String destinationPlaceId,
   int    startTime,
   Map<String, String>         previous,
   Map<String, Pair<int, int>> stopTimes,
-  dynamic database,
-) async {
-
+  ffi.Database db,
+) {
   final List<String> destKeys = [];
   for (final key in stopTimes.keys) {
     if (key.startsWith("$destinationPlaceId|")) {
@@ -320,217 +298,211 @@ Future<Result> _buildResult(
     return Result([], 0);
   }
 
-  String bestKey = destKeys.first;
-  for (final key in destKeys) {
-    if (stopTimes[key]!.value < stopTimes[bestKey]!.value) {
-      bestKey = key;
-    }
-  }
+  // Scoring Weights
+  const double waitTimeMultiplier = 1.5; 
+  const double transferPenaltyMins = 45.0;
 
-  final List<PathStop> rawPath = [];
-  String? currentKey = bestKey;
+  List<PathStop> bestRawPath = [];
+  double bestScore = double.infinity;
+  int finalArrivalTime = 0;
 
-  while (currentKey != null) {
+  // Evaluate all routes that reached the destination
+  for (final destKey in destKeys) {
+    final List<PathStop> currentRawPath = [];
+    String? currentKey = destKey;
 
-    final String placeId = currentKey.split('|')[0];
-    final String oprsNo  = currentKey.split('|')[1];
+    // 1. Reconstruct path backward
+    while (currentKey != null) {
+      final String placeId = currentKey.split('|')[0];
+      final String oprsNo  = currentKey.split('|')[1];
 
-    if (placeId == sourcePlaceId) {
-      rawPath.insert(0, PathStop(
+      if (placeId == sourcePlaceId) {
+        currentRawPath.insert(0, PathStop(
+          placeId:     placeId,
+          placeName:   '',
+          arrivalTime: startTime,
+          deptTime:    startTime,
+          oprsNo:      '',
+        ));
+        break;
+      }
+
+      final Pair<int, int>? times = stopTimes[currentKey];
+      if (times == null) break;
+
+      currentRawPath.insert(0, PathStop(
         placeId:     placeId,
         placeName:   '',
-        arrivalTime: startTime,
-        deptTime:    startTime,
-        oprsNo:      '',
+        arrivalTime: times.value,
+        deptTime:    times.key,
+        oprsNo:      oprsNo,
+        time: times.value - times.key
       ));
-      break;
+
+      currentKey = previous[currentKey];
     }
 
-    final Pair<int, int>? times = stopTimes[currentKey];
-    if (times == null) break;
+    // 2. Shift deptTime: each stop shows the NEXT leg's boarding time
+    for (int i = 0; i < currentRawPath.length - 1; i++) {
+      currentRawPath[i] = PathStop(
+        placeId:     currentRawPath[i].placeId,
+        placeName:   currentRawPath[i].placeName,
+        arrivalTime: currentRawPath[i].arrivalTime,
+        deptTime:    currentRawPath[i + 1].deptTime,
+        oprsNo:      currentRawPath[i + 1].oprsNo,
+        time:        currentRawPath[i].time
+      );
+    }
+    
+    if (currentRawPath.isNotEmpty) {
+      final last = currentRawPath.last;
+      currentRawPath[currentRawPath.length - 1] = PathStop(
+        placeId:     last.placeId,
+        placeName:   last.placeName,
+        arrivalTime: last.arrivalTime,
+        deptTime:    last.arrivalTime,
+        oprsNo:      last.oprsNo,
+      );
+    }
 
-    rawPath.insert(0, PathStop(
-      placeId:     placeId,
-      placeName:   '',
-      arrivalTime: times.value,
-      deptTime:    times.key,
-      oprsNo:      oprsNo,
-      time: times.value - times.key
+    // 3. Calculate metrics for this specific path
+    int arrival = currentRawPath.last.arrivalTime;
+    int totalTravelTime = arrival - startTime;
+    if (totalTravelTime < 0) totalTravelTime += 1440; // Midnight wrap
 
-    ));
+    int totalWaitTime = 0;
+    for (int i = 0; i < currentRawPath.length - 1; i++) {
+      int wait = currentRawPath[i].deptTime - currentRawPath[i].arrivalTime;
+      if (wait < 0) wait += 1440;
+      totalWaitTime += wait;
+    }
 
-    currentKey = previous[currentKey];
+    int transfers = (currentRawPath.length - 2).clamp(0, 999);
+
+    // 4. Apply the score formula
+    double score = totalTravelTime + 
+                  (totalWaitTime * waitTimeMultiplier) + 
+                  (transfers * transferPenaltyMins);
+
+    // Keep track of the lowest score
+    if (score < bestScore) {
+      bestScore = score;
+      bestRawPath = currentRawPath;
+      finalArrivalTime = arrival;
+    }
   }
 
-  // shift deptTime: each stop shows the NEXT leg's boarding time
-  for (int i = 0; i < rawPath.length - 1; i++) {
-    rawPath[i] = PathStop(
-      placeId:     rawPath[i].placeId,
-      placeName:   rawPath[i].placeName,
-      arrivalTime: rawPath[i].arrivalTime,
-      deptTime:    rawPath[i + 1].deptTime,
-      oprsNo:      rawPath[i + 1].oprsNo,
-      time : rawPath[i].time
-    );
-  }
-  if (rawPath.isNotEmpty) {
-    final last = rawPath.last;
-    rawPath[rawPath.length - 1] = PathStop(
-      placeId:     last.placeId,
-      placeName:   last.placeName,
-      arrivalTime: last.arrivalTime,
-      deptTime:    last.arrivalTime,
-      oprsNo:      last.oprsNo,
-    );
-  }
+  print("🏆 Best Route Score: $bestScore | Arrival: $finalArrivalTime");
 
-  // batch place name lookup
-  // final List<String> placeIds = rawPath.map((p) => p.placeId).toList();
-
+  // We now proceed with the single best route exactly as the old code did
+  final List<PathStop> rawPath = bestRawPath;
   List<String> placeIds = [];
-  List<String> oprsNo = [];
+  List<String> oprsNoList = [];
   for (var p in rawPath) {
     if (!placeIds.contains(p.placeId)) {
       placeIds.add(p.placeId);
-      oprsNo.add(p.oprsNo);
+      oprsNoList.add(p.oprsNo);
     }
   }
 
   Map<String, String> nameLookup = {};
   Map<String, String> serviceTypeLookup = {};
   Map<String, String> vehicleNoLookup = {};
-  Map<String, Map<String, String>>stopDetailsLookup = {};
-  // Map<String, double> latLookup = {};
-  // Map<String, double> lonLookup = {};
+  Map<String, Map<String, String>> stopDetailsLookup = {};
 
   if (placeIds.isNotEmpty) {
-    String placeholders = "";
-
-    for (int i = 0; i < placeIds.length; i++) {
-      placeholders += "?";
-      if (i != placeIds.length - 1) {
-        placeholders += ",";
-      }
-    }
-    final List<Map<String, dynamic>> rows = await database.rawQuery(
+    String placeholders = List.filled(placeIds.length, '?').join(',');
+    
+    final ffi.ResultSet rows = db.select(
       'SELECT * FROM place_master WHERE placeId IN ($placeholders)',
       placeIds,
     );
 
-    
-
-    
-
     for (final row in rows) {
-
       final id = row['placeId'].toString();
-
       nameLookup[id] = row['placeName']?.toString() ?? 'Unknown';
 
       stopDetailsLookup[id] = {
         "placeId" : row['placeId'].toString(),
         "placeName" :  row['placeName']?.toString() ?? 'Unknown',
-        "pincode" : row['pincode'].toString(),
-        "address" : row['address'].toString(),
-        'latitude' : row['latitude'].toString(),
-        'longitude' : row['longitude'].toString(),
-        'district' : row['district'].toString(),
+        "pincode" : row['pincode']?.toString() ?? '',
+        "address" : row['address']?.toString() ?? '',
+        'latitude' : row['latitude']?.toString() ?? '',
+        'longitude' : row['longitude']?.toString() ?? '',
+        'district' : row['district']?.toString() ?? '',
       };
-
-      // latLookup[id] = (row['latitude'] as num?)?.toDouble() ?? 0.0;
-      // lonLookup[id] = (row['longitude'] as num?)?.toDouble() ?? 0.0;
     }
   }
 
-  
-    
-   if (oprsNo.isNotEmpty) {
-  final placeholders = List.filled(oprsNo.length, '?').join(',');
+  if (oprsNoList.isNotEmpty) {
+    final placeholders = List.filled(oprsNoList.length, '?').join(',');
+    final ffi.ResultSet serviceDetails = db.select('''
+      SELECT oprsNo, vehicleNumber, serviceType
+      FROM service_details
+      WHERE oprsNo IN ($placeholders)
+      ''', oprsNoList,
+    );
 
-  final List<Map<String, dynamic>> serviceDetails =
-      await database.rawQuery(
-    '''
-    SELECT oprsNo, vehicleNumber, serviceType
-    FROM service_details
-    WHERE oprsNo IN ($placeholders)
-    ''',
-    oprsNo,
-  );
-
-  for (final row in serviceDetails) {
-    final id = row['oprsNo'] as String;
-
-    serviceTypeLookup[id] = row['serviceType']?.toString() ?? '';
-    vehicleNoLookup[id] = row['vehicleNumber']?.toString() ?? '';
+    for (final row in serviceDetails) {
+      final id = row['oprsNo'] as String;
+      serviceTypeLookup[id] = row['serviceType']?.toString() ?? '';
+      vehicleNoLookup[id] = row['vehicleNumber']?.toString() ?? '';
+    }
   }
-}
-
-  
 
   final List<PathStop> path = [];
 
-for (int i = 0; i < rawPath.length; i++) {
+  for (int i = 0; i < rawPath.length; i++) {
+    double distance = 0;
+    int time = 0;
 
-  double distance = 0;
-
-  int time = 0;
-
-  if(i < rawPath.length - 1){
-    
-
-     time = (rawPath[i].deptTime) -  (rawPath[i + 1].arrivalTime);
-
-     int arrival = rawPath[i+ 1].arrivalTime;
-      int dept = rawPath[i].deptTime;
-
-     
-
-    
-
-    if(arrival < dept)
-    {
-      arrival += 1440;
-    }
-
-    time = arrival - dept;
-
-    
-    distance /= 2;
-
-  }
-  path.add(
-    PathStop(
-      placeId: rawPath[i].placeId,
-      placeName: nameLookup[rawPath[i].placeId] ?? 'UNKNOWN',
-      arrivalTime: rawPath[i].arrivalTime,
-      deptTime: rawPath[i].deptTime,
-      oprsNo: rawPath[i].oprsNo,
-      distance: distance,
-      time: time,
-      serviceType: serviceTypeLookup[rawPath[i].oprsNo] ?? "UNKNOWN",
-      vehicleNo: vehicleNoLookup[rawPath[i].oprsNo] ?? "UNKNOWN",
-      stopDetails: stopDetailsLookup[rawPath[i].placeId]
+    if(i < rawPath.length - 1){
+       time = (rawPath[i].deptTime) - (rawPath[i + 1].arrivalTime);
+       int arrival = rawPath[i+ 1].arrivalTime;
+       int dept = rawPath[i].deptTime;
       
-    ),
-  );
-}
-
-  print("Path: ${path.length} stop(s) | arrival=${stopTimes[bestKey]!.value}");
-
-  
-  for (int i = 0; i < path.length; i++) {
-    final s = path[i];
-    print(
-      "  [${i + 1}] ${s.placeName} (${s.placeId})"
-      "  bus=${s.oprsNo.isEmpty ? 'source' : s.oprsNo}"
-      "  board=${s.deptTime}  arrive=${s.arrivalTime} "
-      " distance = ${s.distance}"
-      "  time = ${s.time}"
+      if(arrival < dept) {
+        arrival += 1440;
+      }
+      time = arrival - dept;
+      distance /= 2;
+    }
+    
+    path.add(
+      PathStop(
+        placeId: rawPath[i].placeId,
+        placeName: nameLookup[rawPath[i].placeId] ?? 'UNKNOWN',
+        arrivalTime: rawPath[i].arrivalTime,
+        deptTime: rawPath[i].deptTime,
+        oprsNo: rawPath[i].oprsNo,
+        distance: distance,
+        time: time,
+        serviceType: serviceTypeLookup[rawPath[i].oprsNo] ?? "UNKNOWN",
+        vehicleNo: vehicleNoLookup[rawPath[i].oprsNo] ?? "UNKNOWN",
+        stopDetails: stopDetailsLookup[rawPath[i].placeId]
+      ),
     );
   }
 
-  return Result(path, stopTimes[bestKey]!.value);
+  for (int i = 0; i < path.length; i++) {
+
+    final s = path[i];
+
+    print(
+
+      "  [${i + 1}] ${s.placeName} (${s.placeId})"
+
+      "  bus=${s.oprsNo.isEmpty ? 'source' : s.oprsNo}"
+
+      "  board=${s.deptTime}  arrive=${s.arrivalTime} "
+
+      " distance = ${s.distance}"
+
+      "  time = ${s.time}"
+
+    );
+
+  }
+
+  return Result(path, finalArrivalTime);
 }
-
-
-

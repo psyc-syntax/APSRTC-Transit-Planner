@@ -27,6 +27,15 @@ class RouteResultsScreen extends ConsumerWidget {
             body: Center(child: Text("Error: $error"))),
 
       data: (data) {
+         WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    if (data != null && data.path.isNotEmpty) {
+      
+      ref.read(tempSelectedStartTimeProvider.notifier).state =
+          data.path[0].deptTime;
+    }
+
+  });
         
         return RouteResultsDataPart(results: data!);
       } 

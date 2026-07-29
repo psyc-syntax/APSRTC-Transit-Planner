@@ -8,9 +8,10 @@ import "package:planner_demo/providers/providers.dart";
 import "package:planner_demo/widgets/route%20results/day_param_container_for_bottom_model_sheet.dart";
 
 class BottomModelSheetForTimeSelection extends ConsumerWidget {
-  const BottomModelSheetForTimeSelection({super.key, required this.startTime});
+  const BottomModelSheetForTimeSelection({super.key, required this.startTime, required this.inHome});
 
   final int startTime;
+  final bool inHome;
 
   @override
   Widget build(BuildContext context, ref) {
@@ -148,16 +149,18 @@ class BottomModelSheetForTimeSelection extends ConsumerWidget {
             child: ElevatedButton(
               onPressed: () {
                 print(ref.watch(selectedStartTimeProvider));
+                print("temp selected time ${ref.watch(tempSelectedStartTimeProvider)}");
 
                 updateDateAndTime(ref);
+
 
                 final finalTime = ref.read(selectedStartTimeProvider);
                 final finalDate = ref.read(selectedDateProvider);
                 print('FINAL DATE: $finalDate');
                 print('FINAL TIME: $finalTime');
 
-                ref.read(runAlgorithmTriggerProvider.notifier).state++;
-                ref.read(isMarkAlgorithmRunning.notifier).state = true;
+                if(!inHome) ref.read(runAlgorithmTriggerProvider.notifier).state++;
+                if(!inHome)ref.read(isMarkAlgorithmRunning.notifier).state = true;
 
                 Navigator.pop(context);
               },

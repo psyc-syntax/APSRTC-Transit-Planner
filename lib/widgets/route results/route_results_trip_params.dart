@@ -15,7 +15,7 @@ class RouteResultsTripParams extends StatelessWidget{
 
     int totalTime = dateTimeData.totalTimeCalc(results!);
     
-    String time = "~";
+    String time = "";
 
     if((totalTime / 60).toInt() > 0){
          time += "${(totalTime / 60).toInt()}H ";

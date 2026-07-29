@@ -23,18 +23,31 @@ class DatabaseHelper {
   }
 }
 
+  
+  // Method to get the absolute file path for the background Isolate
+  Future<String> getDatabaseFilePath() async {
+    // Await the database getter first. 
+    // This guarantees the DB is copied from assets if it's the first time running.
+    await database; 
+    
+    String dbPath = await getDatabasesPath();
+    return join(dbPath, "ap_v2.db");
+  }
+
+  
+
   //method to initialize database
   Future<Database> intDatabase() async {
     //get path of the apps database
     String dbPath = await getDatabasesPath();
 
     //adding the our database to app database
-    String path = join(dbPath, "apsrtc_v1.db");
+    String path = join(dbPath, "ap_v2.db");
 
     //if our database doesnt exist in the apps database then adding it to the database from the assets folder
     if (!await File(path).exists()) {
       //getting byte format of data from the database
-      ByteData data = await rootBundle.load("assets/data/apsrtc_v1.db");
+      ByteData data = await rootBundle.load("assets/data/ap_v2.db");
 
       List<int> bytes = data.buffer.asUint8List(
         data.offsetInBytes,
@@ -60,21 +73,33 @@ class DatabaseHelper {
       WHERE placeId IS NOT NULL
         AND (pincode IS NOT NULL OR address IS NOT NULL OR district IS NOT NULL)
       ORDER BY placeName 
-      LIMIT 100
+      
     ''');
   } 
   
   // 2. Search query matches name AND has at least some metadata
-  else {
-    return await db.rawQuery('''
+
+    final searchResults =  await db.rawQuery('''
       SELECT placeName, district, pincode, address, placeId, latitude, longitude
       FROM place_master 
       WHERE placeName LIKE ? 
         AND (pincode IS NOT NULL OR address IS NOT NULL OR district IS NOT NULL)
       ORDER BY placeName 
-      LIMIT 100
+      
     ''', ['$cleanQuery%']);
-  }
+
+    if(searchResults.isEmpty){
+      return await db.rawQuery('''
+      SELECT placeName, district, pincode, address, placeId, latitude, longitude
+      FROM place_master
+      WHERE placeName LIKE ?
+      ORDER BY placeName
+      
+    ''', ['$cleanQuery%']);
+    }
+
+  return searchResults;
+
 
 }
 

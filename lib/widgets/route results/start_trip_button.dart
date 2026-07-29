@@ -31,7 +31,7 @@ class StartTripButton extends StatelessWidget{
           
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(20),
+              borderRadius: BorderRadiusGeometry.circular(32),
             ),
           ),
         ),
@@ -40,8 +40,9 @@ class StartTripButton extends StatelessWidget{
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Start Trip", style: TextStyle(fontSize: 16)),
-              Icon(Icons.bolt, size: 18),
+              Text("More Details", style: TextStyle(fontSize: 16)),
+              SizedBox(width: 2,),
+              Icon(Icons.catching_pokemon, size: 18),
             ],
           ),
         )

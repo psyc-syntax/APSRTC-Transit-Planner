@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/providers/providers.dart';
@@ -35,7 +35,7 @@ class StopBasicDetailsCard extends ConsumerWidget{
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: InkWell(
 
-        onLongPress: (){
+         onLongPress: (){
           showDialog(context: context, builder: (context){
             return StopDetailsAlertDialog(placeName: stopName, placeId: placeId, address: address, latitude: latitude, longitude: longitude, pincode: pincode, district: district);
           });
@@ -54,12 +54,16 @@ class StopBasicDetailsCard extends ConsumerWidget{
               ref.read(isdestinationPlaceSelectedProvider.notifier).state = true;
               print("Updated destinationPlaceIdProvider: ${ref.read(destinationPlaceIdProvider)}");
             }
+          
             
             
             Navigator.pop(context);
           }
           else{
-            (){};
+          
+              showDialog(context: context, builder: (context){
+            return StopDetailsAlertDialog(placeName: stopName, placeId: placeId, address: address, latitude: latitude, longitude: longitude, pincode: pincode, district: district);
+          });
             // Handle the case when back navigation is not needed
             // For example, you might want to navigate to a different screen or show a message
           }

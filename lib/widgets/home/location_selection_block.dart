@@ -15,7 +15,7 @@ class LocationSelectionBlock extends ConsumerWidget {
       children: [
         //left side icons
         Padding(
-          padding: const EdgeInsets.only(left: 32, right: 12, top: 16),
+          padding: const EdgeInsets.only(left: 20, right: 10, top: 8),
           child: Column(
             children: [
               //from Icon

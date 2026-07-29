@@ -5,10 +5,11 @@ import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/widgets/route%20results/bottom_model_sheet_for_time_selection.dart';
 
 class StratTimeDetailsBlock extends ConsumerWidget {
-  const StratTimeDetailsBlock({super.key, required this.startTime, required this.startTimeMin});
+  const StratTimeDetailsBlock({super.key, required this.startTime, required this.startTimeMin, required this.inHome});
 
   final String startTime;
   final int startTimeMin;
+  final bool inHome;
 
 
   @override
@@ -24,11 +25,14 @@ class StratTimeDetailsBlock extends ConsumerWidget {
         ref.read(tempSelectedDateProvider.notifier).state = ref.read(selectedDateProvider);
         showModalBottomSheet(
           context: context,
-          builder: (context) => BottomModelSheetForTimeSelection(startTime: startTimeMin,),
+          builder: (context) => BottomModelSheetForTimeSelection(
+            startTime: startTimeMin,
+            inHome: inHome,
+            ),
         );
       },
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.only(bottom: 8.0),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
@@ -62,7 +66,7 @@ class StratTimeDetailsBlock extends ConsumerWidget {
                       "${
                         dateTimeData.displayDayMonth(_selectedDateData)
                         }, ${
-                          dateTimeData.minToTime(int.parse(startTime))
+                          dateTimeData.minToTime(ref.watch(tempSelectedStartTimeProvider))
                         }",
 
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(

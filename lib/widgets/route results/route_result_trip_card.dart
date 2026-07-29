@@ -34,7 +34,11 @@ class RouteResultTripCard extends ConsumerWidget {
         children: [
           
 
-          StratTimeDetailsBlock(startTime: selectedtime, startTimeMin: ref.watch(selectedStartTimeProvider)),
+          StratTimeDetailsBlock(
+            startTime: selectedtime, 
+            startTimeMin: ref.watch(selectedStartTimeProvider),
+            inHome: false,
+          ),
 
 
           Text("No route found!!"),

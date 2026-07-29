@@ -37,7 +37,7 @@ class TripNavigationScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TopTitle(isbackNeeded: true, title: ""),
+                      TopTitle(isbackNeeded: true, title: "More Details"),
                       GestureDetector(
                         
                        child:  Icon(
@@ -67,7 +67,7 @@ class TripNavigationScreen extends ConsumerWidget {
                           SizedBox(height: 6),
                           TripNavLocationParams(results: results),
 
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 6),
 
                           Column(
                             children: [

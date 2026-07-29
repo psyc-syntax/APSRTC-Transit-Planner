@@ -44,10 +44,31 @@ dependencies:
 
   timeline_tile: ^2.0.0
 
+
+  sqlite3: ^2.4.6
+  sqlite3_flutter_libs: ^0.5.24
+  lottie: ^3.3.1
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
+
+
+flutter_native_splash:
+  color: "#F97316"
+  image: assets/images/markBus_splash_screen_icon.png
+
+
+  android: true
+  ios: true
+  web: false
+
+  android_12:
+    color: "#F97316"
+    image: assets/images/markBus_splash_screen_icon.png
 
 
 flutter_launcher_icons:
@@ -75,10 +96,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/data/apsrtc_v1.db
+    - assets/data/ap_v2.db
     - icons/markBus_icon.png
     - assets/images/about_light_image.png
     - assets/images/about_dark_image.png
+    - assets/markbus_route_finding_simple.json
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

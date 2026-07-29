@@ -34,17 +34,36 @@ class FindOptimalRouteButton extends ConsumerWidget {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () async {
-              if (!isStartingPlaceSelected ||
-                  !isDestinationPlaceSelected) {
-                return;
-              }
+              bool isBothSelected = !isStartingPlaceSelected && !isDestinationPlaceSelected;
 
-              if (ref.read(tempDateCategoryProvider) == "Today") {
-                ref.read(tempSelectedStartTimeProvider.notifier).state =
-                    DateTime.now().hour * 60 +
-                        DateTime.now().minute;
-              } else {
-                ref.read(tempSelectedStartTimeProvider.notifier).state = 480;
+              if (!isStartingPlaceSelected || !isDestinationPlaceSelected) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      actionsPadding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                      content: Text(
+                        isBothSelected ?"Select both starting and destination places"
+                        :!isStartingPlaceSelected? "Select starting place"
+                        :"Select destination place",
+                        style: Theme.of(context).textTheme.bodyMedium, 
+                        // textAlign: TextAlign.center,
+                      ),
+
+
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Close", style: TextStyle(
+                            fontSize: 12,
+                          ),),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                return;
               }
 
               updateDateAndTime(ref);
@@ -56,24 +75,17 @@ class FindOptimalRouteButton extends ConsumerWidget {
               if (ref.read(isMarkAlgorithmRunning)) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const RouteResultsScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const RouteResultsScreen()),
                 );
               }
             },
 
             style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
               shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32),
-                ),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
               ),
               padding: const WidgetStatePropertyAll(
-                EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 14,
-                ),
+                EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
             ),
 
@@ -84,10 +96,7 @@ class FindOptimalRouteButton extends ConsumerWidget {
                 children: [
                   Text("Start Trip", style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 6),
-                  const Icon(
-                    Icons.bolt,
-                    size: 18,
-                  ),
+                  const Icon(Icons.bolt, size: 18),
                 ],
               ),
             ),
