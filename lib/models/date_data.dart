@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
+import 'package:planner_demo/models/app_data.dart';
 
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 
 
 class DateTimeData {
@@ -13,6 +14,22 @@ class DateTimeData {
       "year": dateTime.year,
     };
   }
+
+String displayDay(Map<String, dynamic> dateData) {
+  final day = dateData['day'];
+
+  if (day == null) {
+    return '';
+  }
+
+  final date = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    int.parse(day.toString()),
+  );
+
+  return DateFormat('EEE').format(date);
+}
 
   String minToTime(int minutes) {
     minutes %= 1440;
@@ -130,6 +147,28 @@ double getMultiplier(int totalTime) {
   if (totalTime <= 120) return 0.60;     // 37.2 km/h
   if (totalTime <= 240) return 0.58;     // 34.8 km/h
   return 0.55;                           // 33 km/h
+}
+
+double totalTimeByDistance(int distance) {
+  double baseTimeInMinutes;
+  
+  if (distance <= 100) {
+    baseTimeInMinutes = (distance / 40.0) * 60;
+  } else {
+    baseTimeInMinutes = (distance / 50.0) * 60;
+  }
+  
+
+  double trafficOverhead = baseTimeInMinutes * 0.10; 
+  double restBreakOverhead = 0;
+  
+  if (baseTimeInMinutes > 180) { 
+    restBreakOverhead = 30;
+  }
+  
+
+  double totalTimeInMinutes = baseTimeInMinutes + trafficOverhead + restBreakOverhead;
+  return totalTimeInMinutes;
 }
 
 

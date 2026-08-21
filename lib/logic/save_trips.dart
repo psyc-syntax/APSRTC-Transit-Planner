@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/helpers/database_helper.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/logic/trip_id_generator.dart';
 import 'package:planner_demo/providers/providers.dart';
+
+import '../models/app_data.dart';
 
 bool isTripSaved(WidgetRef ref, Result result) {
       final trips = ref.watch(savedTripsProvider);

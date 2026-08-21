@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/models/date_data.dart';
-import 'package:planner_demo/providers/providers.dart';
+
 import 'package:planner_demo/screens/trip_navigation_screen.dart';
 
 
@@ -13,6 +13,8 @@ import 'package:planner_demo/widgets/shared/top_title.dart';
 import 'package:planner_demo/widgets/route%20results/route_results_trip_params.dart';
 import 'package:planner_demo/widgets/route%20results/start_trip_button.dart';
 import 'package:planner_demo/widgets/route%20results/strat_time_details_block.dart';
+
+import '../../models/app_data.dart';
 
 class RouteResultsDataPart extends ConsumerWidget {
   const RouteResultsDataPart({super.key, required this.results});

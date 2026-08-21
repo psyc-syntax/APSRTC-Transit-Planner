@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/screens/trip_navigation_screen.dart';
+
+import '../../models/app_data.dart';
 
 class StartTripButton extends StatelessWidget{
   const StartTripButton(

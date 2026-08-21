@@ -45,12 +45,16 @@ class StopBasicDetailsCard extends ConsumerWidget{
             if(isStartingStop){
               ref.read(startingPlaceIdProvider.notifier).state = placeId.trim();
               ref.read(startingPlaceNameProvider.notifier).state = stopName;  
+              ref.read(startingLatProvider.notifier).state = double.tryParse(latitude!)!;
+              ref.read(startingLonProvider.notifier).state = double.tryParse(latitude!)!;
               ref.read(isstartingPlaceSelectedProvider.notifier).state = true;
               print("Updated startingPlaceIdProvider: ${ref.read(startingPlaceIdProvider)}");
             }
             else{
               ref.read(destinationPlaceIdProvider.notifier).state = placeId.trim();
               ref.read(destinationPlaceNameProvider.notifier).state = stopName;
+              ref.read(destinationLatProvider.notifier).state = double.tryParse(latitude!)!;
+              ref.read(destinationLonProvider.notifier).state = double.tryParse(latitude!)!;
               ref.read(isdestinationPlaceSelectedProvider.notifier).state = true;
               print("Updated destinationPlaceIdProvider: ${ref.read(destinationPlaceIdProvider)}");
             }

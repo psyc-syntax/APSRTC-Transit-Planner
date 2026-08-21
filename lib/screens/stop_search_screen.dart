@@ -255,8 +255,8 @@ class _StopSearchScreenState extends State<StopSearchScreen> {
           pincode: stop["pincode"]?.toString() ?? "-",
           address: stop["address"] ?? "",
           placeId: stop["placeId"]?.toString() ?? "-",
-          latitude: stop["latitude"]?.toString() ?? "-",
-          longitude: stop["longitude"]?.toString() ?? "-",
+          latitude: stop["latitude"]?.toString() ?? "0.00",
+          longitude: stop["longitude"]?.toString() ?? "0.00",
           isStartingStop: widget.isStartingStop,
           isbackneeded: widget.isbackneeded,
         );

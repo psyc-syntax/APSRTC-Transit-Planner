@@ -1,4 +1,6 @@
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
+
+import '../models/app_data.dart';
 
 Map<String, dynamic> resultToJson(Result result, String id){
  List<Map<String, dynamic>> pathJosn = [];

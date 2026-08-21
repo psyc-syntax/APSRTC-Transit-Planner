@@ -19,11 +19,11 @@ class CircularColouredIcon extends StatelessWidget {
       width: 24,
       height: 24,
       decoration: BoxDecoration(
-        color: isfillColor ? color : Colors.transparent,
+        color: isfillColor ? color : Theme.of(context).colorScheme.surface,
         shape: BoxShape.circle,
         border: Border.all(
           color: color,
-          width: 2,
+          width: 1,
         ),
       ),
       child: Icon(

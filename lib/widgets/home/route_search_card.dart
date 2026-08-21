@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/widgets/home/location_selection_block.dart';
+import 'package:planner_demo/widgets/home/travel_date_selection_block.dart';
 
-import 'package:planner_demo/widgets/route%20results/strat_time_details_block.dart';
+
 
 class RouteSearchCard extends StatelessWidget{
-  const RouteSearchCard({super.key});
+  const RouteSearchCard({super.key, required this.inHome});
+
+  final bool inHome;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: Theme.of(context).dividerColor,
           width: 1,
@@ -29,9 +32,11 @@ class RouteSearchCard extends StatelessWidget{
           //     startTime: (DateTime.now().hour * 60 + DateTime.now().minute,).toString(),
           //     ),
           // ),
+
+          
           
       
-          // SizedBox(height: 20,),
+          
         ],
       ),
     );

@@ -3,7 +3,9 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
-import 'package:planner_demo/logic/marks_algorithm.dart';
+import '../models/app_data.dart';
+
+
 
 String generateTripId(Result result){
 

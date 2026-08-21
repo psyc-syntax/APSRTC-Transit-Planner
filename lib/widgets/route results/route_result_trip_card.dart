@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/models/date_data.dart';
 import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/widgets/route%20results/circular_coloured_icon.dart';
 import 'package:planner_demo/widgets/route%20results/strat_time_details_block.dart';
+
+import '../../models/app_data.dart';
 
 class RouteResultTripCard extends ConsumerWidget {
   const RouteResultTripCard({
@@ -117,12 +119,12 @@ class RouteResultTripCard extends ConsumerWidget {
                           )
                         : !isLast
                         ? CircularColouredIcon(
-                            iconData: Icons.bus_alert,
+                            iconData: Icons.directions_bus,
                             color: Theme.of(context).dividerColor,
                             isfillColor: false,
                           )
                         : CircularColouredIcon(
-                            iconData: Icons.directions_transit,
+                            iconData: Icons.flag,
                             color: Theme.of(context).colorScheme.primary,
                           ),
                     if (!isLast)

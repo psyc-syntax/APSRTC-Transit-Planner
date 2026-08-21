@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:planner_demo/screens/home_screen.dart';
 import 'package:planner_demo/screens/more_options_screen.dart';
+import 'package:planner_demo/screens/schedule_screen.dart';
 import 'package:planner_demo/screens/trips_screen.dart';
-import 'package:planner_demo/screens/stop_search_screen.dart';
+
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -17,7 +18,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    const StopSearchScreen(isbackneeded: false, isStartingStop: false),
+    const ScheduleScreen(),
     const TripsScreen(),
     const MoreOptionsScreen(),
   ];
@@ -92,7 +93,7 @@ class _TabsScreenState extends State<TabsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(child: _navItem(Icons.home, "Home", 0)),
-                Expanded(child: _navItem(Icons.location_pin, "Stops", 1)),
+                Expanded(child: _navItem(Icons.calendar_month, "Schedule", 1)),
                 Expanded(child: _navItem(Icons.save, "Trips", 2)),
                 Expanded(child: _navItem(Icons.more_horiz, "More", 3)),
               ],
@@ -120,7 +121,7 @@ class _TabsScreenState extends State<TabsScreen> {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: isSelected ? activeColor.withAlpha(50) : Colors.transparent,
+            color: isSelected ? activeColor.withAlpha(45) : Colors.transparent,
             borderRadius: BorderRadius.circular(30),
           ),
           child: Padding(

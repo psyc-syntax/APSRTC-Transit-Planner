@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/logic/save_trips.dart';
 import 'package:planner_demo/logic/trip_id_generator.dart';
+import 'package:planner_demo/models/app_data.dart';
 import 'package:planner_demo/providers/providers.dart';
 import 'package:planner_demo/screens/trip_navigation_screen.dart';
 

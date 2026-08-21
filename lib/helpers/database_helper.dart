@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:planner_demo/logic/jsont_converters.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/logic/trip_id_generator.dart';
 
 
 import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
+
+import '../models/app_data.dart';
 
 class DatabaseHelper {
   //database initialization

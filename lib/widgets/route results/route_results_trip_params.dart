@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+import 'package:planner_demo/models/app_data.dart';
+
 import 'package:planner_demo/models/date_data.dart';
 import 'package:planner_demo/widgets/route%20results/route_results_trip_param_container.dart';
 

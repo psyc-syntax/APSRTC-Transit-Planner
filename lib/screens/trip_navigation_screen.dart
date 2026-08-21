@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/logic/save_trips.dart';
 
 import 'package:planner_demo/providers/providers.dart';
@@ -9,6 +9,8 @@ import 'package:planner_demo/widgets/trip%20navigation/detailed_trip_details.dar
 import 'package:planner_demo/widgets/trip%20navigation/location_details_block.dart';
 import 'package:planner_demo/widgets/trip%20navigation/location_params.dart';
 import 'package:planner_demo/widgets/shared/top_title.dart';
+
+import '../models/app_data.dart';
 
 class TripNavigationScreen extends ConsumerWidget {
   const TripNavigationScreen({super.key, required this.results});
