@@ -1,53 +1,58 @@
 import 'package:flutter/material.dart';
 
-import 'package:planner_demo/screens/trip_navigation_screen.dart';
+class ShowMoreTripsButton extends StatelessWidget {
+  const ShowMoreTripsButton({
+    super.key,
+    required this.showAllTrips,
+    required this.onPressed,
+  });
 
-import '../../models/app_data.dart';
-
-class StartTripButton extends StatelessWidget{
-  const StartTripButton(
-    {
-      super.key,
-      required this.results
-    }
-    );
-
-  final Result results;
+  final bool showAllTrips;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      
-      decoration: BoxDecoration(
-        
-      ),
+      decoration: const BoxDecoration(),
       child: ElevatedButton(
-        onPressed: (){
-          Navigator.of(context).push(
-          MaterialPageRoute(builder: (context){
-            return TripNavigationScreen(results: results,);
-          })
-        );
-        },
+        onPressed: onPressed,
+
         style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-          
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               borderRadius: BorderRadiusGeometry.circular(32),
             ),
           ),
         ),
+
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+          padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 18,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("More Details", style: TextStyle(fontSize: 16)),
-              SizedBox(width: 2,),
-              Icon(Icons.catching_pokemon, size: 18),
+              Text(
+                showAllTrips
+                    ? "Show Less"
+                    : "Show More Trips",
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+
+              const SizedBox(width: 2),
+
+              Icon(
+                showAllTrips
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
+                size: 18,
+              ),
             ],
           ),
-        )
+        ),
       ),
     );
   }

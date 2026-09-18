@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'dart:ffi' as native;
 import 'package:ffi/ffi.dart' as pkg_ffi;
-
 import 'package:sqlite3/sqlite3.dart' as ffi;
 import 'package:planner_demo/logic/distance_time__calculator_by_lat_lon.dart';
 import 'package:planner_demo/models/app_data.dart';
@@ -156,9 +155,12 @@ List<Result> _jsonToResult(
       final bool isLastStop = (i == rawPath.length - 1);
 
       if (isLastStop) {
+
         // The final stop has no "next leg" to pull a departure time
         // from, so show its arrival time as both — this is your
         // journey's end, nothing departs from here.
+
+
         path.add(PathStop(
           placeId: rawPath[i].placeId,
           placeName: rawPath[i].placeName,
@@ -167,8 +169,10 @@ List<Result> _jsonToResult(
           oprsNo: rawPath[i].oprsNo,
         ));
       } else {
+
         // Take the NEXT stop's original (unshifted) deptTime/oprsNo —
         // that's the bus that departs FROM this current stop.
+
         path.add(PathStop(
           placeId: rawPath[i].placeId,
           placeName: rawPath[i].placeName,
@@ -230,6 +234,7 @@ Future<List<Result>> marksScheduleAlgorithm(
       // dataPath is just a plain String value by this point — safe to
       // hand into the isolate closure, since only the FILE-PREP step
       // (the part that needed platform channels) had to happen outside.
+      
       final String jsonText = _callNativeAlgorithm(
         src,
         dest,

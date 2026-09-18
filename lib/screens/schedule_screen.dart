@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 
 import 'package:planner_demo/widgets/home/route_search_card.dart';
+import 'package:planner_demo/widgets/route%20results/note_suggestion_block.dart';
 import 'package:planner_demo/widgets/schedule/get_all_trips_button.dart';
 import 'package:planner_demo/widgets/schedule/schedule_day_selection_block.dart';
 
@@ -23,9 +24,10 @@ class ScheduleScreen extends StatelessWidget{
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0,),
               child: TopTitle(isbackNeeded: false, title: "Schedules"),
             ),
+            
             Expanded(
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
@@ -44,7 +46,11 @@ class ScheduleScreen extends StatelessWidget{
                             DateTime.now().hour * 60 + DateTime.now().minute,
                           ).toString(),
                           inHome: true,),
+
+                      
           ),
+
+          
 
                     
                     Padding(

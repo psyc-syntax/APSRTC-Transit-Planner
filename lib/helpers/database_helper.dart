@@ -73,34 +73,36 @@ class DatabaseHelper {
       SELECT placeName, district, pincode, address, placeId ,latitude, longitude
       FROM place_master 
       WHERE placeId IS NOT NULL
-        AND (pincode IS NOT NULL OR address IS NOT NULL OR district IS NOT NULL)
-      ORDER BY placeName 
+      ORDER BY rating DESC,
+      (pincode IS NULL AND address IS NULL AND district IS NULL), 
+      placeName 
       
     ''');
   } 
   
   // 2. Search query matches name AND has at least some metadata
 
-    final searchResults =  await db.rawQuery('''
-      SELECT placeName, district, pincode, address, placeId, latitude, longitude
-      FROM place_master 
-      WHERE placeName LIKE ? 
-        AND (pincode IS NOT NULL OR address IS NOT NULL OR district IS NOT NULL)
-      ORDER BY placeName 
-      
-    ''', ['$cleanQuery%']);
+    final searchResults = await db.rawQuery('''
+  SELECT placeName, district, pincode, address, placeId, latitude, longitude
+  FROM place_master
+  WHERE placeName LIKE ?
+  ORDER BY
+    rating DESC,
+    (pincode IS NULL AND address IS NULL AND district IS NULL),
+    placeName
+''', ['$cleanQuery%']);
 
-    if(searchResults.isEmpty){
-      return await db.rawQuery('''
-      SELECT placeName, district, pincode, address, placeId, latitude, longitude
-      FROM place_master
-      WHERE placeName LIKE ?
-      ORDER BY placeName
-      
-    ''', ['$cleanQuery%']);
-    }
+return searchResults;
 
-  return searchResults;
+  //   final serachResultsWithotMoreDetails = await db.rawQuery('''
+  //     SELECT placeName, district, pincode, address, placeId, latitude, longitude
+  //     FROM place_master
+  //     WHERE placeName LIKE ?
+  //     ORDER BY placeName
+      
+  //   ''', ['$cleanQuery%']);
+
+  // return searchResults + serachResultsWithotMoreDetails;
 
 
 }

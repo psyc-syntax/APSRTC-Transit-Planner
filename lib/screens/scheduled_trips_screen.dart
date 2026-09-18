@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planner_demo/widgets/route%20results/note_suggestion_block.dart';
 
 import 'package:planner_demo/widgets/route%20results/route_results_location_details.dart';
 import 'package:planner_demo/widgets/schedule/scheduled%20Trips/morning_trips.dart';
@@ -22,13 +23,14 @@ class ScheduledTripsScreen extends StatelessWidget{
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TopTitle(isbackNeeded: true, title: "Scheduled Trips"),
             ),
+            SizedBox(height: 16,),
             Expanded(
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 4),
+                      padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 4),
                       child: RouteResultsLocationDetails(),
                     ),
 
@@ -37,7 +39,9 @@ class ScheduledTripsScreen extends StatelessWidget{
                       child: TimeDivisonBlock(),
                     ),
 
-                    ScheduleTrips()
+                    ScheduleTrips(),
+                    SizedBox(height: 100,)
+                    
                   ],
                 ),
               ),

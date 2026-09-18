@@ -26,7 +26,7 @@ class DatabaseSizeBlock extends StatelessWidget{
               children: [
                 Text("Database Size", style: Theme.of(context).textTheme.titleSmall,),
                 SizedBox(height: 4,),
-                Text("79.3 MB", style: Theme.of(context).textTheme.titleMedium,)
+                Text("20.3 MB", style: Theme.of(context).textTheme.titleMedium,)
               ],
             ),
           ],

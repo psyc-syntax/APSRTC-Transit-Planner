@@ -28,7 +28,7 @@ class DataIncludesBlock extends StatelessWidget{
             DataIncludeSingleParam(icon: Icons.route, detail: "Routes & Services",),
             DataIncludeSingleParam(icon: Icons.info, detail: "Stop Information"),
             DataIncludeSingleParam(icon: Icons.timelapse, detail: "Timetables"),
-            DataIncludeSingleParam(icon: Icons.route, detail: "Routes & Services"),
+            DataIncludeSingleParam(icon: Icons.route, detail: "Scheduled Trips"),
 
               
           ],

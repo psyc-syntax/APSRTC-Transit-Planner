@@ -92,36 +92,31 @@ String displayDay(Map<String, dynamic> dateData) {
   }
 
 
-  int waitingTimeFinder(int arrivalTimeline, int departure) {
-  // departure is already an absolute timeline value (e.g. 1500)
+int waitingTimeFinder(int arrivalTimeline, int departure) {
+  // departure is already an absolute timeline value
+
+
   if (departure >= 1440) {
     return departure - arrivalTimeline;
   }
 
-  // departure is a clock time (0-1439)
+  // departure is a clock time (0–1439)
   int arrivalClock = arrivalTimeline % 1440;
 
   int wait = departure - arrivalClock;
 
+  // Departure is on the next day
   if (wait < 0) {
     wait += 1440;
   }
 
   return wait;
-
 }
 
 int totalTimeCalc(Result results){
   final path = results.path;
-  int totaltime = 0;
-  for(int i = 0; i < path.length; i++){
-    if(path[i].time != null){
-      totaltime += path[i].time!;
-    }
-    if(i < path.length - 1 && i > 0){
-      totaltime += waitingTimeFinder(path[i].arrivalTime, path[i].deptTime);
-    }
-  }
+  int totaltime = path[path.length - 1].arrivalTime - path[0].deptTime;
+  if(totaltime < 0) totaltime += 1440;
   return totaltime;
 
 }
@@ -129,14 +124,12 @@ int totalTimeCalc(Result results){
 double totalDistanceCalc(Result results){
   
   final path = results.path;
-  int totalTime = 0;
-  for(int i = 0; i < path.length - 1; i++){
-    if(path[i].time != null){
-      totalTime += path[i].time!;
-    }
-    
+  int totalTime = path[path.length - 1].arrivalTime - path[0].deptTime;
+  if(totalTime < 0) totalTime += 1440;
+  
+  for(int i = 1; i < path.length - 1; i++){
+    totalTime -= waitingTimeFinder(path[i].arrivalTime, path[i].deptTime);
   }
-
   return totalTime * getMultiplier(totalTime);
 }
 

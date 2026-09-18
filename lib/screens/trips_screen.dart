@@ -31,7 +31,7 @@ class _TripsScreenState extends ConsumerState<TripsScreen> {
         left : true,
         right : true,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Column(
             children: [
               const TopTitle(isbackNeeded: false, title: "Saved Trips",),
@@ -43,7 +43,10 @@ class _TripsScreenState extends ConsumerState<TripsScreen> {
                     children: [
                       
                       
-                      const SavedConnectionsBlock(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: const SavedConnectionsBlock(),
+                      ),
                   
                       SizedBox(height: 100,),
 

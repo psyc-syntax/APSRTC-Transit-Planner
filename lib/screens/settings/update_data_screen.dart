@@ -50,7 +50,7 @@ class UpdateDataScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 140.0),
                       child: Column(
                         children: const [
-                          DataVersionBlock(),
+                          // DataVersionBlock(),
                           SizedBox(height: 10),
                           DatabaseSizeBlock(),
                           SizedBox(height: 10),

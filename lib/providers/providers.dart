@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:planner_demo/helpers/bin_files_helper.dart';
 import 'package:planner_demo/helpers/database_helper.dart';
-import 'package:planner_demo/logic/marks_algorithm.dart';
+
 import 'package:planner_demo/logic/marks_schedule_trips_algorithm.dart';
 import 'package:planner_demo/models/app_data.dart';
 import 'package:planner_demo/models/date_data.dart';
@@ -87,9 +87,11 @@ Provider<Map<String, dynamic>>((ref) {
 
 });
 
+final showAllTripsProvider =
+    StateProvider<bool>((ref) => false);
 
 
-final routeResultsProvider = FutureProvider<Result?>((ref) async {
+final routeResultsProvider = FutureProvider<List<Result?>>((ref) async {
 
   ref.watch(runAlgorithmTriggerProvider);
 
@@ -99,9 +101,15 @@ final routeResultsProvider = FutureProvider<Result?>((ref) async {
 
   final startTime = ref.watch(selectedStartTimeProvider);
 
+  final double lat1 = ref.watch(startingLatProvider);
+  final double lon1 = ref.watch(startingLonProvider);
+  final double lat2 = ref.watch(destinationLatProvider);
+  final double lon2 = ref.watch(destinationLonProvider);
+  final dataPath = await ref.watch(binaryDataPathProvider.future);
+
    print('RUNNING ALGORITHM WITH TIME: $startTime');
 
-  return marksAlgorithm(sourcePlaceId, destinationPlaceId, startTime);
+  return marksScheduleAlgorithm(sourcePlaceId, destinationPlaceId, startTime, startTime + 240, lat1, lon1, lat2, lon2, dataPath);
 });
 
 
@@ -123,7 +131,6 @@ final binaryDataPathProvider = FutureProvider<String>((ref) async {
 
   return path;
 });
-
 
 final morningScheduleTripsProvider = FutureProvider<List<Result?>>((ref) async{
   ref.watch(runMorningScheduleAlgorithmTriggerProvider);
@@ -161,11 +168,19 @@ final noonScheduleTripsProvider = FutureProvider<List<Result?>>((ref)async{
   final double lon2 = ref.watch(destinationLonProvider);
   final dataPath = await ref.watch(binaryDataPathProvider.future);
 
-
   print('RUNNING NOON SCHEDULE ALGORITHM WITH TIME: $startTime');
 
-  return marksScheduleAlgorithm(sourcePlaceId, destinationPlaceId, startTime, endTime, lat1, lon1, lat2, lon2, dataPath);
-
+  return marksScheduleAlgorithm(
+    sourcePlaceId, 
+    destinationPlaceId, 
+    startTime, 
+    endTime, 
+    lat1, 
+    lon1, 
+    lat2, 
+    lon2, 
+    dataPath
+  );
 
 });
 
@@ -184,16 +199,11 @@ final eveningScheduleTripsProvider = FutureProvider<List<Result?>>((ref)async{
   final double lon2 = ref.watch(destinationLonProvider);
   final dataPath = await ref.watch(binaryDataPathProvider.future);
 
-
   print('RUNNING evening SCHEDULE ALGORITHM WITH TIME: $startTime');
 
   return marksScheduleAlgorithm(sourcePlaceId, destinationPlaceId, startTime, endTime, lat1, lon1, lat2, lon2, dataPath);
 
-
 });
-
-
-
 
 
 final savedTripsProvider = StateProvider<List<Result>>((ref) => []);
@@ -219,8 +229,5 @@ Future<void> saveTrip(
 
     result,
 
-    ...trips,
-
-  ];
-
+    ...trips];
 }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:planner_demo/logic/save_trips.dart';
 
 import 'package:planner_demo/providers/providers.dart';
+import 'package:planner_demo/widgets/route%20results/note_suggestion_block.dart';
 import 'package:planner_demo/widgets/trip%20navigation/detailed_trip_details.dart';
 import 'package:planner_demo/widgets/trip%20navigation/location_details_block.dart';
 import 'package:planner_demo/widgets/trip%20navigation/location_params.dart';
@@ -74,14 +75,20 @@ class TripNavigationScreen extends ConsumerWidget {
                           Column(
                             children: [
                               TripNavDetailedTripDetails(results: results),
-                              SizedBox(height: 100),
                               SizedBox(height: 50),
+                              
                             ],
+                          
                           ),
+                          SizedBox(height: 4,),
+                          NoteSuggestionBlock(),
+                          SizedBox(height: 150),
                         ],
                       ),
                     ),
                   ),
+
+                  
                 ],
               ),
             ),

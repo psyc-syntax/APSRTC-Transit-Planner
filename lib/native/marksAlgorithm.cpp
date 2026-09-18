@@ -9,6 +9,7 @@
 #include <cstring>
 #include <unordered_set>
 #include <mutex>
+#include <atomic>
 #include <utility>
 
 using namespace std;
@@ -75,19 +76,19 @@ static vector<BIndex> B_index;
 static vector<REntry> R_arr;
 static vector<RIndex> R_index;
 static once_flag      g_loadFlag;
-static bool           g_loadOk = false;
+static atomic<bool> g_loadOk{false};
 
-static void loadEngineDataOnce(string dataPath)
+static void loadEngineDataOnce(const string& dataPath)
 {
-    string folder = dataPath;
+    const string& folder = dataPath;
 
     cout << "========== C++ FILE DEBUG ==========" << endl;
     cout << "Folder: " << folder << endl;
 
-    string bArrPath   = folder + "/B_arr.bin";
-    string rArrPath   = folder + "/R_arr.bin";
-    string bIndexPath = folder + "/B_index.bin";
-    string rIndexPath = folder + "/R_index.bin";
+    const string bArrPath   = folder + "/B_arr.bin";
+    const string rArrPath   = folder + "/R_arr.bin";
+    const string bIndexPath = folder + "/B_index.bin";
+    const string rIndexPath = folder + "/R_index.bin";
 
     cout << "B_arr path: " << bArrPath << endl;
     cout << "R_arr path: " << rArrPath << endl;
@@ -103,41 +104,199 @@ static void loadEngineDataOnce(string dataPath)
     cout << "R_arr opened: " << r_arrfile.is_open() << endl;
     cout << "B_index opened: " << b_indexfile.is_open() << endl;
     cout << "R_index opened: " << r_indexfile.is_open() << endl;
-    if (!b_arrfile.is_open() || !r_arrfile.is_open() ||
-        !b_indexfile.is_open() || !r_indexfile.is_open())
+
+    if (!b_arrfile.is_open() ||
+        !r_arrfile.is_open() ||
+        !b_indexfile.is_open() ||
+        !r_indexfile.is_open())
     {
-        g_loadOk = false;
+        cerr << "ERROR: Failed to open one or more binary files." << endl;
+
+        g_loadOk.store(false, memory_order_release);
         return;
     }
 
     int n;
 
-    b_arrfile.read((char *)&n, sizeof(n));
-    B_arr.resize(n);
-    b_arrfile.read((char *)B_arr.data(), (streamsize)(n * sizeof(BEntry)));
+    // --------------------------------------------------------
+    // B_arr
+    // --------------------------------------------------------
 
-    b_indexfile.read((char *)&n, sizeof(n));
-    B_index.resize(n);
-    b_indexfile.read((char *)B_index.data(), (streamsize)(n * sizeof(BIndex)));
+    if (!b_arrfile.read(reinterpret_cast<char*>(&n), sizeof(n)))
+    {
+        cerr << "ERROR: Failed to read B_arr size." << endl;
 
-    r_arrfile.read((char *)&n, sizeof(n));
-    R_arr.resize(n);
-    r_arrfile.read((char *)R_arr.data(), (streamsize)(n * sizeof(REntry)));
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
 
-    r_indexfile.read((char *)&n, sizeof(n));
-    R_index.resize(n);
-    r_indexfile.read((char *)R_index.data(), (streamsize)(n * sizeof(RIndex)));
+    if (n < 0)
+    {
+        cerr << "ERROR: Invalid B_arr size: " << n << endl;
 
-    g_loadOk = true;
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    B_arr.resize(static_cast<size_t>(n));
+
+    if (!b_arrfile.read(
+            reinterpret_cast<char*>(B_arr.data()),
+            static_cast<streamsize>(n * sizeof(BEntry))))
+    {
+        cerr << "ERROR: Failed to read B_arr data." << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    // --------------------------------------------------------
+    // B_index
+    // --------------------------------------------------------
+
+    if (!b_indexfile.read(reinterpret_cast<char*>(&n), sizeof(n)))
+    {
+        cerr << "ERROR: Failed to read B_index size." << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    if (n < 0)
+    {
+        cerr << "ERROR: Invalid B_index size: " << n << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    B_index.resize(static_cast<size_t>(n));
+
+    if (!b_indexfile.read(
+            reinterpret_cast<char*>(B_index.data()),
+            static_cast<streamsize>(n * sizeof(BIndex))))
+    {
+        cerr << "ERROR: Failed to read B_index data." << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    // --------------------------------------------------------
+    // R_arr
+    // --------------------------------------------------------
+
+    if (!r_arrfile.read(reinterpret_cast<char*>(&n), sizeof(n)))
+    {
+        cerr << "ERROR: Failed to read R_arr size." << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    if (n < 0)
+    {
+        cerr << "ERROR: Invalid R_arr size: " << n << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    R_arr.resize(static_cast<size_t>(n));
+
+    if (!r_arrfile.read(
+            reinterpret_cast<char*>(R_arr.data()),
+            static_cast<streamsize>(n * sizeof(REntry))))
+    {
+        cerr << "ERROR: Failed to read R_arr data." << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    // --------------------------------------------------------
+    // R_index
+    // --------------------------------------------------------
+
+    if (!r_indexfile.read(reinterpret_cast<char*>(&n), sizeof(n)))
+    {
+        cerr << "ERROR: Failed to read R_index size." << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    if (n < 0)
+    {
+        cerr << "ERROR: Invalid R_index size: " << n << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    R_index.resize(static_cast<size_t>(n));
+
+    if (!r_indexfile.read(
+            reinterpret_cast<char*>(R_index.data()),
+            static_cast<streamsize>(n * sizeof(RIndex))))
+    {
+        cerr << "ERROR: Failed to read R_index data." << endl;
+
+        g_loadOk.store(false, memory_order_release);
+        return;
+    }
+
+    // --------------------------------------------------------
+    // Everything loaded successfully.
+    // From this point onward these arrays are READ ONLY.
+    // --------------------------------------------------------
+
+    cout << "========== ENGINE DATA LOADED ==========" << endl;
+
+    cout << "B_arr:   " << B_arr.size()
+         << " entries, "
+         << B_arr.size() * sizeof(BEntry)
+         << " bytes" << endl;
+
+    cout << "B_index: " << B_index.size()
+         << " entries, "
+         << B_index.size() * sizeof(BIndex)
+         << " bytes" << endl;
+
+    cout << "R_arr:   " << R_arr.size()
+         << " entries, "
+         << R_arr.size() * sizeof(REntry)
+         << " bytes" << endl;
+
+    cout << "R_index: " << R_index.size()
+         << " entries, "
+         << R_index.size() * sizeof(RIndex)
+         << " bytes" << endl;
+
+    const size_t totalBytes =
+        B_arr.size()   * sizeof(BEntry) +
+        B_index.size() * sizeof(BIndex) +
+        R_arr.size()   * sizeof(REntry) +
+        R_index.size() * sizeof(RIndex);
+
+    cout << "TOTAL ENGINE DATA: "
+         << totalBytes
+         << " bytes ("
+         << (totalBytes / (1024.0 * 1024.0))
+         << " MB)"
+         << endl;
+
+    g_loadOk.store(true, memory_order_release);
 }
 
-const char *_buildResult(
+const char* _buildResult(
     int16_t src,
-    const unordered_map<S_Key, S_Key> &prev,
-    const unordered_map<S_Key, pair<int16_t, int16_t>> &timings,
-    vector<pair<int16_t, S_Key>> &destKeys);
+    const unordered_map<S_Key, S_Key>& prev,
+    const unordered_map<S_Key, pair<int16_t, int16_t>>& timings,
+    vector<pair<int16_t, S_Key>>& destKeys
+);
 
-const char *marksAlgorithm(
+const char* marksAlgorithm(
     int16_t src,
     int16_t dest,
     int16_t st,
@@ -147,8 +306,8 @@ const char *marksAlgorithm(
 )
 {
     call_once(g_loadFlag, [&]() {
-    loadEngineDataOnce(dbpath);
-});
+        loadEngineDataOnce(dbpath);
+        });
     if (!g_loadOk)
     {
         thread_local static string error = "Failed to load one or more engine .bin files";
@@ -161,46 +320,56 @@ const char *marksAlgorithm(
     // transfers) is a sane default for a regional bus network; raise it
     // only if you actually need deeper transfer chains.
     const int16_t MAX_ROUND = 6;
-    const int16_t B_BUFFER  = 5;
-    const int16_t W_BUFFER  = 180;
+    const int16_t B_BUFFER = 5;
+    const int16_t W_BUFFER = 180;
 
     unordered_map<SlotKey, int16_t>                     earlySlot; // best arrival ever seen per (place, origin)
     unordered_map<S_Key, S_Key>                          prev;
     unordered_map<S_Key, pair<int16_t, int16_t>>         timings;   // {dep, arr}
-    unordered_map<S_Key, unordered_set<int32_t>>         usedOprs;
+    // unordered_map<S_Key, unordered_set<int32_t>>         usedOprs;
     unordered_map<int16_t, pair<int16_t, S_Key>>         bestTripForOrigin;  // origin -> {arr, nKey at dest}
+    unordered_set<int32_t>                               oprsAlreadyReachedDest;
+    unordered_set<int32_t>                               usedOprsUptoround;
     bool dfound = false;
     bool dflag = false;
 
     S_Key stKey = mkKey(src, -1, st);   // -1 = sentinel "no bus, this is the start"
-    timings[stKey] = {st, st};
-    usedOprs[stKey] = {};
+    timings[stKey] = { st, st };
+    // usedOprs[stKey] = {};
 
-    vector<S_Key> curr = {stKey};
+    vector<S_Key> curr = { stKey };
 
     for (int round = 1; round <= MAX_ROUND && !curr.empty(); round++)
     {
         vector<Candidate> candidates;
-        if(dfound) break;
-        if(dflag) dfound = true;
+        if (dfound) break;
+        if (dflag) dfound = true;
+
+        unordered_set<int32_t> currRoundOprs = {};
 
         // ---------------- Phase A: generate every reachable connection ----------------
         for (S_Key stop_Key : curr)
         {
             int16_t board_id = S_KeyPlace(stop_Key);
+            if (board_id == dest) continue;
+
             int16_t curr_arr = timings[stop_Key].second;
 
             if (board_id < 0 || static_cast<size_t>(board_id) >= B_index.size())
                 continue;
 
-            const auto &parentUsed = usedOprs[stop_Key];
+            // const auto& parentUsed = usedOprs[stop_Key];
 
-            int16_t ws = (round == 1) ? st  : static_cast<int16_t>(curr_arr + B_BUFFER);
+            int16_t ws = (round == 1) ? st : static_cast<int16_t>(curr_arr + B_BUFFER);
             int16_t we = (round == 1) ? end : static_cast<int16_t>(curr_arr + W_BUFFER);
 
-            int32_t b_idx_st  = B_index[board_id].start;
+            int32_t b_idx_st = B_index[board_id].start;
             int32_t b_idx_end = B_index[board_id].end;
             if (b_idx_st == -1 || b_idx_end == -1) continue;
+
+            if (b_idx_st < 0 || b_idx_end < b_idx_st ||
+                static_cast<size_t>(b_idx_end) >= B_arr.size())
+                continue;
 
             // -------- main (same-day) window --------
             int32_t low = b_idx_st, high = b_idx_end;
@@ -216,13 +385,18 @@ const char *marksAlgorithm(
                 if (B_arr[i].depMin > we) break;
 
                 int32_t curr_oprs = B_arr[i].oprsNo;
-                int16_t curr_dep  = B_arr[i].depMin;
-                int16_t curr_seq  = B_arr[i].seqNo;
-                if (parentUsed.find(curr_oprs) != parentUsed.end()) continue;
+                int16_t curr_dep = B_arr[i].depMin;
+                int16_t curr_seq = B_arr[i].seqNo;
+                // if (parentUsed.find(curr_oprs) != parentUsed.end()) continue;
 
-                int32_t r_idx_st  = R_index[curr_oprs].start;
+                if(usedOprsUptoround.find(curr_oprs) != usedOprsUptoround.end()) continue;
+
+                int32_t r_idx_st = R_index[curr_oprs].start;
                 int32_t r_idx_end = R_index[curr_oprs].end;
                 if (r_idx_st == -1 || r_idx_end == -1) continue;
+                if (r_idx_st < 0 || r_idx_end < r_idx_st ||
+                    static_cast<size_t>(r_idx_end) >= R_arr.size())
+                    continue;
 
                 int32_t rlow = r_idx_st, rhigh = r_idx_end;
                 while (rlow <= rhigh)
@@ -232,24 +406,27 @@ const char *marksAlgorithm(
                     else rhigh = mid - 1;
                 }
 
-                // FIX: origin now correctly seeds from THIS trip's own
+
                 // departure (round 1) or is inherited from the parent
                 // lineage (round 2+) — never mixed across departures.
                 int16_t origin = (round == 1) ? curr_dep : S_KeyOrigin(stop_Key);
 
                 for (int32_t J = rlow; J <= r_idx_end; J++)
                 {
-                    const REntry &re = R_arr[J];
+                    const REntry& re = R_arr[J];
                     if (re.arrMin <= curr_dep) continue;
 
-                    // FIX: elapsed time measured from THIS lineage's own
+
                     // origin departure, not the global window start —
                     // otherwise trips departing later in the window get
                     // wrongly pruned as if they'd already taken hours.
                     int16_t travel = static_cast<int16_t>(re.arrMin - origin);
                     if (travel < 0) travel += 1440;
 
-                    candidates.push_back({stop_Key, re.toPlaceId, curr_oprs, origin, curr_dep, re.arrMin});
+                    // if (travel > static_cast<int16_t>(est * 1.5)) break;
+                    if (re.toPlaceId == dest && oprsAlreadyReachedDest.count(curr_oprs))
+                        continue;
+                    candidates.push_back({ stop_Key, re.toPlaceId, curr_oprs, origin, curr_dep, re.arrMin });
                 }
             }
 
@@ -275,13 +452,19 @@ const char *marksAlgorithm(
                     if (B_arr[i].depMin >= wrapped_we) break;
 
                     int32_t curr_oprs = B_arr[i].oprsNo;
-                    int16_t curr_dep  = B_arr[i].depMin;
-                    int16_t curr_seq  = B_arr[i].seqNo;
-                    if (parentUsed.find(curr_oprs) != parentUsed.end()) continue;
+                    int16_t curr_dep = B_arr[i].depMin;
+                    int16_t curr_seq = B_arr[i].seqNo;
+                    // if (parentUsed.find(curr_oprs) != parentUsed.end()) continue;
 
-                    int32_t r_idx_st  = R_index[curr_oprs].start;
+                    if(usedOprsUptoround.find(curr_oprs) != usedOprsUptoround.end()) continue;
+
+                    int32_t r_idx_st = R_index[curr_oprs].start;
                     int32_t r_idx_end = R_index[curr_oprs].end;
                     if (r_idx_st == -1 || r_idx_end == -1) continue;
+
+                    if (r_idx_st < 0 || r_idx_end < r_idx_st ||
+                        static_cast<size_t>(r_idx_end) >= R_arr.size())
+                        continue;
 
                     int32_t rlow = r_idx_st, rhigh = r_idx_end;
                     while (rlow <= rhigh)
@@ -293,13 +476,15 @@ const char *marksAlgorithm(
 
                     for (int32_t k = rlow; k <= r_idx_end; k++)
                     {
-                        const REntry &re = R_arr[k];
+                        const REntry& re = R_arr[k];
                         if (re.arrMin <= curr_dep) continue;
 
                         int16_t travel = static_cast<int16_t>(re.arrMin + 1440 - origin);
 
-                        candidates.push_back({stop_Key, re.toPlaceId, curr_oprs, origin, curr_dep,
-                                               static_cast<int16_t>(re.arrMin + 1440)});
+                        if (re.toPlaceId == dest && oprsAlreadyReachedDest.count(curr_oprs))
+                            continue;
+                        candidates.push_back({ stop_Key, re.toPlaceId, curr_oprs, origin, curr_dep,
+                                               static_cast<int16_t>(re.arrMin + 1440) });
                     }
                 }
             }
@@ -309,7 +494,7 @@ const char *marksAlgorithm(
         unordered_map<SlotKey, size_t> bestIdxForSlot;
         for (size_t idx = 0; idx < candidates.size(); idx++)
         {
-            const Candidate &c = candidates[idx];
+            const Candidate& c = candidates[idx];
             SlotKey slot = mkSlot(c.toPlace, c.origin);
 
             auto already = earlySlot.find(slot);
@@ -324,29 +509,34 @@ const char *marksAlgorithm(
         vector<S_Key> nxt;
         nxt.reserve(bestIdxForSlot.size());
 
-        for (auto &kv : bestIdxForSlot)
+        for (auto& kv : bestIdxForSlot)
         {
-            const Candidate &c = candidates[kv.second];
+            const Candidate& c = candidates[kv.second];
             S_Key nKey = mkKey(c.toPlace, c.oprsNo, c.origin);
 
             earlySlot[mkSlot(c.toPlace, c.origin)] = c.arr;
             prev[nKey] = c.parent;
-            timings[nKey] = {c.dep, c.arr};
-            usedOprs[nKey] = usedOprs[c.parent];
-            usedOprs[nKey].insert(c.oprsNo);
+            timings[nKey] = { c.dep, c.arr };
+            // usedOprs[nKey] = usedOprs[c.parent];
+            // usedOprs[nKey].insert(c.oprsNo);
+            currRoundOprs.insert(c.oprsNo);
             nxt.push_back(nKey);
 
-            // FIX: only ONE best trip is kept per origin, updated here as
+
             // better connections are found across rounds — no duplicate
             // or stale entries make it into the final output.
             if (c.toPlace == dest)
             {
                 auto exist = bestTripForOrigin.find(c.origin);
                 if (exist == bestTripForOrigin.end() || c.arr < exist->second.first)
-                    bestTripForOrigin[c.origin] = {c.arr, nKey};
+                    bestTripForOrigin[c.origin] = { c.arr, nKey };
                 dflag = true;
+
+
+                oprsAlreadyReachedDest.insert(c.oprsNo);
             }
         }
+        usedOprsUptoround.merge(currRoundOprs);
 
         curr = move(nxt);
     }
@@ -354,27 +544,63 @@ const char *marksAlgorithm(
     // Collapse to exactly one result per distinct departure time, in
     // departure order — this IS your "how many total trips are
     // available, that many we want" list.
+    vector<pair<int16_t, pair<int16_t, S_Key>>> originTrips(
+        bestTripForOrigin.begin(), bestTripForOrigin.end());
+
+    sort(originTrips.begin(), originTrips.end(),
+        [](const pair<int16_t, pair<int16_t, S_Key>>& a,
+            const pair<int16_t, pair<int16_t, S_Key>>& b)
+        { return a.first < b.first; }); // ascending by origin
+
     vector<pair<int16_t, S_Key>> destKeys;
-    destKeys.reserve(bestTripForOrigin.size());
-    for (auto &kv : bestTripForOrigin)
-        destKeys.push_back({kv.second.first, kv.second.second});
+    vector<pair<int16_t, int16_t>> frontier; // kept trips so far: {arrival, transfers}
 
-    sort(destKeys.begin(), destKeys.end(),
-         [](const pair<int16_t, S_Key> &a, const pair<int16_t, S_Key> &b)
-         { return S_KeyOrigin(a.second) < S_KeyOrigin(b.second); });
+    for (int i = (int)originTrips.size() - 1; i >= 0; i--) // latest -> earliest
+    {
+        int16_t arr = originTrips[i].second.first;
+        S_Key   key = originTrips[i].second.second;
 
+        // transfer count = how many hops back to source, minus 1 for
+        // the source's own sentinel state
+        int16_t transfers = 0;
+        S_Key walk = key;
+        while (prev.find(walk) != prev.end())
+        {
+            transfers++;
+            walk = prev.at(walk);
+        }
+        transfers -= 1;
+
+        bool dominated = false;
+        for (auto& f : frontier)
+        {
+            if (f.first <= arr && f.second <= transfers)
+            {
+                dominated = true;
+                break;
+            }
+        }
+
+        if (!dominated)
+        {
+            frontier.push_back({ arr, transfers });
+            destKeys.push_back({ arr, key });
+        }
+    }
+
+    reverse(destKeys.begin(), destKeys.end());
     return _buildResult(src, prev, timings, destKeys);
 }
 
-const char *_buildResult(
+const char* _buildResult(
     int16_t src,
-    const unordered_map<S_Key, S_Key> &prev,
-    const unordered_map<S_Key, pair<int16_t, int16_t>> &timings,
-    vector<pair<int16_t, S_Key>> &destKeys)
+    const unordered_map<S_Key, S_Key>& prev,
+    const unordered_map<S_Key, pair<int16_t, int16_t>>& timings,
+    vector<pair<int16_t, S_Key>>& destKeys)
 {
     vector<string> result;
 
-    for (auto &destPair : destKeys)
+    for (auto& destPair : destKeys)
     {
         S_Key currKey = destPair.second;
         vector<S_Key> path;
@@ -426,20 +652,20 @@ const char *_buildResult(
     return output.c_str();
 }
 
-void freeMarksResult(const char *ptr)
+void freeMarksResult(const char* ptr)
 {
-    free(const_cast<char *>(ptr));
+    free(const_cast<char*>(ptr));
 }
 
 static string _buildResultJson(
     int16_t src,
-    const unordered_map<S_Key, S_Key> &prev,
-    const unordered_map<S_Key, pair<int16_t, int16_t>> &timings,
-    vector<pair<int16_t, S_Key>> &destKeys)
+    const unordered_map<S_Key, S_Key>& prev,
+    const unordered_map<S_Key, pair<int16_t, int16_t>>& timings,
+    vector<pair<int16_t, S_Key>>& destKeys)
 {
     vector<string> result;
 
-    for (auto &destPair : destKeys)
+    for (auto& destPair : destKeys)
     {
         S_Key currKey = destPair.second;
         vector<S_Key> path;
